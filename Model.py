@@ -22,7 +22,7 @@ class User:
 	"""
 	def __init__(self,id):
 		self.id = id
-		self.following = []
+		self.following = {}
 		self.tweets = []
 
 	"""adds a user to this user's following list
@@ -30,7 +30,7 @@ class User:
 	user - user to follow
 	"""
 	def follow(self,user):
-		self.following.append(user)
+		self.following[user.id] = user
 
 	"""posts a tweet from this user
 	Parameter:
@@ -112,12 +112,12 @@ class Parameter:
 	def run(self,user1,user2):
 		raise NotImplementedError
 
-class Community:
+def Community:
 	"""This class represents a detected cluster of users i.e. a community."""
 
 	"""Basic constructor for community
 	"""
-	def __init__(self):
+	def __init__(self);
 		self.users = []
 
 	"""Adds a user to this community
