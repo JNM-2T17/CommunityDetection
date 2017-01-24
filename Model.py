@@ -112,12 +112,12 @@ class Parameter:
 	def run(self,user1,user2):
 		raise NotImplementedError
 
-def Community:
+class Community:
 	"""This class represents a detected cluster of users i.e. a community."""
 
 	"""Basic constructor for community
 	"""
-	def __init__(self);
+	def __init__(self):
 		self.users = []
 
 	"""Adds a user to this community
