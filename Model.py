@@ -112,6 +112,18 @@ class Parameter:
 	def run(self,user1,user2):
 		raise NotImplementedError
 
+	"""Takes a list of users and returns a user that represents the average of
+	all the users according to the parameter
+
+	Parameter:
+	users - users to average
+
+	Returns:
+	average of all users
+	"""
+	def average(self,users):
+		raise NotImplementedError
+
 def Community:
 	"""This class represents a detected cluster of users i.e. a community."""
 
