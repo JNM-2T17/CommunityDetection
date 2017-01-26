@@ -8,17 +8,21 @@ class K-Means(Algorithm):
 
 		indices = random.sample(range(0, len(users)), numClusters)
 		centroids = []
+		userClusters = {}
+		prevUserClusters = {}
+		clusters = {}
 
 		for i in indices:
 			centroids.append(users[i])
 		
 		while True:
 			clusters = {}
+			prevUserClusters = userClusters.copy()
 
 			for c in centroids:
 				clusters.update({c.id: []})
 
-			for u in users:
+			for u in users.values():
 				closestCentroid = None
 				maxSimilarity = None
 
@@ -29,18 +33,19 @@ class K-Means(Algorithm):
 						maxSimilarity = currSimilarity
 
 				clusters[closestCentroid].append(v)
+				userClusters[u.id] = c.id
 
 			newCentroids = []
 			centroidNum = 0
 
+			for uc in userClusters.keys():
+				if not prevUserClusters[uc] == userClusters[uc]:
+					break
+
 			for c in centroids:
 				averageUser = parameter.average(clusters[c.id])
-				averageUser.id = centroidNum
+				averageUser.id = c.id
 				newCentroids.append(averageUser)
-				centroidNum += 1
-
-			if centroidsAreEqual(centroids, newCentroids):
-				break
 
 			else:
 				centroids = newCentroids
