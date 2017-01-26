@@ -36,4 +36,36 @@ class Following(Parameter):
 	average of all users
 	"""
 	def average(self,users):
-		raise NotImplementedError
+		followingCount = {}
+		followersCount = {}
+
+		for u in users.values():
+			for userId in u.following.keys():
+				if userId in followingCount:
+					followingCount[userId] += 1
+				else:
+					followingCount[userId] = 1
+				if userId in followerCount:
+					followersCount[userId] += 1
+				else:
+					followersCount[userId] = 1
+
+		numUsers = len(users)
+
+		averageFollowing = {}
+
+		for userId, count in followingCount:
+			if count*1.0/numUsers >= numUsers/2:
+				averageFollowing[userId] = users[userId]
+
+		averageFollowers = {}
+
+		for userId, count in followersCount:
+			if count*1.0/numUsers >= numUsers/2:
+				averageFollowers[userId] = users[userId]
+
+		averageUser = User("Average")
+		averageUser.following = averageFollowing
+		averageUser.followers = averageFollowers
+
+		return averageUser
