@@ -33,27 +33,32 @@ class KMeans(Algorithm):
 
 				for c in centroids:
 					currSimilarity = self.parameter.similarity(c, u)
+
 					if closestCentroid is None or currSimilarity > maxSimilarity:
 						closestCentroid = c.id
 						maxSimilarity = currSimilarity
 
 				clusters[closestCentroid].update({u.id: u})
-				userClusters[u.id] = c.id
+				userClusters[u.id] = closestCentroid
+				print("closestCentroid:", closestCentroid)
 
-			newCentroids = []
-			centroidNum = 0
-
-			end = False
+			end = True
 
 			for uc in userClusters.keys():
 				if uc in prevUserClusters or uc in userClusters:
 					if not uc in prevUserClusters or not uc in userClusters:
-						end = True
+						end = False
 					elif not prevUserClusters[uc] == userClusters[uc]:
-						end = True
+						end = False
+
+			print("userClusters:", userClusters)
+			print("prevUserClusters:", prevUserClusters)
 
 			if end:
 				break
+				
+
+			newCentroids = []
 
 			for c in centroids:
 				averageUser = self.parameter.average(clusters[c.id])
