@@ -27,5 +27,4 @@ def load_user_frienships(dirname, userIdFilename, ffFilename):
 				tgtId = row[1]
 				users[srcId].follow(users[tgtId])
 
-	v = users.values()
-	return v
+	return users
