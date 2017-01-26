@@ -6,7 +6,7 @@ import random
 class KMeans(Algorithm):
 
 	def run(self, users):
-		numClusters = 2 # What value do we set this to?
+		numClusters = 3 # What value do we set this to?
 
 		userIds = list(users.keys())
 		indices = random.sample(range(0, len(users)), numClusters)

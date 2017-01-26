@@ -57,6 +57,7 @@ class Following(Parameter):
 					followingCount[userId] += 1
 				else:
 					followingCount[userId] = 1
+			for userId in u.followers.keys():
 				if userId in followersCount:
 					followersCount[userId] += 1
 				else:
@@ -65,19 +66,30 @@ class Following(Parameter):
 		numUsers = len(users)
 
 		averageFollowing = {}
+		print(users)
 
 		for userId, count in followingCount.items():
-			if count*1.0/numUsers >= numUsers/2:
-				averageFollowing[userId] = users[userId]
+			if count*1.0/numUsers >= 0: # Change this from 0
+				if not userId in users:
+					dummyUser = User(userId)
+					averageFollowing[userId] = dummyUser
+				else:
+					averageFollowing[userId] = users[userId]
 
 		averageFollowers = {}
 
 		for userId, count in followersCount.items():
-			if count*1.0/numUsers >= numUsers/2:
-				averageFollowers[userId] = users[userId]
+			if count*1.0/numUsers >= 0: # Change this from 0
+				if not userId in users:
+					dummyUser = User(userId)
+					averageFollowers[userId] = dummyUser
+				else:
+					averageFollowers[userId] = users[userId]
 
 		averageUser = User("Average")
 		averageUser.following = averageFollowing
 		averageUser.followers = averageFollowers
+
+		print(averageUser.id, averageUser.following, averageUser.followers)
 
 		return averageUser
