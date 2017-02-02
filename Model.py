@@ -72,7 +72,11 @@ class Clusterer:
 		if len(self.communities) == 0:
 			return 0
 		else:
-			raise NotImplementedError
+			total = 0.0
+			for x in self.communities:
+				total += x.fpu()
+			total /= len(self.communities)
+			return total
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self):
@@ -142,6 +146,16 @@ class Community:
 		self.users.append(user)
 
 	"""Computes the average mutual following links per user in this community.
+	Returns:
+	The average mutual following links per user in this community.
 	"""
 	def fpu(self):
-		raise NotImplementedError
+		total = 0.0
+		for x in self.users:
+			temp = 0.0
+			for k,v in x.following:
+				if x.id in v.following:
+					temp += 1
+			total += temp
+		total /= len(self.users)
+		return fpu
