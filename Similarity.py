@@ -66,7 +66,7 @@ class Following(Parameter):
 		numUsers = len(users)
 
 		averageFollowing = {}
-		print(users)
+		# print(users)
 
 		for userId, count in followingCount.items():
 			if count*1.0/numUsers >= 0: # Change this from 0
@@ -90,6 +90,6 @@ class Following(Parameter):
 		averageUser.following = averageFollowing
 		averageUser.followers = averageFollowers
 
-		print(averageUser.id, averageUser.following, averageUser.followers)
+		# print(averageUser.id, "\nFollowing:", averageUser.following, "\nFollowers:", averageUser.followers)
 
 		return averageUser

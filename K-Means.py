@@ -6,7 +6,7 @@ import random
 class KMeans(Algorithm):
 
 	def run(self, users):
-		numClusters = 3 # What value do we set this to?
+		numClusters = 2 # What value do we set this to?
 
 		userIds = list(users.keys())
 		indices = random.sample(range(0, len(users)), numClusters)
@@ -17,8 +17,11 @@ class KMeans(Algorithm):
 
 		iterationCount = 1
 
+		print("\nInitial Centroids:")
+
 		for i in indices:
 			centroids.append(users[userIds[i]])
+			print("-", usernames[centroids[len(centroids)-1].id])
 		
 		while True:
 			clusters = {}
@@ -40,7 +43,7 @@ class KMeans(Algorithm):
 
 				clusters[closestCentroid].update({u.id: u})
 				userClusters[u.id] = closestCentroid
-				print("closestCentroid:", closestCentroid)
+				# print("closestCentroid:", closestCentroid)
 
 			end = True
 
@@ -51,8 +54,8 @@ class KMeans(Algorithm):
 					elif not prevUserClusters[uc] == userClusters[uc]:
 						end = False
 
-			print("userClusters:", userClusters)
-			print("prevUserClusters:", prevUserClusters)
+			# print("userClusters:", userClusters)
+			# print("prevUserClusters:", prevUserClusters)
 
 			if end:
 				break
@@ -67,17 +70,35 @@ class KMeans(Algorithm):
 
 			centroids = newCentroids
 
-			print("Iteration:", iterationCount)
+			# print("Iteration:", iterationCount)
 			iterationCount += 1
 
 		communities = []
+
+		print("\nStopped at iteration #", iterationCount)
 
 		for key, value in clusters.items():
 			communities.append(value)
 
 		return communities
 
+usernames = {}
+with open("Tweet Data/TestUsernames.csv", 'r') as f:
+	r = csv.reader(f);
+	for row in r:
+		if len(row)>=1:
+			usernames[row[0]] = row[1]
+
 loadedUsers = load_user_friendships("Tweet Data", "/TestUsersList.csv", "/TestFFIds.csv")
 following = Following()
 kmeans = KMeans(following)
-print(kmeans.run(loadedUsers))
+communities = kmeans.run(loadedUsers)
+
+commNum = 1
+
+for c in communities:
+	print("\nCommunity #", commNum)
+	commNum += 1
+
+	for u in c.keys():
+		print("-", usernames[u])
