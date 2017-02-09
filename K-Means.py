@@ -36,6 +36,7 @@ class KMeans(Algorithm):
 
 				for c in centroids:
 					currSimilarity = self.parameter.similarity(c, u)
+					print(c.id, u.id, currSimilarity)
 
 					if closestCentroid is None or currSimilarity > maxSimilarity:
 						closestCentroid = c.id
@@ -70,7 +71,7 @@ class KMeans(Algorithm):
 
 			centroids = newCentroids
 
-			# print("Iteration:", iterationCount)
+			print("\nIteration:", iterationCount)
 			iterationCount += 1
 
 		communities = []
@@ -83,13 +84,13 @@ class KMeans(Algorithm):
 		return communities
 
 usernames = {}
-with open("Tweet Data/TestUsernames.csv", 'r') as f:
+with open("Dummy Tweet Data/TestUsernames.csv", 'r') as f:
 	r = csv.reader(f);
 	for row in r:
 		if len(row)>=1:
 			usernames[row[0]] = row[1]
 
-loadedUsers = load_user_friendships("Tweet Data", "/TestUsersList.csv", "/TestFFIds.csv")
+loadedUsers = load_user_friendships("Dummy Tweet Data", "/TestUsersList.csv", "/TestFFIds.csv")
 following = Following()
 kmeans = KMeans(following)
 communities = kmeans.run(loadedUsers)
