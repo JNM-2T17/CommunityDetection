@@ -47,18 +47,13 @@
     },
     {
       "id": "10",
-      "source": "24",
-      "target": "22"
+      "source": "22",
+      "target": "5"
     },
     {
       "id": "11",
-      "source": "22",
-      "target": "24"
-    },
-    {
-      "id": "12",
       "source": "7",
-      "target": "24"
+      "target": "5"
     }
   ],
   "nodes": [
@@ -180,7 +175,7 @@
     {
       "id": "24",
       "label": "Node 24",
-      "communityNum": 2
+      "communityNum": 1
     },
     {
       "id": "25",
