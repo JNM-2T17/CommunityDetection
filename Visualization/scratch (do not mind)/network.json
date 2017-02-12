@@ -1,8 +1,4 @@
 {
-  "communities":
-    {"1": ["1", "2", "12", "13", "14"],
-     "2": ["3", "4", "10", "11"],
-     "3": ["5", "6", "7", "8", "9"]},
   "edges": [
     {
       "id": "3",
@@ -95,126 +91,97 @@
       "label": "Node 1",
       "color": "rgb(90,90,90)",
       "size": 400,
-      "x": 10,
-      "y": -10,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "2",
       "label": "Node 2",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 9,
-      "y": -9,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "3",
       "label": "Node 3",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 8,
-      "y": -8,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "4",
       "label": "Node 4",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 7,
-      "y": -7,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "5",
       "label": "Node 5",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 6,
-      "y": -6,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "6",
       "label": "Node 6",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 5,
-      "y": -5,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "7",
       "label": "Node 7",
-      "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 4,
-      "y": -4,
-      "type": "tweetegy"
+      "communityNum": 1
     },
     {
       "id": "8",
       "label": "Node 8",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 3,
-      "y": -3,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "9",
       "label": "Node 9",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 2,
-      "y": -2,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "10",
       "label": "Node 10",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": 1,
-      "y": -1,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "11",
       "label": "Node 11",
       "color": "rgb(255,0,0)",
       "size": 100,
-      "x": 0,
-      "y": 0,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "12",
       "label": "Node 12",
       "color": "rgb(90,90,90)",
       "size": 100,
-      "x": -1,
-      "y": 1,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "13",
       "label": "Node 13",
       "color": "rgb(255,0,0)",
       "size": 100,
-      "x": -2,
-      "y": 2,
-      "type": "tweetegy"
+      "communityNum": 2
     },
     {
       "id": "14",
       "label": "Node 14",
       "color": "rgb(45,45,60)",
       "size": 100,
-      "x": -3,
-      "y": 3,
-      "type": "tweetegy"
+      "communityNum": 2
     }
   ]
 }

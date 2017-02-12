@@ -21,6 +21,11 @@
 
 <script>
 
+  function getCommunityOffset(nodeID){
+    console.log(JSON.stringify(nodeID));
+    return [0, 0];
+  }
+
   communities = new Object();
   rawJSON = new Object();
 
@@ -58,16 +63,44 @@
         defaultEdgeHoverColor: '#000',
         edgeHoverSizeRatio: 1,
         edgeHoverExtremities: true,
-        scalingMode: 'outside' 
+        scalingMode: 'outside',
+        enableNodeHovering: false,
+        labelThreshold: 1
        }
       },
 
       function(s) { //This function is passed an instance of Sigma s
 
         //Initialize nodes as a circle
+        // s.graph.nodes().forEach(function(node, i, a) {
+        //   node.x = Math.cos(Math.PI * 2 * i / a.length);
+        //   node.y = Math.sin(Math.PI * 2 * i / a.length);
+        //   console.log("i: x = " + node.x + ", y = " + node.y);
+        // });
+
+        var circleLevel = 1;
+        var totalCircled = 0;
+
+        //Initialize nodes as a circle
         s.graph.nodes().forEach(function(node, i, a) {
-          node.x = Math.cos(Math.PI * 2 * i / a.length);
-          node.y = Math.sin(Math.PI * 2 * i / a.length);
+          communityNodeNum = i - totalCircled;
+          circleSize = 0.1 * circleLevel;
+          circleLimit = Math.pow(2, circleLevel) + 1;
+
+          angle = 360 / circleLimit * communityNodeNum * Math.PI / 180;
+
+          var offset = getCommunityOffset(node);
+
+          node.x = circleSize * Math.cos(angle) + offset[0];
+          node.y = circleSize * Math.sin(angle) + offset[1];
+          // node.x = Math.cos(Math.PI * 2 * (i - totalCircled) / (Math.pow(2, circleLevel) + 1));
+          // node.y = Math.sin(Math.PI * 2 * (i - totalCircled) / (Math.pow(2, circleSize) + 1));
+
+          console.log("i: x = " + node.x + ", y = " + node.y)
+          if(communityNodeNum >= circleLimit - 1){
+            totalCircled += Math.pow(2, circleLevel) + 1;
+            circleLevel++;
+          }
         });
 
         //Call refresh to render the new graph
