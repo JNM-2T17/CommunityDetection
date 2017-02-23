@@ -6,7 +6,7 @@ import random
 class KMeans(Algorithm):
 
 	def run(self, users):
-		numClusters = 2 # What value do we set this to?
+		numClusters = 4 # What value do we set this to?
 
 		userIds = list(users.keys())
 		indices = random.sample(range(0, len(users)), numClusters)
@@ -17,8 +17,11 @@ class KMeans(Algorithm):
 
 		iterationCount = 1
 
+		print("\nInitial Centroids:")
+
 		for i in indices:
 			centroids.append(users[userIds[i]])
+			# print("-", usernames[centroids[len(centroids)-1].id])
 		
 		while True:
 			clusters = {}
@@ -33,27 +36,33 @@ class KMeans(Algorithm):
 
 				for c in centroids:
 					currSimilarity = self.parameter.similarity(c, u)
+					# print(c.id, u.id, currSimilarity)
+
 					if closestCentroid is None or currSimilarity > maxSimilarity:
 						closestCentroid = c.id
 						maxSimilarity = currSimilarity
 
 				clusters[closestCentroid].update({u.id: u})
-				userClusters[u.id] = c.id
+				userClusters[u.id] = closestCentroid
+				# print("closestCentroid:", closestCentroid)
 
-			newCentroids = []
-			centroidNum = 0
-
-			end = False
+			end = True
 
 			for uc in userClusters.keys():
 				if uc in prevUserClusters or uc in userClusters:
 					if not uc in prevUserClusters or not uc in userClusters:
-						end = True
+						end = False
 					elif not prevUserClusters[uc] == userClusters[uc]:
-						end = True
+						end = False
+
+			# print("userClusters:", userClusters)
+			# print("prevUserClusters:", prevUserClusters)
 
 			if end:
 				break
+				
+
+			newCentroids = []
 
 			for c in centroids:
 				averageUser = self.parameter.average(clusters[c.id])
@@ -62,17 +71,17 @@ class KMeans(Algorithm):
 
 			centroids = newCentroids
 
-			print("Iteration:", iterationCount)
+			print("\nIteration:", iterationCount)
 			iterationCount += 1
 
 		communities = []
 
+		print("\nStopped at iteration #", iterationCount)
+
 		for key, value in clusters.items():
-			communities.append(value)
+			c = Community();
+			for k,v in value.items():
+				c.addUser(v)
+			communities.append(c)
 
 		return communities
-
-loadedUsers = load_user_friendships("Tweet Data", "/TestUsersList.csv", "/TestFFIds.csv")
-following = Following()
-kmeans = KMeans(following)
-print(kmeans.run(loadedUsers))

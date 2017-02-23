@@ -57,8 +57,9 @@ class Clusterer:
 	algorithm - algorithm to use. Note: algorithm must have a similarity 
 				parameter set
 	"""
-	def __init__(self,users,algorithm):
-		self.users = users
+	def __init__(self,loader,algorithm):
+		self.loader = loader
+		self.users = loader.load_user_friendships()
 		self.algorithm = algorithm
 		self.communities = []
 
@@ -72,14 +73,28 @@ class Clusterer:
 		if len(self.communities) == 0:
 			return 0
 		else:
-			raise NotImplementedError
+			total = 0.0
+			for x in self.communities:
+				total += x.fpu()
+			total /= len(self.communities)
+			return total
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self):
 		if len(self.communities) == 0:
 			return 1
 		else:
-			raise NotImplementedError
+			m = self.loader.m
+			q = 0
+			for community in self.communities:
+				for i in community.users:
+					for j in community.users:
+						if i != j:
+							a = 1.0 if j.id in i.following else 0.0
+							a -= (len(i.following))*(len(j.following))/(2.0*m)
+							q += a
+			q /= 2.0*m
+			return q
 
 class Algorithm:
 	"""This class represents an abstract algorithm"""
@@ -142,6 +157,18 @@ class Community:
 		self.users.append(user)
 
 	"""Computes the average mutual following links per user in this community.
+	Returns:
+	The average mutual following links per user in this community.
 	"""
 	def fpu(self):
-		raise NotImplementedError
+		if len(self.users) == 0:
+			return 0
+		total = 0.0
+		for x in self.users:
+			temp = 0.0
+			for k,v in x.following.items():
+				if v in self.users and x.id in v.following:
+					temp += 1
+			total += temp
+		total /= len(self.users)
+		return total
