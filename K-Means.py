@@ -49,11 +49,11 @@ class KMeans(Algorithm):
 			end = True
 
 			for uc in userClusters.keys():
-				if uc in prevUserClusters or uc in userClusters:
-					if not uc in prevUserClusters or not uc in userClusters:
+				if uc in prevUserClusters:
+					if not prevUserClusters[uc] == userClusters[uc]:
 						end = False
-					elif not prevUserClusters[uc] == userClusters[uc]:
-						end = False
+				else:
+					end = False
 
 			# print("userClusters:", userClusters)
 			# print("prevUserClusters:", prevUserClusters)
