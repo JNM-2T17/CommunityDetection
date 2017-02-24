@@ -1,6 +1,6 @@
 from LoadUserFriendships import *
-from Model import *
-from Similarity import *
+from model import *
+from similarity import *
 import random
 
 class KMeans(Algorithm):

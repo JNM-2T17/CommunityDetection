@@ -1,4 +1,4 @@
-from Model import *
+from model import *
 import csv
 
 def load_user_friendships(dirname, userIdFilename, ffFilename):
