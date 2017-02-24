@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <!-- START SIGMA IMPORTS -->
+    <script src="js/sigma/sigma.min.js"/>
+    <script src="js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="js/sigma/plugins/sigma.parsers.json.min.js"></script>
+    <script src="js/sigma/plugins/sigma.renderers.edgeLabels.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <!-- END SIGMA IMPORTS -->
+ <style>
+  #network-graph {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+  }
+</style>
+
+<div id="network-graph"></div>
+
+<script type="text/javascript" src="js/drawGraph.js"></script>
+<script type="text/javascript">setGraph("network2.json", "network-graph");</script>
