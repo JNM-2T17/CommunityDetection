@@ -1,7 +1,7 @@
-from Model import *
+from model import *
 import csv
 
-def load_user_frienships(dirname, userIdFilename, ffFilename):
+def load_user_friendships(dirname, userIdFilename, ffFilename):
 	# dirname = "C:/Users/Marc Dominic/Documents/Thesis/Tweet Data"
 	# userIdFilename = "/TestUsersList.csv"
 
