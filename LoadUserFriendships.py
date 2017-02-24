@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from Model import *
 import json
+=======
+from model import *
+import csv
+>>>>>>> refs/remotes/origin/develop
 
 def load_user_friendships(dirname, userIdFilename, ffFilename):
 	# dirname = "C:/Users/Marc Dominic/Documents/Thesis/Tweet Data"
