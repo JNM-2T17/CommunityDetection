@@ -1,0 +1,196 @@
+{
+  "edges": [
+    {
+      "id": "1",
+      "source": "1",
+      "target": "3"
+    },
+    {
+      "id": "2",
+      "source": "3",
+      "target": "1"
+    },
+    {
+      "id": "3",
+      "source": "3",
+      "target": "5"
+    },
+    {
+      "id": "4",
+      "source": "5",
+      "target": "1"
+    },
+    {
+      "id": "5",
+      "source": "7",
+      "target": "3"
+    },
+    {
+      "id": "6",
+      "source": "1",
+      "target": "7"
+    },
+    {
+      "id": "7",
+      "source": "22",
+      "target": "1"
+    },
+    {
+      "id": "8",
+      "source": "3",
+      "target": "22"
+    },
+    {
+      "id": "9",
+      "source": "7",
+      "target": "22"
+    },
+    {
+      "id": "10",
+      "source": "22",
+      "target": "5"
+    },
+    {
+      "id": "11",
+      "source": "7",
+      "target": "5"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "1",
+      "label": "Node 1",
+      "communityNum": 2
+    },
+    {
+      "id": "2",
+      "label": "Node 2",
+      "communityNum": 1
+    },
+    {
+      "id": "3",
+      "label": "Node 3",
+      "communityNum": 2
+    },
+    {
+      "id": "4",
+      "label": "Node 4",
+      "communityNum": 1
+    },
+    {
+      "id": "5",
+      "label": "Node 5",
+      "communityNum": 2
+    },
+    {
+      "id": "6",
+      "label": "Node 6",
+      "communityNum": 1
+    },
+    {
+      "id": "7",
+      "label": "Node 7",
+      "communityNum": 2
+    },
+    {
+      "id": "8",
+      "label": "Node 8",
+      "communityNum": 1
+    },
+    {
+      "id": "9",
+      "label": "Node 9",
+      "communityNum": 3
+    },
+    {
+      "id": "10",
+      "label": "Node 10",
+      "communityNum": 1
+    },
+    {
+      "id": "11",
+      "label": "Node 11",
+      "communityNum": 1
+    },
+    {
+      "id": "12",
+      "label": "Node 12",
+      "communityNum": 1
+    },
+    {
+      "id": "13",
+      "label": "Node 13",
+      "communityNum": 3
+    },
+    {
+      "id": "14",
+      "label": "Node 14",
+      "communityNum": 1
+    },
+    {
+      "id": "15",
+      "label": "Node 15",
+      "communityNum": 1
+    },
+    {
+      "id": "16",
+      "label": "Node 16",
+      "communityNum": 3
+    },
+    {
+      "id": "17",
+      "label": "Node 17",
+      "communityNum": 3
+    },
+    {
+      "id": "18",
+      "label": "Node 18",
+      "communityNum": 3
+    },
+    {
+      "id": "19",
+      "label": "Node 19",
+      "communityNum": 3
+    },
+    {
+      "id": "20",
+      "label": "Node 20",
+      "communityNum": 3
+    },
+    {
+      "id": "21",
+      "label": "Node 21",
+      "communityNum": 3
+    },
+    {
+      "id": "22",
+      "label": "Node 22",
+      "communityNum": 2
+    },
+    {
+      "id": "23",
+      "label": "Node 23",
+      "communityNum": 3
+    },
+    {
+      "id": "24",
+      "label": "Node 24",
+      "communityNum": 1
+    },
+    {
+      "id": "25",
+      "label": "Node 25",
+      "communityNum": 3
+    },
+    {
+      "id": "26",
+      "label": "Node 26",
+      "communityNum": 3
+    },
+    {
+      "id": "27",
+      "label": "Node 27",
+      "communityNum": 3
+    }
+  ]
+}
