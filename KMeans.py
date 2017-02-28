@@ -1,12 +1,16 @@
 from LoadUserFriendships import *
-from Model import *
+from model import *
 from Similarity import *
 import random
 
 class KMeans(Algorithm):
 
+	def __init__(self, similarity, k):
+		super(KMeans, self).__init__(similarity)
+		self.numClusters = k
+
 	def run(self, users):
-		numClusters = 4 # What value do we set this to?
+		numClusters = self.numClusters # What value do we set this to?
 
 		userIds = list(users.keys())
 		indices = random.sample(range(0, len(users)), numClusters)

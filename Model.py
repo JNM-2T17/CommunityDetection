@@ -81,20 +81,7 @@ class Clusterer:
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self):
-		if len(self.communities) == 0:
-			return 1
-		else:
-			m = self.loader.m
-			q = 0
-			for community in self.communities:
-				for i in community.users:
-					for j in community.users:
-						if i != j:
-							a = 1.0 if j.id in i.following else 0.0
-							a -= (len(i.following))*(len(j.following))/(2.0*m)
-							q += a
-			q /= 2.0*m
-			return q
+		return self.algorithm.parameter.modularity(self.communities)
 
 class Algorithm:
 	"""This class represents an abstract algorithm"""
@@ -139,6 +126,17 @@ class Parameter:
 	average of all users
 	"""
 	def average(self,users):
+		raise NotImplementedError
+
+	"""Returns the modularity given a list of communities
+		
+	Parameter:
+	communities - list of communities
+
+	Returns:
+	modularity of these communities (floating point)
+	"""
+	def modularity(self, communities):
 		raise NotImplementedError
 
 class Community:
