@@ -30,20 +30,18 @@ ctr = 0
 start = 0
 end = 25
 for srcId in idList:
+	ctr+=1
 	entry = {}
 	entry["id"] = srcId
 	entry["following_ids"] = []
-	for tgtId in idList:
-		if srcId != tgtId:
-			try:
-				ctr+=1
-				print(ctr, "- Checking relationship between", srcId, "and", tgtId)
-				rel = api.show_friendship(source_id=srcId, target_id=tgtId)
-				src, tgt = rel
-				if src.following:
-					entry["following_ids"].append(tgtId)
-			except Exception as e:
-				print("{}".format(e))
+	try:
+		print(ctr, " - Reading", srcId, "'s friends")
+		friends = api.friends_ids(id=srcId)
+		for tgtId in idList:
+			if tgtId in friends:
+				entry["following_ids"].append(tgtId)
+	except Exception as e:
+		print("{}".format(e))
 	data.append(entry)
 
 with open(dirname+"following.json", 'w') as out:

@@ -34,6 +34,9 @@ class User:
 		self.following[user.id] = user
 		user.followers[self.id] = self
 
+	def saveJson(self, json):
+		self.data = json
+		
 	"""posts a tweet from this user
 	Parameter:
 	post - post to add
