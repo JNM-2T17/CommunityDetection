@@ -1,4 +1,4 @@
-from Model import *
+from model import *
 import math
 
 class Following(Parameter):
@@ -93,3 +93,22 @@ class Following(Parameter):
 		# print(averageUser.id, "\nFollowing:", averageUser.following, "\nFollowers:", averageUser.followers)
 
 		return averageUser
+
+	"""Returns the modularity of the generated communities"""
+	def modularity(self, communities):
+		if len(communities) == 0:
+			return 1
+		else:
+			m = 0
+			for c in communities:
+				m += len(c.users)
+			q = 0
+			for community in communities:
+				for i in community.users:
+					for j in community.users:
+						if i != j:
+							a = 1.0 if j.id in i.following else 0.0
+							a -= (len(i.following))*(len(j.following))/(2.0*m)
+							q += a
+			q /= 2.0*m
+			return q
