@@ -159,7 +159,6 @@ class Community:
 	The average mutual following links per user in this community.
 	"""
 	def fpu(self):
-<<<<<<< HEAD:Model.py
 		if len(self.users) == 0:
 			return 0
 		total = 0.0
@@ -171,14 +170,3 @@ class Community:
 			total += temp
 		total /= len(self.users)
 		return total
-=======
-		total = 0.0
-		for x in self.users:
-			temp = 0.0
-			for k,v in x.following:
-				if x.id in v.following:
-					temp += 1
-			total += temp
-		total /= len(self.users)
-		return fpu
->>>>>>> refs/remotes/origin/develop:model.py
