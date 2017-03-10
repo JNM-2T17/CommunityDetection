@@ -177,8 +177,5 @@ class Community:
 		total /= len(self.users)
 		return total
 
-	def getM(self):
-		total = 0
-		for x in self.users:
-			total += len(x.following)
-		return total
+	def len(self):
+		return len(self.users)

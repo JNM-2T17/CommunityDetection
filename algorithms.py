@@ -118,12 +118,15 @@ class DivisiveHC(Algorithm):
 			# get first community and split
 			temp = frontier.popleft()
 			kmeans = KMeans(self.parameter, 2)
-			results = kmeans.run(temp.users)
+			userDict = {}
+			for u in temp.users:
+				userDict[u.id] = u
+			results = kmeans.run(userDict)
 			t1 = results[0]
 			t2 = results[1]
 
 			# replace previous community with halves
-			current.delete(temp)
+			current.remove(temp)
 			current.append(t1)
 			current.append(t2)
 
@@ -140,10 +143,10 @@ class DivisiveHC(Algorithm):
 			else:	 # if splitting improved modularity
 				
 				# if halves have more than one element, add to frontier
-				if len(t1) > 0:
+				if t1.len() > 0:
 					frontier.append(t1)
 				
-				if len(t2) > 0:
+				if t2.len() > 0:
 					frontier.append(t2)
 
 				# update modularity
