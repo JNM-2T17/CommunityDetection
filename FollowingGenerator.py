@@ -1,5 +1,3 @@
-from FolderIO import FolderIO
-from JSONParser import JSONParser
 import json
 import tweepy
 

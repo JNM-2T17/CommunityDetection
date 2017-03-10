@@ -12,17 +12,21 @@ class Loader:
 	def load_user_friendships(self):
 
 		idList = []
+		userInfo = {}
 		with open(self.dirname+self.userIdFilename, encoding="utf8") as f:
 			for line in f:
-				id = json.loads(line)["id"]
+				cur = json.loads(line)
+				id = cur["id"]
 				if isinstance(id, dict):
 					id = id["$numberLong"]
 				idList.append(id)
+				userInfo[id] = cur
 		idList = set(idList)
 		print("Loaded", len(idList), "unique ids")
 		users = {}
 		for id in idList:
 			users[id] = User(id)
+			users[id].saveJson(userInfo[id])
 		print("Created", len(users), "users")
 
 		with open(self.dirname+self.ffFilename, encoding="utf8") as f:
@@ -39,5 +43,10 @@ class Loader:
 						if tgtId in users:
 							users[id].follow(users[tgtId])
 							self.m+=1
-
+		toDelete = []
+		for i in users:
+			if users[i].countNetworkSize() == 0:
+				toDelete.append(i)
+		for i in toDelete:
+			del users[i]
 		return users

@@ -9,7 +9,7 @@ def normalizedSimilarity(user1, user2):
 	sim = f.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
-	return int(sim/10)
+	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json")
 following = Following()
@@ -32,9 +32,9 @@ for c in communities:
 	print("\nCommunity #", commNum)
 
 	for u in c.users:
-		print("-", u.id)
+		print("-", u.id, u.data["name"])
 		node = {}
-		node["name"] = u.id
+		node["name"] = u.data["name"]
 		node["group"] = commNum
 		data["nodes"].append(node)
 		indices[u.id] = ctr
