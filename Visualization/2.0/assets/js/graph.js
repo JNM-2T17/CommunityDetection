@@ -45,7 +45,6 @@ window.onload=function(){
             .style("stroke", "rgb(50,50,50)")
             .style("opacity", "0.6");
     }
-
     // Gets data from JSON file
     d3.json(filename, function(error, graph) {
         if (error) throw error;
