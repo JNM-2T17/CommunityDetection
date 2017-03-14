@@ -6,7 +6,10 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
 
+    <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
     <script type="text/javascript" src="//d3js.org/d3.v3.js"></script>
+    <script src="assets/js/jquery-3.1.1.min.js"></script>
   
     <script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 
@@ -18,6 +21,10 @@
         .link {
             stroke: #999;
             stroke-opacity: .6;
+        }
+
+        .blendCircle {
+            mix-blend-mode: multiply;
         }
     </style>
 
@@ -35,6 +42,7 @@
     }
     </script>
 
+    <button id="saveButton">Turn to Static Image</button>
     <input id="filename" type="hidden" value="school_vis_100.json"/>
     <input id="directed" type="hidden" value="true"/>
 
