@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <!-- START SIGMA IMPORTS -->
+    <script src="js/sigma/sigma.min.js"/>
+    <script src="js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="js/sigma/plugins/sigma.parsers.json.min.js"></script>
+    <script src="js/sigma/plugins/sigma.renderers.edgeLabels.min.js"></script>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <!-- END SIGMA IMPORTS -->
+ <style>
+  #network-graph {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+  }
+</style>
+
+<div id="network-graph"></div>
+
+<script>
+
+  function getCommunityOffset(nodeID){
+    console.log(JSON.stringify(nodeID));
+    return [0, 0];
+  }
+
+  communities = new Object();
+  rawJSON = new Object();
+
+  $.getJSON("network.json", function(json) {
+      rawJSON = json;
+
+      communityCount = Object.keys(rawJSON.communities).length;
+
+      for(var i = 0; i < communityCount; i++){
+        currKey = Object.keys(rawJSON.communities)[i];
+        communitySize = rawJSON.communities[currKey].length;
+        console.log("Community " + currKey + ":");
+
+        for(var j = 0; j < communitySize; j++){
+          console.log(" - " + rawJSON.communities[currKey][j]);
+        }
+      }
+
+      sigma.parsers.json( "network.json",
+
+      {container: 'network-graph',
+       renderer: {
+        container: document.getElementById('network-graph'),
+        type: 'canvas'
+       },
+       settings: {
+        animationsTime: 1000,
+        borderSize: 2,
+        outerBorderSize: 3,
+        defaultNodeOuterBorderColor: 'rgb(236, 81, 72)',
+        enableEdgeHovering: true,
+        edgeHoverHighlightNodes: 'circle',
+        sideMargin: 1,
+        edgeHoverColor: 'edge',
+        defaultEdgeHoverColor: '#000',
+        edgeHoverSizeRatio: 1,
+        edgeHoverExtremities: true,
+        scalingMode: 'outside',
+        enableNodeHovering: false,
+        labelThreshold: 1
+       }
+      },
+
+      function(s) { //This function is passed an instance of Sigma s
+
+        //Initialize nodes as a circle
+        // s.graph.nodes().forEach(function(node, i, a) {
+        //   node.x = Math.cos(Math.PI * 2 * i / a.length);
+        //   node.y = Math.sin(Math.PI * 2 * i / a.length);
+        //   console.log("i: x = " + node.x + ", y = " + node.y);
+        // });
+
+        var circleLevel = 1;
+        var totalCircled = 0;
+
+        //Initialize nodes as a circle
+        s.graph.nodes().forEach(function(node, i, a) {
+          communityNodeNum = i - totalCircled;
+          circleSize = 0.1 * circleLevel;
+          circleLimit = Math.pow(2, circleLevel) + 1;
+
+          angle = 360 / circleLimit * communityNodeNum * Math.PI / 180;
+
+          var offset = getCommunityOffset(node);
+
+          node.x = circleSize * Math.cos(angle) + offset[0];
+          node.y = circleSize * Math.sin(angle) + offset[1];
+          // node.x = Math.cos(Math.PI * 2 * (i - totalCircled) / (Math.pow(2, circleLevel) + 1));
+          // node.y = Math.sin(Math.PI * 2 * (i - totalCircled) / (Math.pow(2, circleSize) + 1));
+
+          console.log("i: x = " + node.x + ", y = " + node.y)
+          if(communityNodeNum >= circleLimit - 1){
+            totalCircled += Math.pow(2, circleLevel) + 1;
+            circleLevel++;
+          }
+        });
+
+        //Call refresh to render the new graph
+        s.refresh();
+      });
+  });
+
+
+
+  
+</script>

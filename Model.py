@@ -22,7 +22,8 @@ class User:
 	"""
 	def __init__(self,id):
 		self.id = id
-		self.following = []
+		self.following = {}
+		self.followers = {}
 		self.tweets = []
 
 	"""adds a user to this user's following list
@@ -30,7 +31,14 @@ class User:
 	user - user to follow
 	"""
 	def follow(self,user):
-		self.following.append(user)
+		self.following[user.id] = user
+		user.followers[self.id] = self
+
+	def saveJson(self, json):
+		self.data = json
+	
+	def countNetworkSize(self):
+		return len(self.following) + len(self.followers)
 
 	"""posts a tweet from this user
 	Parameter:
@@ -55,8 +63,9 @@ class Clusterer:
 	algorithm - algorithm to use. Note: algorithm must have a similarity 
 				parameter set
 	"""
-	def __init__(self,users,algorithm):
-		self.users = users
+	def __init__(self,loader,algorithm):
+		self.loader = loader
+		self.users = loader.load_user_friendships()
 		self.algorithm = algorithm
 		self.communities = []
 
@@ -70,14 +79,15 @@ class Clusterer:
 		if len(self.communities) == 0:
 			return 0
 		else:
-			raise NotImplementedError
+			total = 0.0
+			for x in self.communities:
+				total += x.fpu()
+			total /= len(self.communities)
+			return total
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self):
-		if len(self.communities) == 0:
-			return 1
-		else:
-			raise NotImplementedError
+		return self.algorithm.parameter.modularity(self.communities)
 
 class Algorithm:
 	"""This class represents an abstract algorithm"""
@@ -112,12 +122,35 @@ class Parameter:
 	def run(self,user1,user2):
 		raise NotImplementedError
 
-def Community:
+	"""Takes a list of users and returns a user that represents the average of
+	all the users according to the parameter
+
+	Parameter:
+	users - users to average
+
+	Returns:
+	average of all users
+	"""
+	def average(self,users):
+		raise NotImplementedError
+
+	"""Returns the modularity given a list of communities
+		
+	Parameter:
+	communities - list of communities
+
+	Returns:
+	modularity of these communities (floating point)
+	"""
+	def modularity(self, communities):
+		raise NotImplementedError
+
+class Community:
 	"""This class represents a detected cluster of users i.e. a community."""
 
 	"""Basic constructor for community
 	"""
-	def __init__(self);
+	def __init__(self):
 		self.users = []
 
 	"""Adds a user to this community
@@ -128,6 +161,21 @@ def Community:
 		self.users.append(user)
 
 	"""Computes the average mutual following links per user in this community.
+	Returns:
+	The average mutual following links per user in this community.
 	"""
 	def fpu(self):
-		raise NotImplementedError
+		if len(self.users) == 0:
+			return 0
+		total = 0.0
+		for x in self.users:
+			temp = 0.0
+			for k,v in x.following.items():
+				if v in self.users and x.id in v.following:
+					temp += 1
+			total += temp
+		total /= len(self.users)
+		return total
+
+	def len(self):
+		return len(self.users)
