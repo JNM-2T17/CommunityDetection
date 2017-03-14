@@ -117,3 +117,96 @@ class Following(Parameter):
 			q /= 2.0*m
 			print("Modularity =", q)
 			return q
+
+class Hashtags(Parameter):
+	"""This class represents the following similarity parameter"""
+
+	def __init__(self):
+		Parameter.__init__(self)
+
+	"""Computes for following similarity
+	Parameter:
+	user1 - first user
+	user2 - second user
+	"""
+	def similarity(self,user1,user2):
+		# TODO Change this function for hashtags
+		cFriend = 0
+		for k, v in user1.following.items():
+			if k in user2.following:
+				cFriend += 1
+
+		cFollowers = 0
+		for k, v in user1.followers.items():
+			if k in user2.followers:
+				cFollowers += 1
+
+		friendDenom = math.sqrt(len(user1.following) * len(user2.following))
+		followDenom = math.sqrt(len(user1.followers) * len(user2.followers))
+
+		if friendDenom == 0 and followDenom == 0:
+			return 0
+
+		elif friendDenom == 0:
+			return cFollowers / followDenom
+
+		elif followDenom == 0:
+			return cFriend / friendDenom
+
+		else:
+			return (cFriend / friendDenom + cFollowers / followDenom) 
+
+	"""Takes a list of users and returns a user that represents the average of
+	all the users according to the parameter
+
+	Parameter:
+	users - users to average
+
+	Returns:
+	average of all users
+	"""
+	def average(self,users):
+		hashtagCount = {}
+
+		for u in users.values():
+			for h in u.hashtags.keys():
+				if h in hashtagCount:
+					hashtagCount[h] += 1
+				else:
+					hashtagCount[h] = 1
+
+		numUsers = len(users)
+
+		averageHashtags = {}
+
+		for hashtag, count in hashtagCount.items():
+			if count*1.0/numUsers >= 0: # Change this from 0
+				averageHashtags[hashtag] = math.ceil(count*1.0/numUsers)
+
+		averageUser = User("Average")
+		averageUser.hashtags = averageHashtags
+
+		return averageUser
+
+	"""Returns the modularity of the generated communities"""
+	def modularity(self, communities):
+		#TODO Change this function for hashtags
+		if len(communities) == 0:
+			return 1
+		else:
+			m = 0
+			for c in communities:
+				total = 0
+				for x in c.users:
+					total += len(x.following)
+				m += total
+			q = 0
+			for community in communities:
+				for i in community.users:
+					for j in community.users:
+						if i != j:
+							a = 1.0 if j.id in i.following else 0.0
+							a -= (len(i.following))*(len(j.following))/(2.0*m)
+							q += a
+			q /= 2.0*m
+			return q
