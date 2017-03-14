@@ -1,12 +1,15 @@
-from LoadUserFriendships import *
 from model import *
 from similarity import *
+from collections import *
 import random
 
 class KMeans(Algorithm):
+	def __init__(self, parameter, k):
+		self.k = k
+		super(KMeans, self).__init__(parameter)
 
 	def run(self, users):
-		numClusters = 2 # For now this is hardcoded
+		numClusters = self.k # For now this is hardcoded
 
 		userIds = list(users.keys()) # Create list of user ideas
 		indices = random.sample(range(0, len(users)), numClusters) # Randomize centroids for each cluster (returns indices in userIds list)
@@ -17,12 +20,9 @@ class KMeans(Algorithm):
 
 		iterationCount = 1 # Initialize iteration count to 1
 
-		print("\nInitial Centroids:")
-
 		# Add randomly selected centroids to centroids array
 		for i in indices:
 			centroids.append(users[userIds[i]])
-			print("-", usernames[centroids[len(centroids)-1].id])
 		
 		# Assign users to clusters with closest centroids until clusters don't change
 		while True:
@@ -41,7 +41,7 @@ class KMeans(Algorithm):
 				# Compare with every centroid
 				for c in centroids:
 					currSimilarity = self.parameter.similarity(c, u) # Check similarity between current centroid and current user
-					print(c.id, u.id, currSimilarity)
+					# print(c.id, u.id, currSimilarity)
 
 					# Set closest centroid of user if so far current centroid is the most similar
 					if closestCentroid is None or currSimilarity > maxSimilarity:
@@ -112,19 +112,25 @@ class DivisiveHC(Algorithm):
 
 		iterCount = 0
 		# while there are communities to split
-		while not frontier:
+
+		while frontier:
 			print("Iteration", iterCount)
 			iterCount+=1
 			# get first community and split
 			temp = frontier.popleft()
 			kmeans = KMeans(self.parameter, 2)
 
-			results = kmeans.run()
+			userDict = {}
+			for u in temp.users:
+				userDict[u.id] = u
+			results = kmeans.run(userDict)
+
 			t1 = results[0]
 			t2 = results[1]
 
 			# replace previous community with halves
-			current.delete(temp)
+			current.remove(temp)
+
 			current.append(t1)
 			current.append(t2)
 
@@ -133,6 +139,7 @@ class DivisiveHC(Algorithm):
 
 			# if splitting worsened modularity
 			if mod < prevmod:
+				print(mod, prevmod)
 				# remove new divisions and restore old whole
 				current.pop()
 				current.pop()
@@ -140,10 +147,10 @@ class DivisiveHC(Algorithm):
 			else:	 # if splitting improved modularity
 				
 				# if halves have more than one element, add to frontier
-				if len(t1) > 0:
+				if t1.len() > 0:
 					frontier.append(t1)
 				
-				if len(t2) > 0:
+				if t2.len() > 0:
 					frontier.append(t2)
 
 				# update modularity

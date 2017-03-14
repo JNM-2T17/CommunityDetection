@@ -1,8 +1,7 @@
 from model import *
-from Loader import *
-from Similarity import *
-from KMeans import *
-from dhc import *
+from loader import *
+from similarity import *
+from algorithms import *
 import json
 
 def normalizedSimilarity(user1, user2):
@@ -10,12 +9,12 @@ def normalizedSimilarity(user1, user2):
 	sim = f.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
-	return int(sim/10)
+	return int(sim/10 + 1)
 
-loader = Loader("MongoDB Tweet Data/", "user.json", "following.json")
+loader = Loader("Tweet Data/", "user_dataset.json", "following.json")
 following = Following()
-kmeans = divisive_hc(following)
-clusterer = Clusterer(loader, kmeans)
+algo = DivisiveHC(following)
+clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
 
@@ -33,9 +32,9 @@ for c in communities:
 	print("\nCommunity #", commNum)
 
 	for u in c.users:
-		print("-", u.id)
+		print("-", u.id, u.data["name"])
 		node = {}
-		node["name"] = u.id
+		node["name"] = u.data["name"]
 		node["group"] = commNum
 		data["nodes"].append(node)
 		indices[u.id] = ctr

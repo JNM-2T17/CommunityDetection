@@ -101,7 +101,10 @@ class Following(Parameter):
 		else:
 			m = 0
 			for c in communities:
-				m += len(c.users)
+				total = 0
+				for x in c.users:
+					total += len(x.following)
+				m += total
 			q = 0
 			for community in communities:
 				for i in community.users:

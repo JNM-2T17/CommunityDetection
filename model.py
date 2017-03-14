@@ -34,6 +34,12 @@ class User:
 		self.following[user.id] = user
 		user.followers[self.id] = self
 
+	def saveJson(self, json):
+		self.data = json
+	
+	def countNetworkSize(self):
+		return len(self.following) + len(self.followers)
+
 	"""posts a tweet from this user
 	Parameter:
 	post - post to add
@@ -170,3 +176,6 @@ class Community:
 			total += temp
 		total /= len(self.users)
 		return total
+
+	def len(self):
+		return len(self.users)
