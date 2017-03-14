@@ -17,16 +17,10 @@ with open(dirname+userIdFilename, encoding="utf8") as f:
 		if isinstance(id, dict):
 			id = id["$numberLong"]
 		idList.append(id)
-
 print("Imported", len(idList), "ids")
-# rel = api.show_friendship(source_id=2355697038, target_id=1222576416)
-# src, tgt = rel
-# print(src.following)
 
 data = []
 ctr = 0
-start = 0
-end = 25
 for srcId in idList:
 	ctr+=1
 	entry = {}
