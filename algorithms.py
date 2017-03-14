@@ -112,21 +112,25 @@ class DivisiveHC(Algorithm):
 
 		iterCount = 0
 		# while there are communities to split
+
 		while frontier:
 			iterCount+=1
 			print("Iteration", iterCount)
 			# get first community and split
 			temp = frontier.popleft()
 			kmeans = KMeans(self.parameter, 2)
+
 			userDict = {}
 			for u in temp.users:
 				userDict[u.id] = u
 			results = kmeans.run(userDict)
+
 			t1 = results[0]
 			t2 = results[1]
 
 			# replace previous community with halves
 			current.remove(temp)
+
 			current.append(t1)
 			current.append(t2)
 
