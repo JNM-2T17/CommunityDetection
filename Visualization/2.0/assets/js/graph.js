@@ -1,11 +1,17 @@
 var color;
 var force;
 var svg;
+var w = window;
+var d = document;
+var e = d.documentElement;
+var g = d.getElementsByTagName('body')[0];
+var width = w.innerWidth || e.clientWidth || g.clientWidth;
+var height = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
 window.onload=function(){
-    //Constants for the SVG
-    var width = 1000,
-        height = 600;
+
+    var filename = document.getElementById("filename").value;
+    var directed = document.getElementById("directed").value;
 
     //Set up the colour scale
     color = d3.scale.category20();
@@ -14,7 +20,7 @@ window.onload=function(){
     force = d3.layout.force()
         .charge(-120)
         .linkDistance(function(d) { 
-            return(1/(d.value+1) * 300); 
+            return(1/(d.value+1) * 500); 
         })
         .size([width, height]);
 
@@ -22,9 +28,24 @@ window.onload=function(){
     svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
-};
 
-function readGraphJSON(filename){
+    if(directed == "true"){
+        svg.append("defs").selectAll("marker")
+            .data(["suit", "licensing", "resolved"])
+          .enter().append("marker")
+            .attr("id", function(d) { return d; })
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 25)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+          .append("path")
+            .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+            .style("stroke", "rgb(50,50,50)")
+            .style("opacity", "0.6");
+    }
+
     // Gets data from JSON file
     d3.json(filename, function(error, graph) {
         if (error) throw error;
@@ -39,8 +60,10 @@ function readGraphJSON(filename){
             .data(graph.links)
             .enter().append("line")
             .attr("class", "link")
+            .style("marker-end",  "url(#suit)")
             .style("stroke-width", function (d) {
-            return Math.sqrt(d.value);
+                return 1;
+            // return Math.sqrt(d.value);
         });
 
         //Do the same with the circles for the nodes - no 
@@ -97,6 +120,9 @@ function readGraphJSON(filename){
             });
         });
     });
+};
+
+function readGraphJSON(filename, directed){
 }
 
 function mouseover() {
