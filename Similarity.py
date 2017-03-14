@@ -96,6 +96,7 @@ class Following(Parameter):
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self, communities):
+		print("Calculating Modularity")
 		if len(communities) == 0:
 			return 1
 		else:
@@ -114,4 +115,5 @@ class Following(Parameter):
 							a -= (len(i.following))*(len(j.following))/(2.0*m)
 							q += a
 			q /= 2.0*m
+			print("Modularity =", q)
 			return q

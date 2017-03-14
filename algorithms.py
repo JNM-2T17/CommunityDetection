@@ -113,8 +113,8 @@ class DivisiveHC(Algorithm):
 		iterCount = 0
 		# while there are communities to split
 		while frontier:
-			print("Iteration", iterCount)
 			iterCount+=1
+			print("Iteration", iterCount)
 			# get first community and split
 			temp = frontier.popleft()
 			kmeans = KMeans(self.parameter, 2)
@@ -132,7 +132,7 @@ class DivisiveHC(Algorithm):
 
 			# get modularity
 			mod = self.parameter.modularity(current)
-
+			print("New mod =", mod, ", prev mod =", prevmod)
 			# if splitting worsened modularity
 			if mod < prevmod:
 				print(mod, prevmod)

@@ -3,11 +3,11 @@ import json
 
 class Loader:
 
-	def __init__(self, dirname, userIdFilename, ffFilename):
+	def __init__(self, dirname, userIdFilename, ffFilename, tweetsFilename):
 		self.dirname = dirname
 		self.userIdFilename = userIdFilename
 		self.ffFilename = ffFilename
-		self.m = 0
+		self.tweetsFilename = tweetsFilename
 
 	def load_user_friendships(self):
 
@@ -42,11 +42,33 @@ class Loader:
 							tgtId = tgtId["$numberLong"]
 						if tgtId in users:
 							users[id].follow(users[tgtId])
-							self.m+=1
+		
+		readIds = []
+		with open(self.dirname+self.tweetsFilename, encoding="utf8") as f:
+			for line in f:
+				data = json.loads(line)
+				if data["id"] not in readIds:
+					readIds.append(data["id"])
+					user = users[data["id"]]
+					if "tweets" in data.keys():
+						for t in data["tweets"]:
+							tweetdata = t
+							user.tweets.append(Tweet(tweetdata))
+							if "hashtags" in tweetdata["entities"].keys():
+								for h in tweetdata["entities"]["hashtags"]:
+									hText = h["text"].lower()
+									if hText in user.hashtags.keys():
+										user.hashtags[hText] += 1
+									else:
+										user.hashtags[hText] = 1
+		# for i in users:
+		# 	print(i, users[i].data["name"], len(users[i].hashtags))
+
 		toDelete = []
 		for i in users:
 			if users[i].countNetworkSize() == 0:
 				toDelete.append(i)
 		for i in toDelete:
 			del users[i]
+		print("Deleted", len(toDelete), " users")
 		return users

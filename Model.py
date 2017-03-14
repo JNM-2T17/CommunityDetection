@@ -3,14 +3,10 @@ class Tweet:
 
 	"""basic constructor for a tweet
 	Parameters:
-	tweet - string of tweet
-	hashtags - list of hashtag strings
-	mentions - list of users mentioned
+	tweetdata - json information of tweet
 	"""
-	def __init__(self,tweet,hashtags,mentions):
-		self.tweet = tweet
-		self.hashtags = hashtags
-		self.mentions = mentions
+	def __init__(self,tweetdata):
+		self.tweetdata = tweetdata
 
 
 class User:
@@ -25,6 +21,7 @@ class User:
 		self.following = {}
 		self.followers = {}
 		self.tweets = []
+		self.hashtags = {}
 
 	"""adds a user to this user's following list
 	Parameter:
