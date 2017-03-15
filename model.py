@@ -22,6 +22,7 @@ class User:
 		self.followers = {}
 		self.tweets = []
 		self.hashtags = {}
+		self.outgoingEdges = {}
 
 	"""adds a user to this user's following list
 	Parameter:
@@ -65,6 +66,8 @@ class Clusterer:
 		self.users = loader.load_user_friendships()
 		self.algorithm = algorithm
 		self.communities = []
+		for user in self.users:
+			self.users[user].outgoingEdges = algorithm.parameter.createEdges(self.users[user], self.users)
 
 	"""Runs the algorithm on the users
 	"""
@@ -140,6 +143,18 @@ class Parameter:
 	modularity of these communities (floating point)
 	"""
 	def modularity(self, communities):
+		raise NotImplementedError
+
+	"""Returns the dictionary of edges {userId: weight} given a user and the list of users
+		
+	Parameter:
+	user - user to generate edges
+	userList - list of users
+
+	Returns:
+	dictionary of edges
+	"""
+	def createEdges(self, user, userList):
 		raise NotImplementedError
 
 class Community:

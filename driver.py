@@ -12,8 +12,8 @@ def normalizedSimilarity(user1, user2):
 	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-following = Following()
-algo = DivisiveHC(following)
+sim = Hashtags()
+algo = KMeans(sim, 2)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
