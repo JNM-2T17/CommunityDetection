@@ -118,12 +118,20 @@ class Following(Parameter):
 			print("Modularity =", q)
 			return q
 
-	def createEdges(self, user, userList):
+	def createOutgoingEdges(self, user, userList):
 		edges = {}
 		for u in userList:
 			if user != userList[u] and userList[u].id in user.following.keys():
 				edges[u] = 1
 		return edges
+
+	def createIncomingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and user.id in userList[u].following.keys():
+				edges[u] = 1
+		return edges
+
 
 class Hashtags(Parameter):
 	"""This class represents the hashtag similarity parameter"""
@@ -178,7 +186,7 @@ class Hashtags(Parameter):
 		averageHashtags = {}
 
 		for hashtag, count in hashtagCount.items():
-			if count*1.0/numUsers >= 0: # Change this from 0
+			if count*1.0/numUsers >= 0.5: # Change this from 0
 				averageHashtags[hashtag] = math.ceil(count*1.0/numUsers)
 
 		averageUser = User("Average")
@@ -210,7 +218,14 @@ class Hashtags(Parameter):
 			print("Modularity =", q)
 			return q
 
-	def createEdges(self, user, userList):
+	def createOutgoingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:
+				edges[u] = 1
+		return edges
+
+	def createIncomingEdges(self, user, userList):
 		edges = {}
 		for u in userList:
 			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:

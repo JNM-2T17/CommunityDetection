@@ -140,7 +140,6 @@ class DivisiveHC(Algorithm):
 			for u in temp.users:
 				userDict[u.id] = u
 			results = kmeans.run(userDict)
-
 			t1 = results[0]
 			t2 = results[1]
 
@@ -163,36 +162,13 @@ class DivisiveHC(Algorithm):
 			else:	 # if splitting improved modularity
 				
 				# if halves have more than one element, add to frontier
-				if t1.len() > 0:
+				if t1.len() > 1:
 					frontier.append(t1)
 				
-				if t2.len() > 0:
+				if t2.len() > 1:
 					frontier.append(t2)
 
 				# update modularity
 				prevmod = mod
 
 		return current
-
-# For running the code; not important once we have a proper implementation
-
-# usernames = {}
-# with open("Dummy Tweet Data/TestUsernames.csv", 'r') as f:
-# 	r = csv.reader(f);
-# 	for row in r:
-# 		if len(row)>=1:
-# 			usernames[row[0]] = row[1]
-
-# loadedUsers = load_user_friendships("Dummy Tweet Data", "/TestUsersList.csv", "/TestFFIds.csv")
-# following = Following()
-# kmeans = KMeans(following)
-# communities = kmeans.run(loadedUsers)
-
-# commNum = 1
-
-# for c in communities:
-# 	print("\nCommunity #", commNum)
-# 	commNum += 1
-
-# 	for u in c.keys():
-# 		print("-", usernames[u])

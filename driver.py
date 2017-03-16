@@ -13,7 +13,7 @@ def normalizedSimilarity(user1, user2):
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
 sim = Hashtags()
-algo = KMeans(sim, 2)
+algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
@@ -46,8 +46,6 @@ for c in communities:
 users = clusterer.users
 for key in users:
 	curUser = users[key]
-	# if curUser.countNetworkSize()==0:
-	# 	print(curUser.data["name"], "is irrelevant")
 	for f in curUser.following:
 		link = {}
 		link["source"] = indices[curUser.id]
@@ -60,5 +58,5 @@ print("Modularity:", clusterer.modularity())
 print("FPUPC:", clusterer.fpupc())
 
 print("Writing json...")
-with open('alron_vis.json', 'w') as outfile:
+with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)

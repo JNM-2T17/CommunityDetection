@@ -23,6 +23,7 @@ class User:
 		self.tweets = []
 		self.hashtags = {}
 		self.outgoingEdges = {}
+		self.incomingEdges = {}
 
 	"""adds a user to this user's following list
 	Parameter:
@@ -36,7 +37,7 @@ class User:
 		self.data = json
 	
 	def countNetworkSize(self):
-		return len(self.following) + len(self.followers)
+		return len(self.outgoingEdges) + len(self.incomingEdges)
 
 	"""posts a tweet from this user
 	Parameter:
@@ -67,7 +68,15 @@ class Clusterer:
 		self.algorithm = algorithm
 		self.communities = []
 		for user in self.users:
-			self.users[user].outgoingEdges = algorithm.parameter.createEdges(self.users[user], self.users)
+			self.users[user].outgoingEdges = algorithm.parameter.createOutgoingEdges(self.users[user], self.users)
+			self.users[user].incomingEdges = algorithm.parameter.createIncomingEdges(self.users[user], self.users)
+		toDelete = []
+		for i in self.users:
+			if self.users[i].countNetworkSize() == 0:
+				toDelete.append(i)
+		for i in toDelete:
+			del self.users[i]
+		print("Deleted", len(toDelete), " users")
 
 	"""Runs the algorithm on the users
 	"""
@@ -145,16 +154,28 @@ class Parameter:
 	def modularity(self, communities):
 		raise NotImplementedError
 
-	"""Returns the dictionary of edges {userId: weight} given a user and the list of users
+	"""Returns the dictionary of outgoing edges {userId: weight} given a user and the list of users
 		
 	Parameter:
 	user - user to generate edges
 	userList - list of users
 
 	Returns:
-	dictionary of edges
+	dictionary of outgoing edges
 	"""
-	def createEdges(self, user, userList):
+	def createOutgoingEdges(self, user, userList):
+		raise NotImplementedError
+
+	"""Returns the dictionary of incoming edges {userId: weight} given a user and the list of users
+		
+	Parameter:
+	user - user to generate edges
+	userList - list of users
+
+	Returns:
+	dictionary of incoming edges
+	"""
+	def createIncomingEdges(self, user, userList):
 		raise NotImplementedError
 
 class Community:
