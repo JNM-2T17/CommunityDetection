@@ -13,6 +13,7 @@ class KMeans(Algorithm):
 
 		# If there are less users than clusters that need to be formed
 		if len(users) < numClusters:
+			print("LESS USERS THAN CLUSTERS:", len(users), " < ", numClusters)
 			communities = []
 
 			# Form a community for each user
@@ -21,11 +22,11 @@ class KMeans(Algorithm):
 				c.addUser(value)
 				communities.append(c)
 
-			# Return the generated communities
-			return communities
+			print("numClusters = " + str(numClusters) + ", community count = " + str(len(communities)))
 
 		# If there are at least as many users as clusters that need to be formed
 		else:
+			print("MORE OR EQUAL USERS THAN CLUSTERS")
 			userIds = list(users.keys()) # Create list of user ideas
 			indices = random.sample(range(0, len(users)), numClusters) # Randomize centroids for each cluster (returns indices in userIds list)
 			centroids = [] # Initialize array of centroids
@@ -110,8 +111,12 @@ class KMeans(Algorithm):
 				if c.len() > 0:
 					communities.append(c)
 
-			# Return the generated communities
-			return communities
+		# Append blank communities to make up for difference in number of users and required clusters
+		for i in range(0, numClusters - len(communities)):
+			communities.append(Community())
+
+		# Return the generated communities
+		return communities
 
 class DivisiveHC(Algorithm):
 

@@ -13,7 +13,7 @@ def normalizedSimilarity(user1, user2):
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
 sim = Hashtags()
-algo = KMeans(sim, 2)
+algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities

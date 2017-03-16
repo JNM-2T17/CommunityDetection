@@ -178,11 +178,13 @@ class Hashtags(Parameter):
 		averageHashtags = {}
 
 		for hashtag, count in hashtagCount.items():
-			if count*1.0/numUsers >= 0: # Change this from 0
+			if count*1.0/numUsers >= 0.4: # Change this from 0
 				averageHashtags[hashtag] = math.ceil(count*1.0/numUsers)
 
 		averageUser = User("Average")
 		averageUser.hashtags = averageHashtags 
+
+		print("Average User:", len(averageUser.hashtags));
 
 		return averageUser
 
