@@ -111,7 +111,7 @@ class Following(Parameter):
 				for i in community.users:
 					for j in community.users:
 						if i != j:
-							a = 1.0 if j.id in i.following else 0.0
+							a = 1.0 if j.id in i.outgoingEdges.keys() or j.id in i.incomingEdges.keys() else 0.0
 							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
 							q += a
 			q /= 2.0*m
@@ -221,7 +221,7 @@ class Hashtags(Parameter):
 				for i in community.users:
 					for j in community.users:
 						if i != j:
-							a = 1.0 if j.id in i.following else 0.0
+							a = 1.0 if j.id in i.outgoingEdges.keys() or j.id in i.incomingEdges.keys() else 0.0
 							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
 							q += a
 			q /= 2.0*m
