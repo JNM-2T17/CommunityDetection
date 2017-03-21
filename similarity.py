@@ -147,6 +147,12 @@ class Hashtags(Parameter):
 				commonHashtags.append(i)
 		return commonHashtags
 
+	def totalHashtags(self, user):
+		total = 0
+		for h in user.hashtags:
+			total += user.hashtags[h]
+		return total
+
 	"""Computes for hashtag similarity
 	Parameter:
 	user1 - first user
@@ -157,8 +163,10 @@ class Hashtags(Parameter):
 		n = len(c)
 		sim = 0
 		for k in c:
-			val = (1 - abs(user1.hashtags[k]/len(user1.hashtags) - user2.hashtags[k]/len(user2.hashtags)))
-			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (len(user1.hashtags)+len(user2.hashtags)))
+			total1 = self.totalHashtags(user1)
+			total2 = self.totalHashtags(user2)
+			val = (1 - abs(user1.hashtags[k]/total1 - user2.hashtags[k]/total2))
+			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (total1+total2))
 			sim += val
 		return sim
 
@@ -217,7 +225,7 @@ class Hashtags(Parameter):
 							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
 							q += a
 			q /= 2.0*m
-			print("Modularity =", q)
+			# print("Modularity =", q)
 			return q
 
 	def createOutgoingEdges(self, user, userList):

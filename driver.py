@@ -4,9 +4,8 @@ from similarity import *
 from algorithms import *
 import json
 
-def normalizedSimilarity(user1, user2):
-	f = Following()
-	sim = f.similarity(user1, user2)
+def normalizedSimilarity(user1, user2, s):
+	sim = s.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
 	return int(sim/10 + 1)
@@ -46,11 +45,11 @@ for c in communities:
 users = clusterer.users
 for key in users:
 	curUser = users[key]
-	for f in curUser.following:
+	for e in curUser.outgoingEdges:
 		link = {}
 		link["source"] = indices[curUser.id]
-		link["target"] = indices[curUser.following[f].id]
-		link["value"] = normalizedSimilarity(curUser, curUser.following[f])
+		link["target"] = indices[e]
+		link["value"] = curUser.outgoingEdges[e]
 		data["links"].append(link)
 
 print("Finished! Generated", len(communities), "communities")
