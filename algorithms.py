@@ -3,12 +3,19 @@ from similarity import *
 from collections import *
 import random
 
+MIN_DIST = 0
+MAX_DIST = 1
+AVE_DIST = 2
+
 class KMeans(Algorithm):
 	def __init__(self, parameter, k):
 		self.k = k
 		super(KMeans, self).__init__(parameter)
 
 	def run(self, users):
+		global MIN_DIST
+		global MAX_DIST
+		global AVE_DIST
 		numClusters = self.k # For now this is hardcoded
 
 		# If there are less users than clusters that need to be formed
@@ -30,54 +37,81 @@ class KMeans(Algorithm):
 			userIds = list(users.keys()) # Create list of user ideas
 			indices = random.sample(range(0, len(users)), numClusters) # Randomize centroids for each cluster (returns indices in userIds list)
 			centroids = [] # Initialize array of centroids
-			userClusters = {} # Initialize dictionary of user clusters (maps user ids to their clusters)
 			prevUserClusters = {} # Initialize dictionary of previous user clusters (copy of previous iteration's user clusters)
 			clusters = {} # Maps cluster centroids to dictionaries of users in the cluster
 
 			iterationCount = 1 # Initialize iteration count to 1
 
-			# Add randomly selected centroids to centroids array
-			for i in indices:
-				centroids.append(users[userIds[i]])
+
+			mode = MAX_DIST
 			
+			clusters = [[] for i in range(0,self.k)]
+			ctr = 0
+			# Add randomly selected centroids to clusters array
+			for i in indices:
+				clusters[ctr].append(users[userIds[i]])
+				ctr += 1
+			
+			for u in users.values():
+				u.prevGrp = -1
+				u.currGrp = -1
+			
+			end = False
 			# Assign users to clusters with closest centroids until clusters don't change
-			while True:
-				clusters = {}
-				prevUserClusters = userClusters.copy() # Copy current set of user clusters to previous set of user clusters
-
-				# Empty clusters
-				for c in centroids:
-					clusters.update({c.id: {}})
-
+			while not end:
+				prevUserClusters = clusters.copy() # Copy current set of user clusters to previous set of user clusters
+				
 				# Assign users to more similar centroids
 				for u in users.values():
 					closestCentroid = None
-					maxSimilarity = None
+					similarity = None
+					ctr2 = 0
+						
+					for com in prevUserClusters:
+						if mode == MIN_DIST:
+							sim = 2 ** 31 - 1
+						elif mode == MAX_DIST:
+							sim = -1
+						elif mode == AVE_DIST:
+							sim = None
 
-					# Compare with every centroid
-					for c in centroids:
-						currSimilarity = self.parameter.similarity(c, u) # Check similarity between current centroid and current user
-						# print(c.id, u.id, currSimilarity)
+						currSim = -1
+						for v in com:
+							currSim = self.parameter.similarity(u,v)
+							if mode == MIN_DIST:
+								if currSim != 0 and currSim < sim:
+									sim = currSim
+							elif mode == MAX_DIST:
+								if currSim > sim:
+									sim = currSim
+							elif mode == AVE_DIST:
+								if sim == None:
+									sim = float(currSim) / len(com)
+								else:
+									sim += float(currSim) / len(com)
 
-						# Set closest centroid of user if so far current centroid is the most similar
-						if closestCentroid is None or currSimilarity > maxSimilarity:
-							closestCentroid = c.id
-							maxSimilarity = currSimilarity
+						if mode == MIN_DIST and sim == 2 ** 31 - 1:
+							sim = 0
+
+						if closestCentroid is None or sim < similarity:
+							closestCentroid = ctr2
+							similarity = sim
+
+						ctr2 += 1
 
 					# Once closest centroid to user is found, update lists
-					clusters[closestCentroid].update({u.id: u})
-					userClusters[u.id] = closestCentroid
+					clusters[closestCentroid].append(u)
+					u.currGrp = closestCentroid
 					# print("closestCentroid:", closestCentroid)
 
 				end = True
 
 				# Check if user clusters are the same as in the previous iteration
-				for uc in userClusters.keys():
-					if uc in prevUserClusters:
-						if not prevUserClusters[uc] == userClusters[uc]: # If current user's cluster was different in the previous iteration, clusters aren't final
-							end = False
-					else: # If the user doesn't even exist in the prevUserClusters (NOTE: Not actually sure how this would happen), clusters aren't final
+				for u in users.values():
+					#print(u.id,u.prevGrp,u.currGrp)
+					if u.prevGrp != u.currGrp:
 						end = False
+					u.prevGrp = u.currGrp
 
 				# print("userClusters:", userClusters)
 				# print("prevUserClusters:", prevUserClusters)
@@ -85,16 +119,6 @@ class KMeans(Algorithm):
 				# Break out of loop if clusters are final
 				if end:
 					break
-
-				newCentroids = []
-
-				# Set new centroids for next iteration
-				for c in centroids:
-					averageUser = self.parameter.average(clusters[c.id]) # Generate the average user for the cluster of the given centroid
-					averageUser.id = c.id # Assign the ID of the generated user (so it doesn't repeat)
-					newCentroids.append(averageUser) # Add the generated user to the new list of centroids
-
-				centroids = newCentroids # Set new centroids as current centroids
 
 				print("\nIteration:", iterationCount)
 				iterationCount += 1
@@ -104,9 +128,9 @@ class KMeans(Algorithm):
 			print("\nStopped at iteration #", iterationCount)
 
 			# Convert clusters to communities
-			for key, value in clusters.items():
+			for value in clusters:
 				c = Community()
-				for k,v in value.items():
+				for v in value:
 					c.addUser(v)
 				if c.len() > 0:
 					communities.append(c)
