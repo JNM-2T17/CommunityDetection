@@ -90,6 +90,13 @@ window.onload=function(){
 
         node.on("mouseover", mouseover)
             .on("mouseout", mouseout)
+            .on("click", click);
+
+        // node.on('click', datum => {
+        //     alert("hi");
+        //     alert(datum);
+        //     console.log(datum); // the datum for the clicked circle
+        // });
 
         //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
         force.on("tick", function () {
@@ -123,12 +130,16 @@ window.onload=function(){
 
 function mouseover() {
     d3.select(this).select("text").transition()
-      .style("opacity", "1")
+      .style("opacity", "1");
 }
 
 function mouseout() {
     d3.select(this).select("text").transition()
-      .style("opacity", "0")
+      .style("opacity", "0");
+}
+
+function click(elem) {
+    console.log(elem);
 }
 
 
