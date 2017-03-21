@@ -11,7 +11,7 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-sim = Following()
+sim = Hashtags()
 algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
