@@ -168,28 +168,35 @@ class DivisiveHC(Algorithm):
 			userDict = {}
 			for u in temp.users:
 				userDict[u.id] = u
-			results = kmeans.run(userDict)
-			t1 = results[0]
-			t2 = results[1]
 
-			# replace previous community with halves
-			current.remove(temp)
+			ctr = 0
+			found = False
+			while ctr < 5:
+				results = kmeans.run(userDict)
+				t1 = results[0]
+				t2 = results[1]
 
-			current.append(t1)
-			current.append(t2)
+				# replace previous community with halves
+				current.remove(temp)
 
-			# get modularity
-			mod = self.parameter.modularity(current)
+				current.append(t1)
+				current.append(t2)
+
+				# get modularity
+				mod = self.parameter.modularity(current)
+				if mod>prevmod:
+					found = True
+					break
+				else:
+					# remove new divisions and restore old whole
+					current.pop()
+					current.pop()
+					current.append(temp)
+				ctr += 1
+
 			print("New mod =", mod, ", prev mod =", prevmod)
 			# if splitting worsened modularity
-			if mod < prevmod:
-				print(mod, prevmod)
-				# remove new divisions and restore old whole
-				current.pop()
-				current.pop()
-				current.append(temp)
-			else:	 # if splitting improved modularity
-				
+			if found:
 				# if halves have more than one element, add to frontier
 				if t1.len() > 1:
 					frontier.append(t1)
