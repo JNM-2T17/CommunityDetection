@@ -3,8 +3,8 @@ from similarity import *
 from collections import *
 import random
 
-MIN_DIST = 0
-MAX_DIST = 1
+MAX_DIST = 0
+MIN_DIST = 1
 AVE_DIST = 2
 
 class KMeans(Algorithm):
@@ -13,8 +13,8 @@ class KMeans(Algorithm):
 		super(KMeans, self).__init__(parameter)
 
 	def run(self, users):
-		global MIN_DIST
 		global MAX_DIST
+		global MIN_DIST
 		global AVE_DIST
 		numClusters = self.k # For now this is hardcoded
 
@@ -42,8 +42,7 @@ class KMeans(Algorithm):
 
 			iterationCount = 1 # Initialize iteration count to 1
 
-
-			mode = MAX_DIST
+			mode = AVE_DIST
 			
 			clusters = [[] for i in range(0,self.k)]
 			ctr = 0
@@ -60,44 +59,49 @@ class KMeans(Algorithm):
 			# Assign users to clusters with closest centroids until clusters don't change
 			while not end:
 				prevUserClusters = clusters.copy() # Copy current set of user clusters to previous set of user clusters
-				
+				clusters = [[] for i in range(0,self.k)]
+			
 				# Assign users to more similar centroids
 				for u in users.values():
 					closestCentroid = None
 					similarity = None
 					ctr2 = 0
+					temp = [0 for i in range(0,2)]
 						
 					for com in prevUserClusters:
-						if mode == MIN_DIST:
-							sim = 2 ** 31 - 1
-						elif mode == MAX_DIST:
-							sim = -1
-						elif mode == AVE_DIST:
-							sim = None
+						sim = None
 
 						currSim = -1
 						for v in com:
 							currSim = self.parameter.similarity(u,v)
-							if mode == MIN_DIST:
-								if currSim != 0 and currSim < sim:
+							if mode == MAX_DIST:
+								if sim is None:
+									if abs(currSim) < 1e-4:
+										sim = currSim
+								if abs(currSim) < 1e-4 and currSim < sim:
 									sim = currSim
-							elif mode == MAX_DIST:
-								if currSim > sim:
+							elif mode == MIN_DIST:
+								if sim is None:
+									if abs(currSim - 1) < 1e-4:
+										sim = currSim
+								if abs(currSim - 1) < 1e-4 and currSim > sim:
 									sim = currSim
 							elif mode == AVE_DIST:
-								if sim == None:
+								if sim is None:
 									sim = float(currSim) / len(com)
 								else:
 									sim += float(currSim) / len(com)
 
-						if mode == MIN_DIST and sim == 2 ** 31 - 1:
+						if sim is None:
 							sim = 0
 
-						if closestCentroid is None or sim < similarity:
+						if closestCentroid is None or sim > similarity:
 							closestCentroid = ctr2
 							similarity = sim
 
+						temp[ctr2] = sim
 						ctr2 += 1
+					#print(u.id,temp)
 
 					# Once closest centroid to user is found, update lists
 					clusters[closestCentroid].append(u)
@@ -193,7 +197,7 @@ class DivisiveHC(Algorithm):
 					current.pop()
 					current.append(temp)
 				ctr += 1
-
+			print(len(current),"communities")
 			print("New mod =", mod, ", prev mod =", prevmod)
 			# if splitting worsened modularity
 			if found:

@@ -11,7 +11,7 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-sim = Hashtags()
+sim = Following()
 algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
@@ -31,7 +31,10 @@ for c in communities:
 	print("\nCommunity #", commNum)
 
 	for u in c.users:
-		print("-", u.id, u.data["name"])
+		try:
+			print("-", u.id, u.data["name"])
+		except UnicodeEncodeError:
+			print("-", u.id)
 		node = {}
 		node["name"] = u.data["name"]
 		node["group"] = commNum
