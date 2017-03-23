@@ -7,6 +7,7 @@ var e = d.documentElement;
 var g = d.getElementsByTagName('body')[0];
 var width = w.innerWidth || e.clientWidth || g.clientWidth;
 var height = w.innerHeight|| e.clientHeight|| g.clientHeight;
+var lastClicked = null;
 
 var allCommunityWords = [];
 var wordCloudColor;
@@ -146,7 +147,10 @@ function mouseout() {
 }
 
 function click(elem) {
-    generateWordCloud(elem["group"], 50);
+    if(elem["group"] != lastClicked){
+        generateWordCloud(elem["group"], 50);
+        lastClicked = elem["group"];
+    }
 }
 
 
