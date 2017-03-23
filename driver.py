@@ -4,19 +4,19 @@ from similarity import *
 from algorithms import *
 import json
 
-def normalizedSimilarity(user1, user2):
-	f = Following()
-	sim = f.similarity(user1, user2)
+def normalizedSimilarity(user1, user2, s):
+	sim = s.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
 	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-following = Following()
-algo = DivisiveHC(following)
+sim = Hashtags()
+algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
+userList = clusterer.users
 
 commNum = 1
 
@@ -32,7 +32,10 @@ for c in communities:
 	print("\nCommunity #", commNum)
 
 	for u in c.users:
-		print("-", u.id, u.data["name"])
+		try:
+			print("-", u.id, u.data["name"])
+		except UnicodeEncodeError:
+			print("-", u.id)
 		node = {}
 		node["name"] = u.data["name"]
 		node["group"] = commNum
@@ -46,13 +49,11 @@ for c in communities:
 users = clusterer.users
 for key in users:
 	curUser = users[key]
-	# if curUser.countNetworkSize()==0:
-	# 	print(curUser.data["name"], "is irrelevant")
-	for f in curUser.following:
+	for e in curUser.outgoingEdges:
 		link = {}
 		link["source"] = indices[curUser.id]
-		link["target"] = indices[curUser.following[f].id]
-		link["value"] = normalizedSimilarity(curUser, curUser.following[f])
+		link["target"] = indices[e]
+		link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 		data["links"].append(link)
 
 print("Finished! Generated", len(communities), "communities")
@@ -60,5 +61,5 @@ print("Modularity:", clusterer.modularity())
 print("FPUPC:", clusterer.fpupc())
 
 print("Writing json...")
-with open('alron_vis.json', 'w') as outfile:
+with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)

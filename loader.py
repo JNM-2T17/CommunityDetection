@@ -61,14 +61,4 @@ class Loader:
 										user.hashtags[hText] += 1
 									else:
 										user.hashtags[hText] = 1
-		# for i in users:
-		# 	print(i, users[i].data["name"], len(users[i].hashtags))
-
-		toDelete = []
-		for i in users:
-			if users[i].countNetworkSize() == 0:
-				toDelete.append(i)
-		for i in toDelete:
-			del users[i]
-		print("Deleted", len(toDelete), " users")
 		return users

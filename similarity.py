@@ -104,57 +104,71 @@ class Following(Parameter):
 			for c in communities:
 				total = 0
 				for x in c.users:
-					total += len(x.following)
+					total += len(x.outgoingEdges)
 				m += total
 			q = 0
 			for community in communities:
 				for i in community.users:
 					for j in community.users:
 						if i != j:
-							a = 1.0 if j.id in i.following else 0.0
-							a -= (len(i.following))*(len(j.following))/(2.0*m)
+							a = 1.0 if j.id in i.outgoingEdges.keys() or j.id in i.incomingEdges.keys() else 0.0
+							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
 							q += a
 			q /= 2.0*m
 			print("Modularity =", q)
 			return q
 
+	def createOutgoingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and userList[u].id in user.following.keys():
+				edges[u] = 1
+		return edges
+
+	def createIncomingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and user.id in userList[u].following.keys():
+				edges[u] = 1
+		return edges
+
+
 class Hashtags(Parameter):
-	"""This class represents the following similarity parameter"""
+	"""This class represents the hashtag similarity parameter"""
 
 	def __init__(self):
 		Parameter.__init__(self)
 
-	"""Computes for following similarity
+	def commonHashtags(self, u1, u2):
+		commonHashtags = []
+		u2keys = u2.hashtags.keys()
+		for i in u1.hashtags:
+			if i in u2keys:
+				commonHashtags.append(i)
+		return commonHashtags
+
+	def totalHashtags(self, user):
+		total = 0
+		for h in user.hashtags:
+			total += user.hashtags[h]
+		return total
+
+	"""Computes for hashtag similarity
 	Parameter:
 	user1 - first user
 	user2 - second user
 	"""
 	def similarity(self,user1,user2):
-		# TODO Change this function for hashtags
-		cFriend = 0
-		for k, v in user1.following.items():
-			if k in user2.following:
-				cFriend += 1
-
-		cFollowers = 0
-		for k, v in user1.followers.items():
-			if k in user2.followers:
-				cFollowers += 1
-
-		friendDenom = math.sqrt(len(user1.following) * len(user2.following))
-		followDenom = math.sqrt(len(user1.followers) * len(user2.followers))
-
-		if friendDenom == 0 and followDenom == 0:
-			return 0
-
-		elif friendDenom == 0:
-			return cFollowers / followDenom
-
-		elif followDenom == 0:
-			return cFriend / friendDenom
-
-		else:
-			return (cFriend / friendDenom + cFollowers / followDenom) 
+		c = self.commonHashtags(user1, user2)
+		n = len(c)
+		sim = 0
+		for k in c:
+			total1 = self.totalHashtags(user1)
+			total2 = self.totalHashtags(user2)
+			val = (1 - abs(user1.hashtags[k]/total1 - user2.hashtags[k]/total2))
+			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (total1+total2))
+			sim += val
+		return sim
 
 	"""Takes a list of users and returns a user that represents the average of
 	all the users according to the parameter
@@ -180,17 +194,19 @@ class Hashtags(Parameter):
 		averageHashtags = {}
 
 		for hashtag, count in hashtagCount.items():
-			if count*1.0/numUsers >= 0: # Change this from 0
+			if count*1.0/numUsers >= 0.4: # Change this from 0
 				averageHashtags[hashtag] = math.ceil(count*1.0/numUsers)
 
 		averageUser = User("Average")
-		averageUser.hashtags = averageHashtags
+		averageUser.hashtags = averageHashtags 
+
+		print("Average User:", len(averageUser.hashtags));
 
 		return averageUser
 
 	"""Returns the modularity of the generated communities"""
 	def modularity(self, communities):
-		#TODO Change this function for hashtags
+		print("Calculating Modularity")
 		if len(communities) == 0:
 			return 1
 		else:
@@ -198,15 +214,30 @@ class Hashtags(Parameter):
 			for c in communities:
 				total = 0
 				for x in c.users:
-					total += len(x.following)
+					total += len(x.outgoingEdges)
 				m += total
 			q = 0
 			for community in communities:
 				for i in community.users:
 					for j in community.users:
 						if i != j:
-							a = 1.0 if j.id in i.following else 0.0
-							a -= (len(i.following))*(len(j.following))/(2.0*m)
+							a = 1.0 if j.id in i.outgoingEdges.keys() or j.id in i.incomingEdges.keys() else 0.0
+							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
 							q += a
 			q /= 2.0*m
+			# print("Modularity =", q)
 			return q
+
+	def createOutgoingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:
+				edges[u] = 1
+		return edges
+
+	def createIncomingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:
+				edges[u] = 1
+		return edges
