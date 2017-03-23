@@ -11,7 +11,7 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-sim = Hashtags()
+sim = Retweets()
 algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
@@ -25,24 +25,28 @@ data["directed"] = False
 data["nodes"] = []
 data["links"] = []
 
+communityTweets = {}
+
 indices = {}
 
 ctr = 0
 for c in communities:
 	print("\nCommunity #", commNum)
-
+	tweetString = []
 	for u in c.users:
 		try:
 			print("-", u.id, u.data["name"])
 		except UnicodeEncodeError:
 			print("-", u.id)
+		for t in u.tweets:
+			tweetString.append(t.tweetdata["text"])
 		node = {}
 		node["name"] = u.data["name"]
 		node["group"] = commNum
 		data["nodes"].append(node)
 		indices[u.id] = ctr
 		ctr+=1
-
+	communityTweets[commNum] = tweetString
 	commNum += 1
 
 
@@ -63,3 +67,9 @@ print("FPUPC:", clusterer.fpupc())
 print("Writing json...")
 with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)
+
+print("Writing word cloud data...")
+# for x in communityTweets:
+# 	communityTweets[x] = communityTweets[x][:5]
+with open('communitytweets.json', 'w') as outfile:
+    json.dump(communityTweets, outfile)

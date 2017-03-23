@@ -22,6 +22,7 @@ class User:
 		self.followers = {}
 		self.tweets = []
 		self.hashtags = {}
+		self.retweets = {}
 		self.outgoingEdges = {}
 		self.incomingEdges = {}
 
@@ -131,18 +132,6 @@ class Parameter:
 	def run(self,user1,user2):
 		raise NotImplementedError
 
-	"""Takes a list of users and returns a user that represents the average of
-	all the users according to the parameter
-
-	Parameter:
-	users - users to average
-
-	Returns:
-	average of all users
-	"""
-	def average(self,users):
-		raise NotImplementedError
-
 	"""Returns the modularity given a list of communities
 		
 	Parameter:
@@ -152,7 +141,27 @@ class Parameter:
 	modularity of these communities (floating point)
 	"""
 	def modularity(self, communities):
-		raise NotImplementedError
+		print("Calculating Modularity")
+		if len(communities) == 0:
+			return 1
+		else:
+			m = 0
+			for c in communities:
+				total = 0
+				for x in c.users:
+					total += len(x.outgoingEdges)
+				m += total
+			q = 0
+			for community in communities:
+				for i in community.users:
+					for j in community.users:
+						if i != j:
+							a = 1.0 if j.id in i.outgoingEdges.keys() or j.id in i.incomingEdges.keys() else 0.0
+							a -= (len(i.outgoingEdges))*(len(j.outgoingEdges))/(2.0*m)
+							q += a
+			q /= 2.0*m
+			# print("Modularity =", q)
+			return q
 
 	"""Returns the dictionary of outgoing edges {userId: weight} given a user and the list of users
 		
