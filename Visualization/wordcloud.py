@@ -1,10 +1,12 @@
 import json
 import operator
 
+# Counts the number of words per community from a JSON file and writes to another JSON file
 def countWords(readFile, writeFile):
 	minSize = 25
 	maxSize = 100
 
+	# Load JSON file containing tweets
 	with open(readFile, encoding="utf8") as f:
 		line = f.readline()
 		data = json.loads(line)
@@ -12,6 +14,7 @@ def countWords(readFile, writeFile):
 	cWordCounts = {}
 	cWordMinMax = {}
 
+	# Count instances of each word per community
 	for key, value in data.items():
 		wordCounts = {}
 
@@ -64,6 +67,7 @@ def countWords(readFile, writeFile):
 			else:
 				cWordCounts[key][key2] = (value2 - 1) / (cWordMinMax[key]["maxCount"] - 1) * maxSize + minSize
 
+	# Convert to JSON format
 	finalCounts = {}
 
 	for key, value in cWordCounts.items():
@@ -75,6 +79,7 @@ def countWords(readFile, writeFile):
 	with open(writeFile, 'w') as outputFile:
 		json.dump(finalCounts, outputFile)
 
+# Removes unnecessary characters and case
 def cleanWord(word):
 	word = word.lower()
 	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
