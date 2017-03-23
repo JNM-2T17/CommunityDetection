@@ -16,6 +16,7 @@ algo = DivisiveHC(sim)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
+userList = clusterer.users
 
 commNum = 1
 
@@ -31,7 +32,10 @@ for c in communities:
 	print("\nCommunity #", commNum)
 
 	for u in c.users:
-		print("-", u.id, u.data["name"])
+		try:
+			print("-", u.id, u.data["name"])
+		except UnicodeEncodeError:
+			print("-", u.id)
 		node = {}
 		node["name"] = u.data["name"]
 		node["group"] = commNum
@@ -49,7 +53,7 @@ for key in users:
 		link = {}
 		link["source"] = indices[curUser.id]
 		link["target"] = indices[e]
-		link["value"] = curUser.outgoingEdges[e]
+		link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 		data["links"].append(link)
 
 print("Finished! Generated", len(communities), "communities")
