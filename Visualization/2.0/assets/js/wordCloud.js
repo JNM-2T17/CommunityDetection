@@ -19,7 +19,6 @@ function generateWordCloud(groupNo, maxCount){
          var frequency_list = allCommunityWords[groupNo];
     }
    
-
     d3.layout.cloud().size([width, height])
             .words(frequency_list)
             .rotate(0)
@@ -36,7 +35,7 @@ function generateWordCloud(groupNo, maxCount){
                 .append("g")
                 // without the transform, words words would get cutoff to the left and top, they would
                 // appear outside of the SVG area
-                .attr("transform", "translate(320,200)")
+                .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
                 .selectAll("text")
                 .data(words)
                 .enter().append("text")
