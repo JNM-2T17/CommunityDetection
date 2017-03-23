@@ -146,8 +146,8 @@ function mouseout() {
 }
 
 function click(elem) {
-    $("body").append("<div id=\"wordCloudContainer\"><div id=\"wordCloud\"></div></div>")
-    generateWordCloud(elem["group"], 40);
+    $("body").append("<div id=\"wordCloud\"></div>")
+    generateWordCloud(elem["group"], 1000);
 }
 
 

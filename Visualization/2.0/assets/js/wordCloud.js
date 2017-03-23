@@ -12,9 +12,6 @@ function loadWordData(wordFileName){
 }
 
 function generateWordCloud(groupNo, maxCount){
-    console.log(groupNo);
-    console.log(allCommunityWords);
-
     if(allCommunityWords[groupNo].length > maxCount){
          var frequency_list = allCommunityWords[groupNo].slice(0, maxCount);
     }
@@ -31,6 +28,7 @@ function generateWordCloud(groupNo, maxCount){
             .start();
 
     function drawWordCloud(words) {
+        $("#wordCloud").empty();
         d3.select("#wordCloud").append("svg")
                 .attr("width", width)
                 .attr("height", height)

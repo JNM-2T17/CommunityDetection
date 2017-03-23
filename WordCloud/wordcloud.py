@@ -2,19 +2,18 @@ import json
 import operator
 
 def countWords(readFile, writeFile):
-	minSize = 15
-	maxSize = 75
+	minSize = 25
+	maxSize = 100
 
 	with open(readFile, encoding="utf8") as f:
 		line = f.readline()
 		data = json.loads(line)
 
 	cWordCounts = {}
+	cWordMinMax = {}
 
 	for key, value in data.items():
 		wordCounts = {}
-		maxCount = 1
-		minCount = float("inf")
 
 		words = []
 
@@ -24,25 +23,46 @@ def countWords(readFile, writeFile):
 		for w in words:
 			word = cleanWord(w)
 
-			if isSignificantWord(word):
-				if word in wordCounts:
-					wordCounts[word] = wordCounts[word] + 1
-
-					if wordCounts[word] > maxCount:
-						maxCount = wordCounts[word]
-				else:
-					wordCounts[word] = 1
-
-		for key2, value2 in wordCounts.items():
-			if value2 < minCount:
-				minCount = value2
-
-		for key2, value2 in wordCounts.items():
-			if maxCount == minCount:
-				wordCounts[key2] = minSize
+			if word in wordCounts:
+				wordCounts[word] = wordCounts[word] + 1
 			else:
-				wordCounts[key2] = (value2 - 1) / (maxCount - 1) * maxSize + minSize
+				wordCounts[word] = 1
+
 		cWordCounts[key] = wordCounts
+		cWordMinMax[key] = {"maxCount" : 1, "minCount" : float("inf")}
+
+	# Remove words that are too common
+	for key, value in cWordCounts["1"].copy().items():
+		inAllDict = True
+
+		for key2, value2 in cWordCounts.items():
+			if not key in value2.keys():
+				inAllDict = False
+				break
+
+		if inAllDict:
+			for c in cWordCounts:
+				cWordCounts[c].pop(key, None)
+
+	# Remove mentions
+	for key, value in cWordCounts.items():
+		for key2, value2 in value.copy().items():
+			if key2[:1] == "@":
+				cWordCounts[key].pop(key2, None)
+
+	# Adjust size values
+	for key, value in data.items():
+		for key2, value2 in cWordCounts[key].items():
+			if value2 < cWordMinMax[key]["minCount"]:
+				cWordMinMax[key]["minCount"] = value2
+			if value2 > cWordMinMax[key]["maxCount"]:
+				cWordMinMax[key]["maxCount"] = value2
+
+		for key2, value2 in cWordCounts[key].items():
+			if cWordMinMax[key]["maxCount"] == cWordMinMax[key]["minCount"]:
+				cWordCounts[key][key2] = minSize
+			else:
+				cWordCounts[key][key2] = (value2 - 1) / (cWordMinMax[key]["maxCount"] - 1) * maxSize + minSize
 
 	finalCounts = {}
 
@@ -55,18 +75,9 @@ def countWords(readFile, writeFile):
 	with open(writeFile, 'w') as outputFile:
 		json.dump(finalCounts, outputFile)
 
-def isSignificantWord(word):
-	exceptions = ["the", "and", "a", "is", "are", "in", "to", "that", "of"]
-
-	if word in exceptions:
-		return False
-
-	else:
-		return True
-
 def cleanWord(word):
 	word = word.lower()
-	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '')
+	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
 	return word
 
 countWords("communityTweets.json", "wordCounts.json")
