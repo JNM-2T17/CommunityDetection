@@ -1,39 +1,3 @@
-<!-- <html>
-  <head>
-    <title>Word Cloud</title>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="d3.layout.cloud.js"></script>
-    <script src="d3.wordcloud.js"></script>
-  </head>
-  <body>
-    <div id='wordcloud'></div>
-    <script>
-
-    var w = window;
-    var d = document;
-    var e = d.documentElement;
-    var g = d.getElementsByTagName('body')[0];
-    var width = w.innerWidth || e.clientWidth || g.clientWidth;
-    var height = w.innerHeight|| e.clientHeight|| g.clientHeight;
-
-    var filename = "wordCounts.json";
-
-    // Gets data from JSON file
-    d3.json(filename, function(error, jsonfile) {
-        if (error) throw error;
-
-        var frequency_list = jsonfile["wordCloud"];
-
-        d3.wordcloud()
-            .size([800, 400])
-            .selector('#wordcloud')
-            .words(frequency_list)
-            .start();
-    });
-    </script>
-  </body> 
-</html> -->
-
 <!DOCTYPE html>
 <html>
 <script src="http://d3js.org/d3.v3.min.js"></script>

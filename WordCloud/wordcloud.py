@@ -1,56 +1,59 @@
+import json
+import operator
+
 def countWords(readFile, writeFile):
 	minSize = 15
 	maxSize = 75
 
-	with open(readFile, 'r') as inputFile:
-		words = inputFile.read().replace('\n', ' ').split()
+	with open(readFile, encoding="utf8") as f:
+		line = f.readline()
+		data = json.loads(line)
 
-	wordCounts = {}
-	maxCount = 1
-	minCount = float("inf")
+	cWordCounts = {}
 
-	for w in words:
-		word = w.lower()
+	for key, value in data.items():
+		wordCounts = {}
+		maxCount = 1
+		minCount = float("inf")
 
-		if isSignificantWord(word):
-			if word in wordCounts:
-				wordCounts[word] = wordCounts[word] + 1
+		words = []
 
-				if wordCounts[word] > maxCount:
-					maxCount = wordCounts[word]
+		for l in value:
+			words = words + l.replace('\n', ' ').split()
+
+		for w in words:
+			word = cleanWord(w)
+
+			if isSignificantWord(word):
+				if word in wordCounts:
+					wordCounts[word] = wordCounts[word] + 1
+
+					if wordCounts[word] > maxCount:
+						maxCount = wordCounts[word]
+				else:
+					wordCounts[word] = 1
+
+		for key2, value2 in wordCounts.items():
+			if value2 < minCount:
+				minCount = value2
+
+		for key2, value2 in wordCounts.items():
+			if maxCount == minCount:
+				wordCounts[key2] = minSize
 			else:
-				wordCounts[word] = 1
+				wordCounts[key2] = (value2 - 1) / (maxCount - 1) * maxSize + minSize
+		cWordCounts[key] = wordCounts
 
-	for key, value in wordCounts.items():
-		if value < minCount:
-			minCount = value
+	finalCounts = {}
 
-	for key, value in wordCounts.items():
-		if maxCount == minCount:
-			wordCounts[key] = minSize
-		else:
-			wordCounts[key] = (value - 1) / (maxCount - 1) * maxSize + minSize
+	for key, value in cWordCounts.items():
+		finalCounts[key] = []
+
+		for key2, value2 in sorted(value.items(), key=operator.itemgetter(1), reverse = True):
+			finalCounts[key].append({"text": key2, "size": value2})
 
 	with open(writeFile, 'w') as outputFile:
-		outputFile.truncate()
-		outputFile.write("{\n\t\"wordCloud\": [\n")
-
-		arraySize = len(wordCounts.items())
-		arrayCurr = 0
-
-		for key, value in wordCounts.items():
-			arrayCurr += 1
-			
-			outputFile.write("\t\t{\n\t\t\t\"text\" : \"" + key + "\", \n\t\t\t\"size\" : " + str(value) + "\n\t\t")
-
-			if not arrayCurr is arraySize:
-				outputFile.write("},\n")
-
-			else:
-				outputFile.write("}\n")
-
-		outputFile.write("\t]\n}")
-		outputFile.close()
+		json.dump(finalCounts, outputFile)
 
 def isSignificantWord(word):
 	exceptions = ["the", "and", "a", "is", "are", "in", "to", "that", "of"]
@@ -61,5 +64,9 @@ def isSignificantWord(word):
 	else:
 		return True
 
+def cleanWord(word):
+	word = word.lower()
+	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '')
+	return word
 
-countWords("words.txt", "wordCounts.json")
+countWords("communityTweets.json", "wordCounts.json")

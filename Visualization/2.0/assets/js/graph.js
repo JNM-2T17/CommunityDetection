@@ -8,10 +8,16 @@ var g = d.getElementsByTagName('body')[0];
 var width = w.innerWidth || e.clientWidth || g.clientWidth;
 var height = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
+var allCommunityWords = [];
+var wordCloudColor;
+
 window.onload=function(){
 
+    var wordFile = document.getElementById("wordFile").value;
     var filename = document.getElementById("filename").value;
     var directed = document.getElementById("directed").value;
+
+    loadWordData(wordFile);
 
     //Set up the colour scale
     color = d3.scale.category20();
@@ -25,7 +31,7 @@ window.onload=function(){
         .size([width, height]);
 
     //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-    svg = d3.select("body").append("svg")
+    svg = d3.select("#graph").append("svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -126,6 +132,7 @@ window.onload=function(){
             });
         });
     });
+
 };
 
 function mouseover() {
@@ -139,7 +146,8 @@ function mouseout() {
 }
 
 function click(elem) {
-    console.log(elem);
+    $("body").append("<div id=\"wordCloudContainer\"><div id=\"wordCloud\"></div></div>")
+    generateWordCloud(elem["group"], 40);
 }
 
 
