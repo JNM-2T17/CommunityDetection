@@ -157,6 +157,7 @@ class KMeans(Algorithm):
 				if numClusters > 1:
 					if currModularity < prevModularity:
 						communities = prevCommunities
+						numClusters -= 1
 						break
 
 				prevCommunities = communities

@@ -56,14 +56,11 @@ for c in communities:
 	print("\nCommunity #", commNum)
 	tweetString = []
 	for u in c.users:
-		try:
-			print("-", u.id, u.data["name"])
-		except UnicodeEncodeError:
-			print("-", u.id)
+		print("-", u.id)
 		for t in u.tweets:
 			tweetString.append(t.tweetdata["text"])
 		node = {}
-		node["name"] = u.data["name"]
+		node["name"] = u.data["id"]
 		node["group"] = commNum
 		data["nodes"].append(node)
 		indices[u.id] = ctr

@@ -35,17 +35,18 @@ def countWords(readFile, writeFile):
 		cWordMinMax[key] = {"maxCount" : 1, "minCount" : float("inf")}
 
 	# Remove words that are too common
-	for key, value in cWordCounts["1"].copy().items():
-		inAllDict = True
+	if len(cWordCounts) > 1:
+		for key, value in cWordCounts["1"].copy().items():
+			inAllDict = True
 
-		for key2, value2 in cWordCounts.items():
-			if not key in value2.keys():
-				inAllDict = False
-				break
+			for key2, value2 in cWordCounts.items():
+				if not key in value2.keys():
+					inAllDict = False
+					break
 
-		if inAllDict:
-			for c in cWordCounts:
-				cWordCounts[c].pop(key, None)
+			if inAllDict:
+				for c in cWordCounts:
+					cWordCounts[c].pop(key, None)
 
 	# Remove mentions
 	for key, value in cWordCounts.items():
