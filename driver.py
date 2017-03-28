@@ -4,15 +4,35 @@ from similarity import *
 from algorithms import *
 import json
 
+def getAlgo(sim, algoVal):
+	return (KMeans(sim) if algoVal == "1" 
+						else DivisiveHC(sim))
+
+def getParameter(paramVal):
+	return (Following() if paramVal == "1" 
+						else Hashtags() if paramVal == "2" 
+						else Retweets())
+
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
 	return int(sim/10 + 1)
 
-loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-sim = Retweets()
-algo = DivisiveHC(sim)
+
+print("Input algorithm:")
+print("1- KMeans")
+print("2- Divisive HC")
+algoVal = input()
+
+print("Input parameter:")
+print("1- Following")
+print("2- Hashtags")
+print("3- Retweets")
+paramVal = input()
+loader = Loader("Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
+sim = getParameter(paramVal)
+algo = getAlgo(sim, algoVal)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
@@ -69,7 +89,5 @@ with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)
 
 print("Writing word cloud data...")
-# for x in communityTweets:
-# 	communityTweets[x] = communityTweets[x][:5]
 with open('communitytweets.json', 'w') as outfile:
     json.dump(communityTweets, outfile)
