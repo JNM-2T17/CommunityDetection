@@ -9,6 +9,7 @@
     <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
     <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
     <script type="text/javascript" src="//d3js.org/d3.v3.js"></script>
+    <script src="assets/js/d3.layout.cloud.js"></script>
     <script src="assets/js/jquery-3.1.1.min.js"></script>
   
     <script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -27,8 +28,11 @@
             mix-blend-mode: multiply;
         }
     </style>
+    <link type="text/css" rel="stylesheet" href="assets/css/wordCloud.css"/>
 
     <script type="text/javascript" src="assets/js/graph.js"></script>
+    <script type="text/javascript" src="assets/js/wordCloud.js"></script>
+    <script type="text/javascript" src="assets/js/misc.js"></script>
 </head>
 
 <body>
@@ -42,9 +46,10 @@
     }
     </script>
 
-    <button id="saveButton">Turn to Static Image</button>
-    <input id="filename" type="hidden" value="hashvis.json"/>
-    <input id="directed" type="hidden" value="true"/>
+    <div id="graph"></div>
+    <div id="wordCloud"></div>
+
+    <!-- <button id="saveButton">Turn to Static Image</button> -->
 </body>
 
 </html>
