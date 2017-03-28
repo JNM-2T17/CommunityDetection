@@ -6,7 +6,7 @@ auth.set_access_token("2355697038-vbX1vt6liw7PI4DAR4tEDy3BuZpIzmgpIDUsnvi", "WHM
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-dirname = "C:/Users/Marc/Documents/CommunityDetection/Tweet Data/"
+dirname = "C:/Users/Marc/Documents/CommunityDetection/Demo Tweet Data/"
 userIdFilename = "user_dataset.json"
 
 idList = []

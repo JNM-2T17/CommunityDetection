@@ -4,15 +4,35 @@ from similarity import *
 from algorithms import *
 import json
 
+def getAlgo(sim, algoVal):
+	return (KMeans(sim) if algoVal == "1" 
+						else DivisiveHC(sim))
+
+def getParameter(paramVal):
+	return (Following() if paramVal == "1" 
+						else Hashtags() if paramVal == "2" 
+						else Retweets())
+
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
 	sim *= 100
 	sim = int(sim)
 	return int(sim/10 + 1)
 
-loader = Loader("Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
-sim = Hashtags()
-algo = DivisiveHC(sim)
+
+print("Input algorithm:")
+print("1- KMeans")
+print("2- Divisive HC")
+algoVal = input()
+
+print("Input parameter:")
+print("1- Following")
+print("2- Hashtags")
+print("3- Retweets")
+paramVal = input()
+loader = Loader("Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
+sim = getParameter(paramVal)
+algo = getAlgo(sim, algoVal)
 clusterer = Clusterer(loader, algo)
 clusterer.run()
 communities = clusterer.communities
@@ -25,24 +45,28 @@ data["directed"] = False
 data["nodes"] = []
 data["links"] = []
 
+communityTweets = {}
+
 indices = {}
 
 ctr = 0
 for c in communities:
 	print("\nCommunity #", commNum)
-
+	tweetString = []
 	for u in c.users:
 		try:
 			print("-", u.id, u.data["name"])
 		except UnicodeEncodeError:
 			print("-", u.id)
+		for t in u.tweets:
+			tweetString.append(t.tweetdata["text"])
 		node = {}
 		node["name"] = u.data["name"]
 		node["group"] = commNum
 		data["nodes"].append(node)
 		indices[u.id] = ctr
 		ctr+=1
-
+	communityTweets[commNum] = tweetString
 	commNum += 1
 
 
@@ -63,3 +87,7 @@ print("FPUPC:", clusterer.fpupc())
 print("Writing json...")
 with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)
+
+print("Writing word cloud data...")
+with open('communitytweets.json', 'w') as outfile:
+    json.dump(communityTweets, outfile)
