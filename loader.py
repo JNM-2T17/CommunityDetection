@@ -61,4 +61,10 @@ class Loader:
 										user.hashtags[hText] += 1
 									else:
 										user.hashtags[hText] = 1
+							if "retweeted_status" in tweetdata.keys():
+								retweetedId = tweetdata["retweeted_status"]["user"]["id"]
+								if retweetedId in user.retweets.keys():
+									user.retweets[retweetedId] += 1
+								else:
+									user.retweets[retweetedId] = 1
 		return users
