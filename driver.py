@@ -2,6 +2,8 @@ from model import *
 from loader import *
 from similarity import *
 from algorithms import *
+from wordcloud import *
+import webbrowser
 import json
 
 def getAlgo(sim, algoVal):
@@ -91,3 +93,7 @@ with open('vis.json', 'w') as outfile:
 print("Writing word cloud data...")
 with open('communitytweets.json', 'w') as outfile:
     json.dump(communityTweets, outfile)
+
+countWords("communitytweets.json", "wordCounts.json")
+url = "http://localhost:8000/Visualization/2.0/index.html?words=../../wordCounts.json&graph=../../vis.json&directed=" + ("true" if paramVal != "2" else "false")
+webbrowser.open(url)

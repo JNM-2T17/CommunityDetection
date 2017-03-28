@@ -50,7 +50,7 @@ def countWords(readFile, writeFile):
 	# Remove mentions
 	for key, value in cWordCounts.items():
 		for key2, value2 in value.copy().items():
-			if key2[:1] == "@":
+			if key2[:1] == "@" or key2.startswith("http://") or key2.startswith("https://"):
 				cWordCounts[key].pop(key2, None)
 
 	# Adjust size values
@@ -85,4 +85,4 @@ def cleanWord(word):
 	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
 	return word
 
-countWords("communityTweets.json", "wordCounts.json")
+countWords("communitytweets.json", "wordCounts.json")
