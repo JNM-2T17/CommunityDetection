@@ -32,6 +32,7 @@ print("1- Following")
 print("2- Hashtags")
 print("3- Retweets")
 paramVal = input()
+print()
 loader = Loader("Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
 sim = getParameter(paramVal)
 algo = getAlgo(sim, algoVal)
@@ -52,11 +53,14 @@ communityTweets = {}
 indices = {}
 
 ctr = 0
+
+print()
+
 for c in communities:
-	print("\nCommunity #", commNum)
+	print("Community #", commNum, "with", len(c.users), ("users" if len(c.users) > 1 else "user"))
 	tweetString = []
 	for u in c.users:
-		print("-", u.id)
+		# print("-", u.id)
 		for t in u.tweets:
 			tweetString.append(t.tweetdata["text"])
 		node = {}
@@ -79,11 +83,11 @@ for key in users:
 		link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 		data["links"].append(link)
 
-print("Finished! Generated", len(communities), "communities")
+print("\nFinished! Generated", len(communities), "communities")
 print("Modularity:", clusterer.modularity())
-print("FPUPC:", clusterer.fpupc())
+# print("FPUPC:", clusterer.fpupc())
 
-print("Writing json...")
+print("\nWriting json...")
 with open('vis.json', 'w') as outfile:
     json.dump(data, outfile)
 
@@ -91,6 +95,7 @@ print("Writing word cloud data...")
 with open('communitytweets.json', 'w') as outfile:
     json.dump(communityTweets, outfile)
 
+print("Opening visualization in web browser...")
 countWords("communitytweets.json", "wordCounts.json")
-url = "http://localhost:8000/Visualization/2.0/index.html?words=../../wordCounts.json&graph=../../vis.json&directed=" + ("true" if paramVal != "2" else "false")
+url = "http://localhost:8000/Visualization/index.html?words=../wordCounts.json&graph=../vis.json&directed=" + ("true" if paramVal != "2" else "false")
 webbrowser.open(url)

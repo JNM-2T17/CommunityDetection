@@ -3,8 +3,8 @@ import operator
 
 # Counts the number of words per community from a JSON file and writes to another JSON file
 def countWords(readFile, writeFile):
-	minSize = 25
-	maxSize = 100
+	minSize = 15
+	maxSize = 70
 
 	# Load JSON file containing tweets
 	with open(readFile, encoding="utf8") as f:
