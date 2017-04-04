@@ -52,7 +52,7 @@ window.onload=function(){
                 .attr("orient", "auto")
               .append("path")
                 .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                .style("stroke", "rgb(50,50,50)")
+                .style("stroke", "rgb(100,100,100)")
                 .style("opacity", "0.6");
         }
         // Gets data from JSON file
@@ -94,7 +94,7 @@ window.onload=function(){
                   .attr("font-family", "Arial")
                   .attr("font-size", "15px")
                   .text(function(d) { return d.name })
-                  .style("stroke", "rgb(50,50,50)")
+                  .style("stroke", "rgb(0,0,0)")
                   .style("opacity", "0")
                   .style("z-index", 2000);
 

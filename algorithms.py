@@ -29,7 +29,6 @@ class KMeans(Algorithm):
 		while True:
 			# If there are less users than clusters that need to be formed
 			if len(users) < numClusters:
-				print("LESS USERS THAN CLUSTERS:", len(users), " < ", numClusters)
 				communities = []
 
 				# Form a community for each user
@@ -38,11 +37,10 @@ class KMeans(Algorithm):
 					c.addUser(value)
 					communities.append(c)
 
-				print("numClusters = " + str(numClusters) + ", community count = " + str(len(communities)))
+				# print("numClusters = " + str(numClusters) + ", community count = " + str(len(communities)))
 
 			# If there are at least as many users as clusters that need to be formed
 			else:
-				print("MORE OR EQUAL USERS THAN CLUSTERS")
 				userIds = list(users.keys()) # Create list of user ideas
 				indices = random.sample(range(0, len(users)), numClusters) # Randomize centroids for each cluster (returns indices in userIds list)
 				centroids = [] # Initialize array of centroids
@@ -133,12 +131,12 @@ class KMeans(Algorithm):
 					if end:
 						break
 
-					print("\nIteration:", iterationCount)
+					# print("\nIteration:", iterationCount)
 					iterationCount += 1
 
 				communities = []
 
-				print("\nStopped at iteration #", iterationCount)
+				# print("\nStopped at iteration #", iterationCount)
 
 				# Convert clusters to communities
 				for value in clusters:
@@ -189,7 +187,7 @@ class DivisiveHC(Algorithm):
 
 		while frontier:
 			iterCount+=1
-			print("Iteration", iterCount)
+			# print("Iteration", iterCount)
 			# get first community and split
 			temp = frontier.popleft()
 			kmeans = KMeans(self.parameter, 2)
@@ -222,8 +220,8 @@ class DivisiveHC(Algorithm):
 					current.pop()
 					current.append(temp)
 				ctr += 1
-			print(len(current),"communities")
-			print("New mod =", mod, ", prev mod =", prevmod)
+			# print(len(current),"communities")
+			# print("New mod =", mod, ", prev mod =", prevmod)
 			# if splitting worsened modularity
 			if found:
 				# if halves have more than one element, add to frontier

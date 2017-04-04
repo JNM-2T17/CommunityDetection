@@ -141,7 +141,6 @@ class Parameter:
 	modularity of these communities (floating point)
 	"""
 	def modularity(self, communities):
-		print("Calculating Modularity")
 		if len(communities) == 0:
 			return 1
 		else:
