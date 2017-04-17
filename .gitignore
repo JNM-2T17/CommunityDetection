@@ -3,9 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# MongoDB Tweet Data
-MongoDB\ Tweet\ Data/*.json
-
 # C extensions
 *.so
 
