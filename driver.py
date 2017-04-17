@@ -57,7 +57,7 @@ ctr = 0
 print()
 
 for c in communities:
-	print("Community #", commNum, "with", len(c.users), ("users" if len(c.users) > 1 else "user"))
+	print("Community #", commNum, "has", len(c.users), ("users" if len(c.users) > 1 else "user"))
 	tweetString = []
 	for u in c.users:
 		# print("-", u.id)
