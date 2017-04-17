@@ -86,4 +86,4 @@ def cleanWord(word):
 	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
 	return word
 
-countWords("communitytweets.json", "wordCounts.json")
+#countWords("communitytweets.json", "wordCounts.json")
