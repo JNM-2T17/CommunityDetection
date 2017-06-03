@@ -13,9 +13,7 @@ var allCommunityWords = [];
 var wordCloudColor;
 
 function generateGraph(words, graph, directed){
-    alert(graph);
-    alert(graph.nodes);
-    alert(graph.links);
+    
     if(words != null && graph != null && directed != null){
         loadWordDataFromJSON(words);
 
@@ -51,6 +49,7 @@ function generateGraph(words, graph, directed){
                 .style("stroke", "rgb(100,100,100)")
                 .style("opacity", "0.6");
         }
+
         //Creates the graph data structure out of the json data
         force.nodes(graph.nodes)
             .links(graph.links)
