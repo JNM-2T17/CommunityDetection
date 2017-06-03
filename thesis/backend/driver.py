@@ -36,6 +36,7 @@ def start(paramVal, algoVal):
 	commNum = 1
 
 	data = {}
+	data["directed"] = "false" if paramVal == "2" else "true"
 	data["nodes"] = []
 	data["links"] = []
 

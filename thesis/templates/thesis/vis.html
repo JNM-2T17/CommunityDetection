@@ -38,10 +38,9 @@
 </head>
 
 <body>
-    <h1> Hello </h1>
     <script>
     window.onload = function(){
-        generateGraph({{ word_cloud|safe }}, {{ graph|safe }}, "{{ directed }}");
+        generateGraph({{ word_cloud|safe }}, {{ graph|safe }});
         // tell the embed parent frame the height of the content
         if (window.parent && window.parent.parent){
             window.parent.parent.postMessage(["resultsFrame", {

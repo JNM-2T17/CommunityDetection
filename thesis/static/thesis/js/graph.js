@@ -12,9 +12,10 @@ var lastClicked = null;
 var allCommunityWords = [];
 var wordCloudColor;
 
-function generateGraph(words, graph, directed){
+function generateGraph(words, graph){
     
-    if(words != null && graph != null && directed != null){
+    if(words != null && graph != null){
+        directed = graph.directed;
         loadWordDataFromJSON(words);
 
         //Set up the colour scale
