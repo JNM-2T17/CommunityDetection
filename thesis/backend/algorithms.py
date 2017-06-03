@@ -1,5 +1,5 @@
-from model import *
-from similarity import *
+from .model import *
+from .similarity import *
 from collections import *
 import random
 

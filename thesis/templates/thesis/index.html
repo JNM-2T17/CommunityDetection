@@ -1,0 +1,17 @@
+<form action="{% url 'thesis:run_algo' %}" method="post">
+	{% csrf_token %}
+	Algorithm: 
+	<select name="algo">
+		<option value="1">K-Means</option>
+		<option value="2">Divisive HC</option>
+	</select>
+	<br/>
+	Parameter:
+	<select name="param">
+		<option value="1">Following</option>
+		<option value="2">Hashtags</option>
+		<option value="3">Retweets</option>
+	</select>
+	<br/>
+	<input type="submit"/>
+</form>
