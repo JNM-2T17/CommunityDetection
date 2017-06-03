@@ -12,16 +12,9 @@ var lastClicked = null;
 var allCommunityWords = [];
 var wordCloudColor;
 
-window.onload=function(){
-
-    URLvars = getUrlVars(); // E.g. index.html?words=wordCounts6.json&graph=vis.json&directed=true
-
-    var wordFile = URLvars["words"];
-    var filename = URLvars["graph"];
-    var directed = URLvars["directed"];
-
-    if(wordFile != "" && filename != "" && directed != ""){
-        loadWordData(wordFile);
+function generateGraph(words, graph, directed){
+    if(words != null && graph != null && directed != null){
+        loadWordDataFromJSON(words);
 
         //Set up the colour scale
         color = d3.scale.category20();
@@ -55,85 +48,80 @@ window.onload=function(){
                 .style("stroke", "rgb(100,100,100)")
                 .style("opacity", "0.6");
         }
-        // Gets data from JSON file
-        d3.json(filename, function(error, graph) {
-            if (error) throw error;
+        //Creates the graph data structure out of the json data
+        force.nodes(graph.nodes)
+            .links(graph.links)
+            .start();
 
-            //Creates the graph data structure out of the json data
-            force.nodes(graph.nodes)
-                .links(graph.links)
-                .start();
+        //Create all the line svgs but without locations yet
+        var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("marker-end",  "url(#suit)")
+            .style("stroke-width", function (d) {
+                return 1;
+            // return Math.sqrt(d.value);
+        });
 
-            //Create all the line svgs but without locations yet
-            var link = svg.selectAll(".link")
-                .data(graph.links)
-                .enter().append("line")
-                .attr("class", "link")
-                .style("marker-end",  "url(#suit)")
-                .style("stroke-width", function (d) {
-                    return 1;
-                // return Math.sqrt(d.value);
+        //Do the same with the circles for the nodes - no 
+        var node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+
+        node.append("circle")
+            .attr("r", 8)
+            .style("fill", function (d) {
+            return color(d.group);
+        });
+
+        node.append("text")
+              .attr("dx", 10)
+              .attr("dy", ".35em")
+              .attr("font-family", "Arial")
+              .attr("font-size", "15px")
+              .text(function(d) { return d.name })
+              .style("stroke", "rgb(0,0,0)")
+              .style("opacity", "0")
+              .style("z-index", 2000);
+
+        node.on("mouseover", mouseover)
+            .on("mouseout", mouseout)
+            .on("click", click);
+
+        // node.on('click', datum => {
+        //     alert("hi");
+        //     alert(datum);
+        //     console.log(datum); // the datum for the clicked circle
+        // });
+
+        //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+        force.on("tick", function () {
+            link.attr("x1", function (d) {
+                return d.source.x;
+            })
+                .attr("y1", function (d) {
+                return d.source.y;
+            })
+                .attr("x2", function (d) {
+                return d.target.x;
+            })
+                .attr("y2", function (d) {
+                return d.target.y;
             });
-
-            //Do the same with the circles for the nodes - no 
-            var node = svg.selectAll(".node")
-                .data(graph.nodes)
-                .enter().append("g")
-                .attr("class", "node")
-                .call(force.drag);
-
-            node.append("circle")
-                .attr("r", 8)
-                .style("fill", function (d) {
-                return color(d.group);
+            d3.selectAll("circle").attr("cx", function (d) {
+                return d.x;
+            })
+                .attr("cy", function (d) {
+                return d.y;
             });
-
-            node.append("text")
-                  .attr("dx", 10)
-                  .attr("dy", ".35em")
-                  .attr("font-family", "Arial")
-                  .attr("font-size", "15px")
-                  .text(function(d) { return d.name })
-                  .style("stroke", "rgb(0,0,0)")
-                  .style("opacity", "0")
-                  .style("z-index", 2000);
-
-            node.on("mouseover", mouseover)
-                .on("mouseout", mouseout)
-                .on("click", click);
-
-            // node.on('click', datum => {
-            //     alert("hi");
-            //     alert(datum);
-            //     console.log(datum); // the datum for the clicked circle
-            // });
-
-            //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-            force.on("tick", function () {
-                link.attr("x1", function (d) {
-                    return d.source.x;
-                })
-                    .attr("y1", function (d) {
-                    return d.source.y;
-                })
-                    .attr("x2", function (d) {
-                    return d.target.x;
-                })
-                    .attr("y2", function (d) {
-                    return d.target.y;
-                });
-                d3.selectAll("circle").attr("cx", function (d) {
-                    return d.x;
-                })
-                    .attr("cy", function (d) {
-                    return d.y;
-                });
-                d3.selectAll("text").attr("x", function (d) {
-                    return d.x;
-                })
-                    .attr("y", function (d) {
-                    return d.y;
-                });
+            d3.selectAll("text").attr("x", function (d) {
+                return d.x;
+            })
+                .attr("y", function (d) {
+                return d.y;
             });
         });
     }

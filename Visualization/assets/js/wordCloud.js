@@ -11,6 +11,14 @@ function loadWordData(wordFileName){
     });
 }
 
+function loadWordDataFromJSON(jsonData){
+    allCommunityWords = jsonData;
+
+    wordCloudColor = d3.scale.linear()
+        .domain([0,1,2,3,4,5,6,10,15,20,100])
+        .range(["rgb(230,230,230)", "rgb(220,220,220)", "rgb(210,210,210)", "rgb(200,200,200)", "rgb(190,190,190)", "rgb(180,180,180)", "rgb(170,170,170)", "rgb(160,160,160)", "rgb(150,150,150)", "rgb(140,140,140)", "rgb(130,130,130)", "rgb(120,120,120)"]);
+}
+
 function generateWordCloud(groupNo, maxCount){
     if(allCommunityWords[groupNo].length > maxCount){
          var frequency_list = allCommunityWords[groupNo].slice(0, maxCount);
