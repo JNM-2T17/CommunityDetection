@@ -8,7 +8,8 @@ import json
 
 def getAlgo(sim, algoVal):
 	return (KMeans(sim) if algoVal == "1" 
-						else DivisiveHC(sim))
+						else DivisiveHC(sim) if algoVal == "2"
+						else AgglomerativeHC(sim))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
@@ -25,6 +26,7 @@ def normalizedSimilarity(user1, user2, s):
 print("Input algorithm:")
 print("1- KMeans")
 print("2- Divisive HC")
+print("3- Agglomerative HC")
 algoVal = input()
 
 print("Input parameter:")
