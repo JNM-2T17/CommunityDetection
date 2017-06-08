@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Community Detection</title>
+		<link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css" type="text/css"/>
+		<link rel="stylesheet" href="assets/css/style.css" type="text/css"/>
+	</head>
+
+	<body>
+		<div id="top">
+			<button class="uploadFile">Upload Users and Tweets <i class="fa fa-upload"></i></button>
+			<select>
+				<option value="" disabled selected>Choose Algorithm</option>
+			</select>
+			<select>
+				<option value="" disabled selected>Choose Parameter</option>
+			</select>
+			<button class="generateCommunities">Generate Communities <i class="fa fa-arrow-right"></i></button>
+		</div>
+
+		<div id="side">
+			<div id="evaluation">
+				<b>Modularity:</b> 0.47<br/>
+				<b>FPUPC:</b> 4
+			</div>
+
+			<div id="communities">
+
+				<div class="community">
+					<button class="community-button">
+						<div class="community-color"></div>
+						<div class="community-name">Community 1</div>
+					</button>
+					<div class="community-wordcloud">
+					</div>
+				</div>
+
+				<div class="community">
+					<button class="community-button">
+						<div class="community-color"></div>
+						<div class="community-name">Community 2</div>
+					</button>
+					<div class="community-wordcloud">
+					</div>
+				</div>
+
+				<div class="community">
+					<button class="community-button">
+						<div class="community-color"></div>
+						<div class="community-name">Community 3</div>
+					</button>
+					<div class="community-wordcloud">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="main">
+			Main
+		</div>
+	</body>
+
+</html>

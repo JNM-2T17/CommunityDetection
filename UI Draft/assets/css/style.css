@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "Source Sans";
+  src: url(../fonts/SourceSansPro-Regular.ttf); }
+body {
+  line-height: 1.5em; }
+
+div#top,
+div#side,
+div#main {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 10px;
+  clear: both;
+  font-family: "Source Sans"; }
+
+div#top {
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #1e1e1e; }
+  div#top button,
+  div#top select {
+    height: 100%;
+    border-radius: 5px;
+    background-color: white;
+    border: 1px solid transparent;
+    font-size: 0.9em;
+    padding: 0 12px;
+    margin-right: 5px;
+    vertical-align: top; }
+  div#top select {
+    min-width: 300px; }
+  div#top button {
+    background-color: #969696;
+    transition: 0.25s;
+    border: none; }
+    div#top button:hover {
+      background-color: gainsboro; }
+    div#top button i {
+      margin-left: 10px;
+      font-size: 1.2em; }
+  div#top button.generateCommunities {
+    background-color: #aae682;
+    float: right;
+    margin-right: 0; }
+    div#top button.generateCommunities i {
+      transition: 0.25s; }
+    div#top button.generateCommunities:hover {
+      background-color: gainsboro; }
+      div#top button.generateCommunities:hover i {
+        margin-right: -5px;
+        margin-left: 15px; }
+
+div#side {
+  top: 60px;
+  left: 0;
+  width: 350px; }
+  div#side div#evaluation {
+    border-radius: 5px;
+    background-color: #969696;
+    color: white;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 0.9em; }
+  div#side div#communities {
+    border-radius: 5px;
+    border: 1px solid #969696;
+    margin-top: 10px; }
+    div#side div#communities div.community {
+      border-bottom: 1px solid #969696; }
+      div#side div#communities div.community:last-child {
+        border-bottom: none; }
+      div#side div#communities div.community button.community-button {
+        padding: 10px;
+        border: none;
+        background: none; }
+        div#side div#communities div.community button.community-button div.community-color {
+          width: 20px;
+          height: 20px;
+          background-color: #646464;
+          display: inline-block;
+          vertical-align: middle;
+          border-radius: 50%; }
+        div#side div#communities div.community button.community-button div.community-name {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 1.2em;
+          margin-left: 10px; }
+
+div#main {
+  top: 60px;
+  left: 350px;
+  width: calc(100% - 350px); }
+
+/* General */
+select,
+button {
+  font-family: "Source Sans"; }
+
+/*# sourceMappingURL=style.css.map */
