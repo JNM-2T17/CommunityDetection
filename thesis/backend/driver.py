@@ -25,7 +25,7 @@ def lol(a, b):
 	print("HI")
 
 def start(paramVal, algoVal):
-	loader = Loader("thesis/backend/Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
+	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
 	algo = getAlgo(sim, algoVal)
 	clusterer = Clusterer(loader, algo)
