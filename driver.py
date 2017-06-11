@@ -101,7 +101,7 @@ url = "http://localhost:8000/Visualization/index.html?words=../wordCounts.json&g
 webbrowser.open(url)
 
 toSave = []
-while true:
+while True:
 	print("Please enter the number of the communitiy/ies you want to save (enter -1 to exit): ", end="")
 	i = int(input())-1
 	if i in toSave:
@@ -113,3 +113,22 @@ while true:
 		print("Invalid input")
 	else:
 		toSave.append(i)
+
+savedUsers = []
+for i in toSave:
+	currComm = communities[i]
+	for u in currComm.users:
+		currUser = u.data
+		currUser["following_ids"] = []
+		for f in u.following:
+			currUser["following_ids"].append(f)
+		currUser["tweets"] = []
+		for t in u.tweets:
+			currUser["tweets"].append(t.tweetdata)
+		savedUsers.append(currUser)
+
+with open("Demo Tweet Data/saved.json", "w") as outfile:
+	for u in savedUsers:
+		json.dump(u, outfile)
+		outfile.write("\n")
+print("Finished saving")
