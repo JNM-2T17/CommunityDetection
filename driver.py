@@ -99,3 +99,17 @@ print("Opening visualization in web browser...")
 countWords("communitytweets.json", "wordCounts.json")
 url = "http://localhost:8000/Visualization/index.html?words=../wordCounts.json&graph=../vis.json&directed=" + ("true" if paramVal != "2" else "false")
 webbrowser.open(url)
+
+toSave = []
+while true:
+	print("Please enter the number of the communitiy/ies you want to save (enter -1 to exit): ", end="")
+	i = int(input())-1
+	if i in toSave:
+		print("You've already indicated to save that community")
+	elif i==-2:
+		print("Saving communities")
+		break
+	elif i<0 or i>=len(communities):
+		print("Invalid input")
+	else:
+		toSave.append(i)
