@@ -1,12 +1,13 @@
 import json
 
 users = []
-with open("Demo Tweet Data/user_dataset.json", encoding="utf8") as f:
+dirname = "MongoDB Tweet Data/"
+with open(dirname+"user_dataset.json", encoding="utf8") as f:
 	for line in f:
 		data = json.loads(line)
 		users.append(data)
 
-with open("Demo Tweet Data/tweets.json", encoding="utf8") as f:
+with open(dirname+"tweets.json", encoding="utf8") as f:
 	for line in f:
 		data = json.loads(line)
 		uId = data["id"]
@@ -17,7 +18,7 @@ with open("Demo Tweet Data/tweets.json", encoding="utf8") as f:
 				u["tweets"] = data["tweets"]
 				break
 
-with open("Demo Tweet Data/following.json", encoding="utf8") as f:
+with open(dirname+"following.json", encoding="utf8") as f:
 	for line in f:
 		data = json.loads(line)
 		uId = data["id"]
@@ -29,7 +30,7 @@ with open("Demo Tweet Data/following.json", encoding="utf8") as f:
 				break
 
 print("Writing json...")
-with open('Demo Tweet Data/compressed.json', 'w') as outfile:
+with open(dirname+"compressed.json", "w") as outfile:
     for u in users:
     	json.dump(u, outfile)
     	outfile.write("\n")

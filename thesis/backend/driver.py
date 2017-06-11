@@ -21,9 +21,6 @@ def normalizedSimilarity(user1, user2, s):
 	sim = int(sim)
 	return int(sim/10 + 1)
 
-def lol(a, b):
-	print("HI")
-
 def start(paramVal, algoVal):
 	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
@@ -88,5 +85,3 @@ def start(paramVal, algoVal):
 	    json.dump(communityTweets, outfile)
 
 	countWords("communitytweets.json", "wordCounts.json")
-	# url = "http://localhost:8000/Visualization/index.html?words=../wordCounts.json&graph=../vis.json&directed=" + ("true" if paramVal != "2" else "false")
-	# webbrowser.open(url)	
