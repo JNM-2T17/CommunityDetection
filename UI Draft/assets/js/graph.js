@@ -13,7 +13,7 @@ var Graph = {
         var e = d.documentElement;
         var g = d.getElementsByTagName('body')[0];
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
-        Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 70;
+        Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
     
         if(graph != null && directed != null){
             //Set up the colour scale

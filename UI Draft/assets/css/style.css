@@ -77,7 +77,12 @@ div#side {
         padding: 10px;
         border: none;
         background: none;
-        width: 100%; }
+        width: 100%;
+        text-align: left;
+        box-sizing: border-box;
+        height: 42px;
+        margin-left: 0;
+        transition: 0.25s; }
         div#side div#communities div.community button.community-button div.community-color {
           width: 20px;
           height: 20px;
@@ -90,6 +95,8 @@ div#side {
           vertical-align: middle;
           font-size: 1.2em;
           margin-left: 10px; }
+        div#side div#communities div.community button.community-button:hover {
+          margin-left: 8px; }
       div#side div#communities div.community div.community-wordcloud {
         margin-left: 10px;
         height: 0;

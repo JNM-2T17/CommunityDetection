@@ -14,7 +14,7 @@
 //         allCommunityWords = jsonfile;
 
 //         if(done){
-//         	initializeVis(allCommunityWords, graphData, true);
+//         	UI.initializeVis(allCommunityWords, graphData, true);
 //         }
 //         else{
 //         	done = true;
@@ -27,7 +27,7 @@
 //         graphData = jsonfile;
 
 //         if(done){
-//         	initializeVis(allCommunityWords, graphData, true);
+//         	UI.initializeVis(allCommunityWords, graphData, true);
 //         }
 //         else{
 //         	done = true;
@@ -86,5 +86,5 @@ var UI = {
 				}, 1000);
 			}
 		});
-	};
+	}
 }
