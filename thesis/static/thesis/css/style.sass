@@ -1,0 +1,161 @@
+$font-main: "Source Sans"
+
+$height-top: 60px
+$width-side: 350px
+
+$color-neutral: rgb(150,150,150)
+$color-green: rgb(170,230,130)
+$color-hover: rgb(220,220,220)
+$color-border: transparent
+
+$bgColor-top: rgb(30,30,30)
+
+$textColor-top: rgb(255,255,255)
+
+@font-face
+	font-family: "Source Sans"
+	src: url(../fonts/SourceSansPro-Regular.ttf)
+
+body
+	line-height: 1.5em
+
+div#top,
+div#side,
+div#main
+	position: absolute
+	box-sizing: border-box
+	padding: 10px
+	clear: both
+	font-family: $font-main
+
+div#top
+	top: 0
+	left: 0
+	height: $height-top
+	width: 100%
+	background-color: $bgColor-top
+
+	button,
+	select
+		height: 100%
+		border-radius: 5px
+		background-color: rgb(255,255,255)
+		border: 1px solid $color-border
+		font-size: 0.9em
+		padding: 0 12px
+		margin-right: 5px
+		vertical-align: top
+
+	select
+		min-width: 250px
+
+	button
+		background-color: $color-neutral
+		transition: 0.25s
+		border: none
+
+		&:hover
+			background-color: $color-hover
+
+		i
+			margin-left: 10px
+			font-size: 1.2em
+
+	button.generateCommunities
+		background-color: $color-green
+		float: right
+		margin-right: 0
+
+		i
+			transition: 0.25s
+
+		&:hover
+			background-color: $color-hover
+
+			i
+				margin-right: -5px
+				margin-left: 15px
+
+div#side
+	top: $height-top
+	left: 0
+	width: $width-side
+
+	div#evaluation
+		border-radius: 5px
+		background-color: $color-neutral
+		color: $textColor-top
+		box-sizing: border-box
+		padding: 10px
+		font-size: 0.9em
+		display: none
+
+	div#communities
+		border-radius: 5px
+		border: 1px solid $color-neutral
+		margin-top: 10px
+		display: none
+
+		div.community
+			border-bottom: 1px solid $color-neutral
+
+			&:last-child
+				border-bottom: none
+
+			button.community-button
+				padding: 10px
+				border: none
+				background: none
+				width: 100%
+				text-align: left
+				box-sizing: border-box
+				height: 42px
+				margin-left: 0
+				transition: 0.25s
+
+				div.community-color
+					width: 20px
+					height: 20px
+					background-color: rgb(100,100,100)
+					display: inline-block
+					vertical-align: middle
+					border-radius: 50%
+
+				div.community-name
+					display: inline-block
+					vertical-align: middle
+					font-size: 1.2em
+					margin-left: 10px
+
+				&:hover
+					margin-left: 8px
+
+			div.community-wordcloud
+				margin-left: 10px
+				height: 0
+				overflow: hidden
+
+div#main
+	top: $height-top
+	left: $width-side
+	width: calc(100% - 350px) /* manual width-side */
+
+/* General */
+
+select,
+button
+	font-family: $font-main
+
+/* Graph */
+
+.node
+	stroke: #fff
+	stroke-width: 1.5px
+
+.link
+	stroke: rgb(100,100,100)
+	stroke-opacity: .6
+
+.blendCircle
+	mix-blend-mode: multiply
+

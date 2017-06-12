@@ -18,7 +18,7 @@ def vis(request):
 		'word_cloud': word_cloud,
 		'graph': graph
 	}
-	return render(request, 'thesis/vis.html', context)
+	return render(request, 'thesis/index.html', context)
 
 def run(request):
 	paramVal = request.POST['param']

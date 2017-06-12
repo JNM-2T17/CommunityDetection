@@ -1,17 +1,64 @@
-<form action="{% url 'thesis:run_algo' %}" method="post">
-	{% csrf_token %}
-	Algorithm: 
-	<select name="algo">
-		<option value="1">K-Means</option>
-		<option value="2">Divisive HC</option>
-	</select>
-	<br/>
-	Parameter:
-	<select name="param">
-		<option value="1">Following</option>
-		<option value="2">Hashtags</option>
-		<option value="3">Retweets</option>
-	</select>
-	<br/>
-	<input type="submit"/>
-</form>
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Community Detection</title>
+		<link rel="stylesheet" href="{% static 'thesis/font-awesome-4.7.0/css/font-awesome.min.css' %}" type="text/css"/>
+		<link rel="stylesheet" href="{% static 'thesis/css/style.css' %}" type="text/css"/>
+		<script src="{% static 'thesis/js/jquery-3.1.1.min.js' %}" type="text/javascript"></script>
+		<script src="{% static 'thesis/js/ui.js' %}"></script>
+		<script src="{% static 'thesis/js/wordcloud.js' %}"></script>
+		<script src="{% static 'thesis/js/graph.js' %}"></script>
+		<script src="{% static 'thesis/js/d3.min.js' %}"></script>
+		<script src="{% static 'thesis/node_modules/d3/d3.min.js' %}"></script>
+        <script src="{% static 'thesis/node_modules/d3-cloud/build/d3.layout.cloud.js' %}"></script>
+        <script src="{% static 'thesis/node_modules/lodash/lodash.min.js' %}"></script>
+        {% if word_cloud %}
+        <script>
+        	UI.initializeVis({{ word_cloud|safe }}, {{ graph|safe }});
+        </script>
+        {% endif %}
+	</head>
+
+	<body>
+		<div id="top">
+			<form action="{% url 'thesis:run_algo' %}" method="post">
+				{% csrf_token %}
+				<select>
+					<option value="" disabled selected>Choose Users & Tweets File</option>
+				</select>
+				<select name="algo">
+					<option value="0" disabled selected>Choose Algorithm</option>
+					<option value="1">K-Means</option>
+					<option value="2">Divisive HC</option>
+				</select>
+				<select name="param">
+					<option value="0" disabled selected>Choose Parameter</option>
+					<option value="1">Following</option>
+					<option value="2">Hashtags</option>
+					<option value="3">Retweets</option>
+				</select>
+				<button class="generateCommunities" tpye="submit">Generate Communities <i class="fa fa-arrow-right"></i></button>
+			</form>
+		</div>
+
+		<div id="side">
+			<div id="evaluation">
+				<b>Modularity:</b> ?<br/>
+				<b>DBI:</b> ?
+			</div>
+
+			<div id="communities">
+			</div>
+		</div>
+
+		<div id="main">
+			<div id="graph">
+			</div>
+		</div>
+	</body>
+
+</html>
