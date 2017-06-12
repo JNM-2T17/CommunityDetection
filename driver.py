@@ -13,7 +13,8 @@ def getAlgo(sim, algoVal):
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
 						else Hashtags() if paramVal == "2" 
-						else Retweets())
+						else Retweets() if paramVal == "3"
+						else Mentions())
 
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
@@ -31,6 +32,8 @@ print("Input parameter:")
 print("1- Following")
 print("2- Hashtags")
 print("3- Retweets")
+print("4- Mentions")
+
 paramVal = input()
 print()
 loader = Loader("Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
