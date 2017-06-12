@@ -18,7 +18,9 @@
         <script src="{% static 'thesis/node_modules/lodash/lodash.min.js' %}"></script>
         {% if word_cloud %}
         <script>
-        	UI.initializeVis({{ word_cloud|safe }}, {{ graph|safe }});
+        	$(document).ready(function(){
+        		UI.initializeVis({{ word_cloud|safe }}, {{ graph|safe }});
+        	});
         </script>
         {% endif %}
 	</head>
