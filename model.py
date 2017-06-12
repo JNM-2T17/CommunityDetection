@@ -23,6 +23,7 @@ class User:
 		self.tweets = []
 		self.hashtags = {}
 		self.retweets = {}
+		self.mentions = {}
 		self.outgoingEdges = {}
 		self.incomingEdges = {}
 
