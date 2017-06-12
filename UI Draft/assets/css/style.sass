@@ -47,7 +47,7 @@ div#top
 		vertical-align: top
 
 	select
-		min-width: 300px
+		min-width: 250px
 
 	button
 		background-color: $color-neutral
@@ -88,11 +88,13 @@ div#side
 		box-sizing: border-box
 		padding: 10px
 		font-size: 0.9em
+		display: none
 
 	div#communities
 		border-radius: 5px
 		border: 1px solid $color-neutral
 		margin-top: 10px
+		display: none
 
 		div.community
 			border-bottom: 1px solid $color-neutral
@@ -104,6 +106,7 @@ div#side
 				padding: 10px
 				border: none
 				background: none
+				width: 100%
 
 				div.community-color
 					width: 20px
@@ -119,6 +122,11 @@ div#side
 					font-size: 1.2em
 					margin-left: 10px
 
+			div.community-wordcloud
+				margin-left: 10px
+				height: 0
+				overflow: hidden
+
 div#main
 	top: $height-top
 	left: $width-side
@@ -130,4 +138,16 @@ select,
 button
 	font-family: $font-main
 
+/* Graph */
+
+.node
+	stroke: #fff
+	stroke-width: 1.5px
+
+.link
+	stroke: rgb(100,100,100)
+	stroke-opacity: .6
+
+.blendCircle
+	mix-blend-mode: multiply
 

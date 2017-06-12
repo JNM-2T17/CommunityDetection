@@ -30,7 +30,7 @@ div#top {
     margin-right: 5px;
     vertical-align: top; }
   div#top select {
-    min-width: 300px; }
+    min-width: 250px; }
   div#top button {
     background-color: #969696;
     transition: 0.25s;
@@ -62,11 +62,13 @@ div#side {
     color: white;
     box-sizing: border-box;
     padding: 10px;
-    font-size: 0.9em; }
+    font-size: 0.9em;
+    display: none; }
   div#side div#communities {
     border-radius: 5px;
     border: 1px solid #969696;
-    margin-top: 10px; }
+    margin-top: 10px;
+    display: none; }
     div#side div#communities div.community {
       border-bottom: 1px solid #969696; }
       div#side div#communities div.community:last-child {
@@ -74,7 +76,8 @@ div#side {
       div#side div#communities div.community button.community-button {
         padding: 10px;
         border: none;
-        background: none; }
+        background: none;
+        width: 100%; }
         div#side div#communities div.community button.community-button div.community-color {
           width: 20px;
           height: 20px;
@@ -87,6 +90,10 @@ div#side {
           vertical-align: middle;
           font-size: 1.2em;
           margin-left: 10px; }
+      div#side div#communities div.community div.community-wordcloud {
+        margin-left: 10px;
+        height: 0;
+        overflow: hidden; }
 
 div#main {
   top: 60px;
@@ -97,5 +104,17 @@ div#main {
 select,
 button {
   font-family: "Source Sans"; }
+
+/* Graph */
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px; }
+
+.link {
+  stroke: #646464;
+  stroke-opacity: 0.6; }
+
+.blendCircle {
+  mix-blend-mode: multiply; }
 
 /*# sourceMappingURL=style.css.map */

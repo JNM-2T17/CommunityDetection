@@ -6,11 +6,24 @@
 		<title>Community Detection</title>
 		<link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css" type="text/css"/>
 		<link rel="stylesheet" href="assets/css/style.css" type="text/css"/>
+		<script src="assets/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+		<script src="assets/js/ui.js"></script>
+		<script src="assets/js/wordcloud.js"></script>
+		<script src="assets/js/graph.js"></script>
+		<script src="assets/js/d3.min.js"></script>
+		<script src="assets/node_modules/d3/d3.min.js"></script>
+        <script src="assets/node_modules/d3-cloud/build/d3.layout.cloud.js"></script>
+        <script src="assets/node_modules/lodash/lodash.min.js"></script>
+        <script>
+        	UI.initializeVis({{ word_cloud|safe }}, {{ graph|safe }}, "{{ directed }}");
+        </script>
 	</head>
 
 	<body>
 		<div id="top">
-			<button class="uploadFile">Upload Users and Tweets <i class="fa fa-upload"></i></button>
+			<select>
+				<option value="" disabled selected>Choose Users & Tweets File</option>
+			</select>
 			<select>
 				<option value="" disabled selected>Choose Algorithm</option>
 			</select>
@@ -22,43 +35,17 @@
 
 		<div id="side">
 			<div id="evaluation">
-				<b>Modularity:</b> 0.47<br/>
-				<b>FPUPC:</b> 4
+				<b>Modularity:</b> ?<br/>
+				<b>DBI:</b> ?
 			</div>
 
 			<div id="communities">
-
-				<div class="community">
-					<button class="community-button">
-						<div class="community-color"></div>
-						<div class="community-name">Community 1</div>
-					</button>
-					<div class="community-wordcloud">
-					</div>
-				</div>
-
-				<div class="community">
-					<button class="community-button">
-						<div class="community-color"></div>
-						<div class="community-name">Community 2</div>
-					</button>
-					<div class="community-wordcloud">
-					</div>
-				</div>
-
-				<div class="community">
-					<button class="community-button">
-						<div class="community-color"></div>
-						<div class="community-name">Community 3</div>
-					</button>
-					<div class="community-wordcloud">
-					</div>
-				</div>
 			</div>
 		</div>
 
 		<div id="main">
-			Main
+			<div id="graph">
+			</div>
 		</div>
 	</body>
 
