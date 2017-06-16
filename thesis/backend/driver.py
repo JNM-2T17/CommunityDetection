@@ -13,7 +13,8 @@ def getAlgo(sim, algoVal):
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
 						else Hashtags() if paramVal == "2" 
-						else Retweets())
+						else Retweets() if paramVal == "3"
+ 						else Mentions())
 
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
@@ -85,3 +86,9 @@ def start(paramVal, algoVal):
 	    json.dump(communityTweets, outfile)
 
 	countWords("communitytweets.json", "wordCounts.json")
+	output = {}
+	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
+	output['algo'] = algoVal
+	output['param'] = paramVal
+
+	return output

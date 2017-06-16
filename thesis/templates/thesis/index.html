@@ -42,6 +42,7 @@
 					<option value="1">Following</option>
 					<option value="2">Hashtags</option>
 					<option value="3">Retweets</option>
+					<option value="4">Mentions</option>
 				</select>
 				<button class="generateCommunities" type="submit">Generate Communities <i class="fa fa-arrow-right"></i></button>
 			</form>
@@ -49,7 +50,11 @@
 
 		<div id="side">
 			<div id="evaluation">
-				<b>Modularity:</b> ?<br/>
+				<b>Modularity:</b> 
+				{% if request.session.output %}
+					{{ request.session.output.mod }}
+				{% endif %}
+				<br/>
 				<b>DBI:</b> ?
 			</div>
 

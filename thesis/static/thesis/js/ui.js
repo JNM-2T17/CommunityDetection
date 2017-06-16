@@ -36,7 +36,7 @@
 // }
 
 var UI = {
-	initializeVis : function(words, graph, directed){
+	initializeVis : function(words, graph){
 		// General
 
 		$("#evaluation").css("display", "block");
@@ -44,7 +44,7 @@ var UI = {
 
 		// Graph
 
-		Graph.generateGraph(graph, directed);
+		Graph.generateGraph(graph);
 
 		// Word Clouds
 

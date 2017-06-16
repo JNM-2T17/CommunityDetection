@@ -105,7 +105,7 @@ class Hashtags(Parameter):
 		return edges
 
 class Retweets(Parameter):
-	"""This class represents the hashtag similarity parameter"""
+	"""This class represents the retweeting similarity parameter"""
 
 	def __init__(self):
 		Parameter.__init__(self)
@@ -150,5 +150,54 @@ class Retweets(Parameter):
 		edges = {}
 		for u in userList:
 			if user != userList[u] and user.id in userList[u].retweets.keys():
+				edges[u] = 1
+		return edges
+
+class Mentions(Parameter):
+	"""This class represents the mentions similarity parameter"""
+
+	def __init__(self):
+		Parameter.__init__(self)
+
+	def commonMentions(self, user1, user2):
+		mentions = []
+		for r in user1.mentions:
+			if r in user2.mentions.keys():
+				mentions.append(r)
+		return mentions
+
+	"""Computes for mentions similarity
+	Parameter:
+	user1 - first user
+	user2 - second user
+	"""
+	def similarity(self,user1,user2):
+		a = len(self.commonMentions(user1, user2))
+		b1 = 0
+		if user2.id in user1.mentions:
+			b1 = user1.mentions[user2.id]
+		b2 = 0
+		if user1.id in user2.mentions:
+			b2 = user2.mentions[user1.id]
+		b = b1+b2
+		if len(user1.mentions)==0 or len(user2.mentions)==0:
+			a = 0
+			b = 0
+		else:
+			a /= math.sqrt(len(user1.mentions))*math.sqrt(len(user2.mentions))
+			b /= len(user1.mentions)*len(user2.mentions)
+		return a+b
+
+	def createOutgoingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and userList[u].id in user.mentions.keys():
+				edges[u] = 1
+		return edges
+
+	def createIncomingEdges(self, user, userList):
+		edges = {}
+		for u in userList:
+			if user != userList[u] and user.id in userList[u].mentions.keys():
 				edges[u] = 1
 		return edges
