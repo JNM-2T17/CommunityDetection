@@ -254,13 +254,20 @@ class AgglomerativeHC(Algorithm):
 				count += 1
 		return total / count
 
+	def copy(self,communities):
+		newComs = []
+		for x in communities:
+			newComs.append(Community())
+			for y in x.users:
+				newComs[-1].addUser(y)
+		return newComs
+
 	def run(self, users):
 		communities = [self.seedCommunity(x) for x in users.values()]
-		prevMod = self.parameter.modularity(communities)
-		currMod = prevMod
+		bestMod = self.parameter.modularity(communities)
+		bestCom = self.copy(communities)
 
-		while len(communities) > 1 and currMod >= prevMod:
-			prevMod = currMod
+		while len(communities) > 1:
 			max1 = max2 = -1;
 			maxSim = -1;
 			print(len(communities))
@@ -286,8 +293,12 @@ class AgglomerativeHC(Algorithm):
 
 			communities = left + right
 			currMod = self.parameter.modularity(communities)
-			print(currMod,"vs",prevMod)
+			# print(currMod,">?",bestMod)
+			if currMod > bestMod:
+				bestMod = currMod
+				bestCom = self.copy(communities)
+				# print("REPLACING")
 
-		return communities
+		return bestCom
 
 
