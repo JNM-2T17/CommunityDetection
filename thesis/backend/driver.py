@@ -83,7 +83,6 @@ def start(paramVal, algoVal):
 	for key in users:
 		curUser = users[key]
 		for e in curUser.outgoingEdges:
-			print("source", indices[curUser.id], "target", indices[e])
 			link = {}
 			link["source"] = indices[curUser.id]
 			link["target"] = indices[e]
