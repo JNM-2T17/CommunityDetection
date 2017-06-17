@@ -53,6 +53,13 @@ class Loader:
 									user.hashtags[hText] += 1
 								else:
 									user.hashtags[hText] = 1
+						if "user_mentions" in tweetdata["entities"].keys():
+							for u in tweetdata["entities"]["user_mentions"]:
+								mentionId = u["id"]
+								if mentionId in user.mentions.keys():
+									user.mentions[mentionId] += 1
+								else:
+									user.mentions[mentionId] = 1
 						if "retweeted_status" in tweetdata.keys():
 							retweetedId = tweetdata["retweeted_status"]["user"]["id"]
 							if retweetedId in user.retweets.keys():

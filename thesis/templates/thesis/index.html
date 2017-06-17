@@ -8,7 +8,7 @@
 		<title>Community Detection</title>
 		<link rel="stylesheet" href="{% static 'thesis/font-awesome-4.7.0/css/font-awesome.min.css' %}" type="text/css"/>
 		<link rel="stylesheet" href="{% static 'thesis/css/style.css' %}" type="text/css"/>
-		<script src="{% static 'thesis/js/jquery-3.1.1.min.js' %}" type="text/javascript"></script>
+		<script src="{% static 'thesis/js/jquery-3.1.1.min.js' %}"></script>
 		<script src="{% static 'thesis/js/ui.js' %}"></script>
 		<script src="{% static 'thesis/js/wordcloud.js' %}"></script>
 		<script src="{% static 'thesis/js/graph.js' %}"></script>
@@ -42,6 +42,7 @@
 					<option value="1">Following</option>
 					<option value="2">Hashtags</option>
 					<option value="3">Retweets</option>
+					<option value="4">Mentions</option>
 				</select>
 				<button class="generateCommunities" type="submit">Generate Communities <i class="fa fa-arrow-right"></i></button>
 			</form>
@@ -49,7 +50,11 @@
 
 		<div id="side">
 			<div id="evaluation">
-				<b>Modularity:</b> ?<br/>
+				<b>Modularity:</b> 
+				{% if request.session.output %}
+					{{ request.session.output.mod }}
+				{% endif %}
+				<br/>
 				<b>DBI:</b> ?
 			</div>
 

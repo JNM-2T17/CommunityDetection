@@ -23,6 +23,7 @@ class User:
 		self.tweets = []
 		self.hashtags = {}
 		self.retweets = {}
+		self.mentions = {}
 		self.outgoingEdges = {}
 		self.incomingEdges = {}
 
@@ -77,7 +78,7 @@ class Clusterer:
 				toDelete.append(i)
 		for i in toDelete:
 			del self.users[i]
-		print("Deleted", len(toDelete), " users")
+		print("Deleted", len(toDelete), "users")
 
 	"""Runs the algorithm on the users
 	"""
