@@ -36,17 +36,34 @@ def start(paramVal, algoVal):
 	data["directed"] = "false" if paramVal == "2" else "true"
 	data["nodes"] = []
 	data["links"] = []
+	data["communities"] = []
+	data["communityLinks"] = []
+	data["info"] = {"minSize" : float('Inf'), "maxSize" : 0}
 
 	communityTweets = {}
 
 	indices = {}
+	commIndices = {}
 
 	ctr = 0
+	commCtr = 0
 
 	print()
 
 	for c in communities:
 		print("Community #", commNum, "has", len(c.users), ("users" if len(c.users) > 1 else "user"))
+
+		comm = {}
+		comm["name"] = commNum
+		comm["size"] = len(c.users)
+		data["communities"].append(comm)
+
+		if data["info"]["minSize"] > comm["size"]:
+			data["info"]["minSize"] = comm["size"]
+
+		if data["info"]["maxSize"] < comm["size"]:
+			data["info"]["maxSize"] = comm["size"]
+
 		tweetString = []
 		for u in c.users:
 			# print("-", u.id)
@@ -61,16 +78,18 @@ def start(paramVal, algoVal):
 		communityTweets[commNum] = tweetString
 		commNum += 1
 
-
 	users = clusterer.users
 	for key in users:
 		curUser = users[key]
 		for e in curUser.outgoingEdges:
+			print("source", indices[curUser.id], "target", indices[e])
 			link = {}
 			link["source"] = indices[curUser.id]
 			link["target"] = indices[e]
 			link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 			data["links"].append(link)
+
+	# TODO: Actually calculate distance between communities
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())

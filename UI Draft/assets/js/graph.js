@@ -5,18 +5,16 @@ var Graph = {
     width : null,
     height : null,
     lastClicked : null,
-    minSize : 25,
-    maxSize : 100,
+    minSize : 8,
+    maxSize : 100
 
-    generateGraph : function(graph){
+    generateGraph : function(graph, directed){
         var w = window;
         var d = document;
         var e = d.documentElement;
         var g = d.getElementsByTagName('body')[0];
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
-
-        directed = graph.directed;
     
         if(graph != null && directed != null){
             //Set up the colour scale
@@ -145,23 +143,13 @@ var Graph = {
         // Do this on click of element
     },
 
-    generateCommunities : function(graph) {
+    generateCommunities : function(graph, directed) {
         var w = window;
         var d = document;
         var e = d.documentElement;
         var g = d.getElementsByTagName('body')[0];
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
-
-        console.log("1");
-
-        directed = graph.directed;
-
-        console.log("graph");
-        console.log(graph);
-
-        console.log("directed");
-        console.log(directed);
     
         if(graph != null && directed != null){
             //Set up the colour scale
@@ -174,8 +162,6 @@ var Graph = {
                     return(1/(d.value+1) * 500); 
                 })
                 .size([Graph.width, Graph.height]);
-
-             console.log("2");
 
             //Append a SVG to the body of the html page. Assign this SVG as an object to svg
             graphSVG = d3.select("#graph").append("svg")
@@ -199,22 +185,10 @@ var Graph = {
                     .style("opacity", "0.6");
             }
 
-             console.log("3");
-
-            // console.log(graph.links);
-            // console.log(graph.communityLinks);
-
             //Creates the graph data structure out of the json data
             Graph.force.nodes(graph.communities)
-                // .links(graph.communityLinks)
+                // .links(graph.links)
                 .start();
-
-            Graph.force.gravity(0);
-            // Graph.force.linkDistance(Graph.height/100);
-            // Graph.force.linkStrength(0.1);
-            Graph.force.charge(function(node) {
-               return node.graph === 0 ? -30 : -300;
-            });
 
             //Create all the line svgs but without locations yet
             // var link = graphSVG.selectAll("#graph .link")
@@ -227,31 +201,21 @@ var Graph = {
             //     // return Math.sqrt(d.value);
             // });
 
-             console.log("4");
-
             //Do the same with the circles for the nodes - no 
             var node = graphSVG.selectAll("#graph .node")
-                .data(graph.communities)
+                .data(graph.nodes)
                 .enter().append("g")
                 .attr("class", "node")
                 .call(Graph.force.drag);
 
             node.append("circle")
                 .attr("r", function(d) {
-                    return getR(d.size);
+                    return (d.size - graph.info.minSize) / (graph.info.maxSize - graph.info.minSize) * (Graph.maxSize - Graph.minSize) + Graph.minSize 
                 })
                 .style("fill", function (d) {
                     return color(d.name);
                 });
 
-            function getR(nodeSize){
-                if(graph.info.maxSize == graph.info.minSize){
-                    return Graph.maxSize;
-                }
-                else{
-                    return (nodeSize - graph.info.minSize) / (graph.info.maxSize - graph.info.minSize) * (Graph.maxSize - Graph.minSize) + Graph.minSize;
-                }
-            }
             // node.append("text")
             //       .attr("dx", 10)
             //       .attr("dy", ".35em")
@@ -272,7 +236,6 @@ var Graph = {
             //     console.log(datum); // the datum for the clicked circle
             // });
 
-
             //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
             Graph.force.on("tick", function () {
                 // link.attr("x1", function (d) {
@@ -288,10 +251,10 @@ var Graph = {
                 //     return d.target.y;
                 // });
                 d3.selectAll("#graph circle").attr("cx", function (d) {
-                    return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
+                    return d.x;
                 })
                     .attr("cy", function (d) {
-                    return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
+                    return d.y;
                 });
                 // d3.selectAll("#graph text").attr("x", function (d) {
                 //     return d.x;
