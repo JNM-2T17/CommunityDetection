@@ -56,6 +56,7 @@ def start(paramVal, algoVal):
 
 		comm = {}
 		comm["name"] = commNum
+		comm["group"] = commNum
 		comm["size"] = len(c.users)
 		data["communities"].append(comm)
 
@@ -84,10 +85,14 @@ def start(paramVal, algoVal):
 		curUser = users[key]
 		for e in curUser.outgoingEdges:
 			link = {}
-			link["source"] = indices[curUser.id]
-			link["target"] = indices[e]
+			link["source"] = curUser.id
+			link["target"] = e
 			link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 			data["links"].append(link)
+			# link["source"] = indices[curUser.id]
+			# link["target"] = indices[e]
+			# link["value"] = normalizedSimilarity(curUser, userList[e], sim)
+			# data["links"].append(link)
 
 	# TODO: Actually calculate distance between communities
 

@@ -140,18 +140,22 @@ var Graph = {
         }
     },
 
-    mouseover : function() {
-        d3.select(this).select("text").transition()
-          .style("opacity", "1");
+    mouseover : function(elem) {
+        if(elem.name >= 0){
+            d3.select(this).select("text").transition()
+              .style("opacity", "1");
+        }
     },
 
-    mouseout : function() {
-        d3.select(this).select("text").transition()
-          .style("opacity", "0");
+    mouseout : function(elem) {
+        if(elem.name >= 0){
+            d3.select(this).select("text").transition()
+              .style("opacity", "0");
+        }
     },
 
     click : function(elem) {
-        // Do this on click of element
+        console.log(elem)
     },
 
     generateCommunities : function(graph) {
@@ -183,7 +187,7 @@ var Graph = {
                 .size([Graph.width, Graph.height]);
 
             //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-            graphSVG = d3.select("#graph").append("svg")
+            var graphSVG = d3.select("#graph").append("svg")
                 .attr("width", Graph.width)
                 .attr("height", Graph.height);
 
@@ -289,7 +293,7 @@ var Graph = {
     clickGC : function(elem) {
         Graph.force.stop();
         $("#graph svg").remove();
-        Graph.generateGraph(Graph.graph);
+        Graph.generateCommunityGraph(Graph.graph, elem["group"]);
 
         $("div#options").append("<button>View All Communities</button>");
         $("div#options button").bind("click", function(){
@@ -308,11 +312,11 @@ var Graph = {
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
 
-        directed = graph.directed;
+        var directed = graph.directed;
     
         if(graph != null && directed != null){
             //Set up the colour scale
-            color = d3.scale.category20();
+            var color = d3.scale.category20();
 
             //Set up the force layout
             Graph.force = d3.layout.force()
@@ -323,7 +327,7 @@ var Graph = {
                 .size([Graph.width, Graph.height]);
 
             //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-            graphSVG = d3.select("#graph").append("svg")
+            var graphSVG = d3.select("#graph").append("svg")
                 .attr("width", Graph.width)
                 .attr("height", Graph.height);
 
@@ -344,14 +348,19 @@ var Graph = {
                     .style("opacity", "0.6");
             }
 
+            //Filters by community
+            var filteredGraph = Graph.filterByCommunity(graph, communityNum);
+
+            console.log(filteredGraph);
+
             //Creates the graph data structure out of the json data
-            Graph.force.nodes(graph.nodes)
-                .links(graph.links)
+            Graph.force.nodes(filteredGraph.nodes)
+                .links(filteredGraph.links)
                 .start();
 
             //Create all the line svgs but without locations yet
             var link = graphSVG.selectAll("#graph .link")
-                .data(graph.links)
+                .data(filteredGraph.links)
                 .enter().append("line")
                 .attr("class", "link")
                 .style("marker-end",  "url(#suit)")
@@ -360,9 +369,9 @@ var Graph = {
                 // return Math.sqrt(d.value);
             });
 
-            //Do the same with the circles for the nodes - no 
+            //Do the same with the circles for the nodes
             var node = graphSVG.selectAll("#graph .node")
-                .data(graph.nodes)
+                .data(filteredGraph.nodes)
                 .enter().append("g")
                 .attr("class", "node")
                 .call(Graph.force.drag);
@@ -370,7 +379,12 @@ var Graph = {
             node.append("circle")
                 .attr("r", 8)
                 .style("fill", function (d) {
-                return color(d.group);
+                    if(d.name >= 0){
+                        return color(d.group);
+                    }
+                    else{
+                        return "transparent";
+                    }
             });
 
             node.append("text")
@@ -421,6 +435,58 @@ var Graph = {
                 });
             });
         }
+    },
+
+    filterByCommunity : function(graph, communityNum){
+        var nodes = [];
+        var links = [];
+        var nodeMap = {}; // Map of node name to index
+        var nodeGroupMap = {}; // Map of node name to group number
+
+        for(var i = 1; i <= graph.communities.length; i++){
+            nodes.push({name: i * -1, group: i});
+        }
+
+        for(i = 0; i < graph.nodes.length; i++){
+            if(graph.nodes[i]["group"] == communityNum){
+                nodes.push(graph.nodes[i]);
+                nodeMap[graph.nodes[i]["name"]] = nodes.length - 1;
+                console.log(graph.nodes[i]["name"]);
+            }
+            nodeGroupMap[graph.nodes[i]["name"]] = graph.nodes[i]["group"];
+        }
+
+        for(i = 0; i < graph.links.length; i++){
+            if(nodeGroupMap[graph.links[i]["source"]] == communityNum
+                || nodeGroupMap[graph.links[i]["target"]] == communityNum){
+
+                if(nodeGroupMap[graph.links[i]["source"]] == communityNum){
+                    if(!(graph.links[i]["target"] in nodeMap)){
+                        nodes.push({
+                                     name  : graph.links[i]["target"],
+                                     group : nodeGroupMap[graph.links[i]["target"]]
+                                   });
+                        nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                    }
+                }
+                if(nodeGroupMap[graph.links[i]["target"]] == communityNum){
+                    if(!(graph.links[i]["source"] in nodeMap)){
+                        nodes.push({
+                                     name  : graph.links[i]["source"],
+                                     group : nodeGroupMap[graph.links[i]["source"]]
+                                   });
+                        nodeMap[graph.links[i]["source"]] = nodes.length - 1;
+                    }
+                }
+                links.push({
+                             source : nodeMap[graph.links[i]["source"]],
+                             target : nodeMap[graph.links[i]["target"]],
+                             value  : graph.links[i]["value"]
+                           });
+            }
+        }
+
+        return {nodes: nodes, links: links};
     }
 }
 
