@@ -55,7 +55,7 @@ var UI = {
 		<div class="community" data-cNum="' + i + '">\n\
 			<button class="community-button">\n\
 				<div class="community-color" style="background-color: ' + communityColors(i) + '"></div>\n\
-				<div class="community-name">Community ' + i + '</div>\n\
+				<div class="community-name">Community ' + i + ' (' + graph.communities[i-1].size + ' user/s)</div>\n\
 			</button>\n\
 			<div class="community-wordcloud">\n\
 			</div>\n\
