@@ -76,6 +76,8 @@ div#side {
     display: none; }
     div#side div#communities div.community {
       border-bottom: 1px solid #969696; }
+      div#side div#communities div.community.active {
+        background-color: gainsboro; }
       div#side div#communities div.community:last-child {
         border-bottom: none; }
       div#side div#communities div.community button.community-button {

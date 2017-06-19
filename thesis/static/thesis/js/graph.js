@@ -295,12 +295,15 @@ var Graph = {
         $("#graph svg").remove();
         Graph.generateCommunityGraph(Graph.graph, elem["group"]);
 
+        Graph.selectCommunity(elem["group"]);
+
         $("div#options").append("<button>View All Communities</button>");
         $("div#options button").bind("click", function(){
             Graph.force.stop();
             $("#graph svg").remove();
             Graph.generateCommunities(Graph.graph);
             $(this).remove();
+            Graph.selectCommunity(0);
         });
     },
 
@@ -378,12 +381,15 @@ var Graph = {
 
             node.append("circle")
                 .attr("r", 8)
-                .style("fill", function (d) {
-                    if(d.name >= 0){
-                        return color(d.group);
+                .style("fill", function (d){
+                    return color(d.group);
+                })
+                .style("display", function(d){
+                    if(d.name < 0){
+                        return "none";
                     }
                     else{
-                        return "transparent";
+                        return "default";
                     }
             });
 
@@ -487,6 +493,14 @@ var Graph = {
         }
 
         return {nodes: nodes, links: links};
+    },
+
+    selectCommunity : function(communityNum){
+        $("div.community").removeClass("active");
+
+        if(communityNum > 0){
+            $("div.community[data-cnum=" + communityNum + "]").addClass("active");
+        }
     }
 }
 
