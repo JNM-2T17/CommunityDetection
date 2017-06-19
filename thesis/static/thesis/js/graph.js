@@ -449,15 +449,17 @@ var Graph = {
         $("#graph svg").remove();
         Graph.generateNodeGraph(Graph.graph, elem.name, elem.group);
 
+        prevCommunityNum = $("div.community.active").attr("data-cnum");
+
         Graph.selectCommunity(0);
 
-        $("div#options").append("<button class='viewCommunityButton'>View Community " + elem.group + "</button>");
+        $("div#options").append("<button class='viewCommunityButton'>Back to Viewing Community " + prevCommunityNum + "</button>");
         $("div#options button.viewCommunityButton").bind("click", function(){
             Graph.force.stop();
             $("#graph svg").remove();
-            Graph.generateCommunityGraph(Graph.graph, elem.group);
+            Graph.generateCommunityGraph(Graph.graph, prevCommunityNum);
             $(this).remove();
-            Graph.selectCommunity(elem.group);
+            Graph.selectCommunity(prevCommunityNum);
         });
     },
 
