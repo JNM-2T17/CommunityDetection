@@ -1,5 +1,3 @@
-from FolderIO import FolderIO
-from JSONParser import JSONParser
 import json
 import tweepy
 
@@ -8,65 +6,42 @@ auth.set_access_token("2355697038-vbX1vt6liw7PI4DAR4tEDy3BuZpIzmgpIDUsnvi", "WHM
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+final_ids = []
+company_list = ["Atlus", "Sony", "Microsoft", "Nintendo", "Ubisoft", "Bethesda", "Naughty Dog", "Square Enix", "EA", "Kojima"]
+coeff = 1
 
-# with open('dlsu_users.json', 'w') as outfile:
-# 	for i in range(1, 11):
-# 		keyword = "DLSU"
-# 		users = api.search_users(keyword, page=i)
-# 		print(len(users))
-# 		print("Writing json...")
-# 		for u in users:
-# 			if keyword not in u.name and keyword not in u.screen_name: 
-# 				json.dump(u._json, outfile)
-# 				outfile.write("\n")
+ctr = 1
+for company in company_list: 
+	print("Crawling tweets for", company)
+	query = company+" E3 -filter:retweets -@Youtube"
+	tweet_ids = []
+	results = api.search(q=query, count=100, lang="en")
+	for r in results:
+		print(ctr, r.text)
+		ctr+=1
+		r = r._json
+		tweet_ids.append(r["id"])
+		if r["user"]["id"] not in final_ids:
+			final_ids.append(r["user"]["id"])
 
-# with open('admu_users.json', 'w') as outfile:
-# 	for i in range(1, 11):
-# 		keyword = "ADMU"
-# 		users = api.search_users(keyword, page=i)
-# 		print(len(users))
-# 		print("Writing json...")
-# 		for u in users:
-# 			if keyword not in u.name and keyword not in u.screen_name: 
-# 				json.dump(u._json, outfile)
-# 				outfile.write("\n")
+	while len(final_ids) < coeff*250:
+		results = api.search(q=query, count=100, max_id=min(tweet_ids), lang="en")
+		for r in results:
+			print(ctr, r.text)
+			ctr+=1
+			r = r._json
+			tweet_ids.append(r["id"])
+			if r["user"]["id"] not in final_ids:
+				final_ids.append(r["user"]["id"])
+			if len(final_ids)==coeff*250:
+				break
+	coeff+=1
 
-with open('up_users.json', 'w') as outfile:
-	for i in range(1, 11):
-		keyword = "Diliman"
-		users = api.search_users(keyword, page=i)
-		print(len(users))
-		print("Writing json...")
-		for u in users:
-			if keyword not in u.name and keyword not in u.screen_name: 
-				json.dump(u._json, outfile)
-				outfile.write("\n")
-
-# with open('ust_users.json', 'w') as outfile:
-# 	for i in range(1, 11):
-# 		keyword = "UST"
-# 		users = api.search_users(keyword, page=i)
-# 		print(len(users))
-# 		print("Writing json...")
-# 		for u in users:
-# 			if keyword not in u.name and keyword not in u.screen_name: 
-# 				json.dump(u._json, outfile)
-# 				outfile.write("\n")
-
-
-# ffList = []
-# ctr = 0
-# for srcId in idList:
-# 	for tgtId in idList:
-# 		if srcId != tgtId:
-# 			ctr+=1
-# 			print(ctr, "- Checking relationship between", srcId, "and", tgtId)
-# 			rel = api.show_friendship(source_id=srcId, target_id=tgtId)
-# 			src, tgt = rel
-# 			if src.following:
-# 				ffList.append([srcId, tgtId])
-# with open(dirname+"/TestFFIds.csv", 'w') as out:
-# 	wr = csv.writer(out);
-# 	for r in ffList:
-# 		wr.writerow(r)
-# print(len(ffList))
+with open('E3 Tweet Data/e3_users.json', 'w') as outfile:
+	ctr = 1
+	for currId in final_ids:
+		print("Getting user", ctr)
+		ctr+=1
+		u = api.get_user(currId)
+		json.dump(u._json, outfile)
+		outfile.write("\n")

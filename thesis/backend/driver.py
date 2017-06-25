@@ -7,13 +7,14 @@ import webbrowser
 import json
 
 def getAlgo(sim, algoVal):
-	return (KMeans(sim) if algoVal == "1" 
+	return (KMeans(sim, k=3) if algoVal == "1" 
 						else DivisiveHC(sim))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
 						else Hashtags() if paramVal == "2" 
-						else Retweets())
+						else Retweets() if paramVal == "3"
+ 						else Mentions())
 
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
@@ -22,7 +23,7 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 def start(paramVal, algoVal):
-	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
+	loader = Loader("thesis/backend/Tiny Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
 	algo = getAlgo(sim, algoVal)
 	clusterer = Clusterer(loader, algo)
@@ -36,17 +37,34 @@ def start(paramVal, algoVal):
 	data["directed"] = "false" if paramVal == "2" else "true"
 	data["nodes"] = []
 	data["links"] = []
+	data["communities"] = []
+	data["communityLinks"] = []
+	data["info"] = {"minSize" : float('Inf'), "maxSize" : 0}
 
 	communityTweets = {}
 
 	indices = {}
+	commIndices = {}
 
 	ctr = 0
+	commCtr = 0
 
 	print()
 
 	for c in communities:
 		print("Community #", commNum, "has", len(c.users), ("users" if len(c.users) > 1 else "user"))
+
+		comm = {}
+		comm["name"] = commNum
+		comm["size"] = len(c.users)
+		data["communities"].append(comm)
+
+		if data["info"]["minSize"] > comm["size"]:
+			data["info"]["minSize"] = comm["size"]
+
+		if data["info"]["maxSize"] < comm["size"]:
+			data["info"]["maxSize"] = comm["size"]
+
 		tweetString = []
 		for u in c.users:
 			# print("-", u.id)
@@ -61,7 +79,6 @@ def start(paramVal, algoVal):
 		communityTweets[commNum] = tweetString
 		commNum += 1
 
-
 	users = clusterer.users
 	for key in users:
 		curUser = users[key]
@@ -71,6 +88,8 @@ def start(paramVal, algoVal):
 			link["target"] = indices[e]
 			link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 			data["links"].append(link)
+
+	# TODO: Actually calculate distance between communities
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())
@@ -85,3 +104,9 @@ def start(paramVal, algoVal):
 	    json.dump(communityTweets, outfile)
 
 	countWords("communitytweets.json", "wordCounts.json")
+	output = {}
+	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
+	output['algo'] = algoVal
+	output['param'] = paramVal
+
+	return output

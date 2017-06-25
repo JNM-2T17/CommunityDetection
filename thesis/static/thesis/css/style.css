@@ -1,6 +1,9 @@
 @font-face {
   font-family: "Source Sans";
   src: url(../fonts/SourceSansPro-Regular.ttf); }
+@font-face {
+  font-family: "Bebas Neue";
+  src: url(../fonts/BebasNeue.otf); }
 body {
   line-height: 1.5em; }
 
@@ -19,6 +22,8 @@ div#top {
   height: 60px;
   width: 100%;
   background-color: #1e1e1e; }
+  div#top form {
+    height: 100%; }
   div#top button,
   div#top select {
     height: 100%;
@@ -67,7 +72,7 @@ div#side {
   div#side div#communities {
     border-radius: 5px;
     border: 1px solid #969696;
-    margin-top: 10px;
+    margin: 10px 0;
     display: none; }
     div#side div#communities div.community {
       border-bottom: 1px solid #969696; }
@@ -101,6 +106,17 @@ div#side {
         margin-left: 10px;
         height: 0;
         overflow: hidden; }
+  div#side div#options button {
+    width: 100%;
+    height: 100%;
+    background-color: #aae682;
+    transition: 0.25s;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 0.8em; }
+    div#side div#options button:hover {
+      background-color: gainsboro; }
 
 div#main {
   top: 60px;

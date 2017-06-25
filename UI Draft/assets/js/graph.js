@@ -5,24 +5,18 @@ var Graph = {
     width : null,
     height : null,
     lastClicked : null,
-    minSize : 25,
-    maxSize : 100,
-    graph : null,
+    minSize : 8,
+    maxSize : 100
 
-    generateGraph : function(graph){
-        console.log("Graph.generateGraph: start");
+    generateGraph : function(graph, directed){
         var w = window;
         var d = document;
         var e = d.documentElement;
         var g = d.getElementsByTagName('body')[0];
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
-
-        directed = graph.directed;
     
         if(graph != null && directed != null){
-            console.log("Graph.generateGraph: setup graph");
-
             //Set up the colour scale
             color = d3.scale.category20();
 
@@ -61,8 +55,6 @@ var Graph = {
                 .links(graph.links)
                 .start();
 
-            console.log("Graph.generateGraph: create graph links");
-
             //Create all the line svgs but without locations yet
             var link = graphSVG.selectAll("#graph .link")
                 .data(graph.links)
@@ -73,8 +65,6 @@ var Graph = {
                     return 1;
                 // return Math.sqrt(d.value);
             });
-
-            console.log("Graph.generateGraph: create graph nodes");
 
             //Do the same with the circles for the nodes - no 
             var node = graphSVG.selectAll("#graph .node")
@@ -111,7 +101,6 @@ var Graph = {
 
             //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
             Graph.force.on("tick", function () {
-                console.log("Graph.generateGraph: set coordinates");
                 link.attr("x1", function (d) {
                     return d.source.x;
                 })
@@ -154,23 +143,15 @@ var Graph = {
         // Do this on click of element
     },
 
-    generateCommunities : function(graph) {
-        console.log("Graph.generateCommunities: start");
-
+    generateCommunities : function(graph, directed) {
         var w = window;
         var d = document;
         var e = d.documentElement;
         var g = d.getElementsByTagName('body')[0];
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
-
-        directed = graph.directed;
-        Graph.graph = graph;
     
         if(graph != null && directed != null){
-
-            console.log("Graph.generateCommunities: setup graph");
-
             //Set up the colour scale
             color = d3.scale.category20();
 
@@ -204,22 +185,10 @@ var Graph = {
                     .style("opacity", "0.6");
             }
 
-            // console.log(graph.links);
-            // console.log(graph.communityLinks);
-
-            console.log("Graph.generateCommunities: creat graph structure");
-
             //Creates the graph data structure out of the json data
             Graph.force.nodes(graph.communities)
-                // .links(graph.communityLinks)
+                // .links(graph.links)
                 .start();
-
-            Graph.force.gravity(0);
-            // Graph.force.linkDistance(Graph.height/100);
-            // Graph.force.linkStrength(0.1);
-            Graph.force.charge(function(node) {
-               return node.graph === 0 ? -30 : -300;
-            });
 
             //Create all the line svgs but without locations yet
             // var link = graphSVG.selectAll("#graph .link")
@@ -232,31 +201,21 @@ var Graph = {
             //     // return Math.sqrt(d.value);
             // });
 
-            console.log("Graph.generateCommunities: create graph nodes");
-
             //Do the same with the circles for the nodes - no 
             var node = graphSVG.selectAll("#graph .node")
-                .data(graph.communities)
+                .data(graph.nodes)
                 .enter().append("g")
                 .attr("class", "node")
                 .call(Graph.force.drag);
 
             node.append("circle")
                 .attr("r", function(d) {
-                    return getR(d.size);
+                    return (d.size - graph.info.minSize) / (graph.info.maxSize - graph.info.minSize) * (Graph.maxSize - Graph.minSize) + Graph.minSize 
                 })
                 .style("fill", function (d) {
                     return color(d.name);
                 });
 
-            function getR(nodeSize){
-                if(graph.info.maxSize == graph.info.minSize){
-                    return Graph.maxSize;
-                }
-                else{
-                    return (nodeSize - graph.info.minSize) / (graph.info.maxSize - graph.info.minSize) * (Graph.maxSize - Graph.minSize) + Graph.minSize;
-                }
-            }
             // node.append("text")
             //       .attr("dx", 10)
             //       .attr("dy", ".35em")
@@ -271,122 +230,6 @@ var Graph = {
             //     .on("mouseout", Graph.mouseout)
             //     .on("click", Graph.click);
 
-            node.on('click', Graph.clickGC);
-
-            //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-            Graph.force.on("tick", function () {
-                console.log("Graph.generateCommunities: set coordinates");
-                d3.selectAll("#graph circle").attr("cx", function (d) {
-                    return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
-                })
-                    .attr("cy", function (d) {
-                    return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
-                });
-            });
-        }
-    },
-
-    clickGC : function(elem) {
-        Graph.force.stop();
-        $("#graph svg").remove();
-        Graph.generateGraph(Graph.graph);
-
-        $("div#options").append("<button>View All Communities</button>");
-        $("div#options button").bind("click", function(){
-            Graph.force.stop();
-            $("#graph svg").remove();
-            Graph.generateCommunities(Graph.graph);
-            $(this).remove();
-        });
-    },
-
-    generateCommunityGraph : function(graph, communityNum){
-        var w = window;
-        var d = document;
-        var e = d.documentElement;
-        var g = d.getElementsByTagName('body')[0];
-        Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
-        Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
-
-        directed = graph.directed;
-    
-        if(graph != null && directed != null){
-            //Set up the colour scale
-            color = d3.scale.category20();
-
-            //Set up the force layout
-            Graph.force = d3.layout.force()
-                .charge(-120)
-                .linkDistance(function(d) { 
-                    return(1/(d.value+1) * 500); 
-                })
-                .size([Graph.width, Graph.height]);
-
-            //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-            graphSVG = d3.select("#graph").append("svg")
-                .attr("width", Graph.width)
-                .attr("height", Graph.height);
-
-            if(directed == "true"){
-                graphSVG.append("defs").selectAll("#graph marker")
-                    .data(["suit", "licensing", "resolved"])
-                  .enter().append("marker")
-                    .attr("id", function(d) { return d; })
-                    .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 25)
-                    .attr("refY", 0)
-                    .attr("markerWidth", 6)
-                    .attr("markerHeight", 6)
-                    .attr("orient", "auto")
-                  .append("path")
-                    .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                    .style("stroke", "rgb(100,100,100)")
-                    .style("opacity", "0.6");
-            }
-
-            //Creates the graph data structure out of the json data
-            Graph.force.nodes(graph.nodes)
-                .links(graph.links)
-                .start();
-
-            //Create all the line svgs but without locations yet
-            var link = graphSVG.selectAll("#graph .link")
-                .data(graph.links)
-                .enter().append("line")
-                .attr("class", "link")
-                .style("marker-end",  "url(#suit)")
-                .style("stroke-width", function (d) {
-                    return 1;
-                // return Math.sqrt(d.value);
-            });
-
-            //Do the same with the circles for the nodes - no 
-            var node = graphSVG.selectAll("#graph .node")
-                .data(graph.nodes)
-                .enter().append("g")
-                .attr("class", "node")
-                .call(Graph.force.drag);
-
-            node.append("circle")
-                .attr("r", 8)
-                .style("fill", function (d) {
-                return color(d.group);
-            });
-
-            node.append("text")
-                  .attr("dx", 10)
-                  .attr("dy", ".35em")
-                  .attr("font-family", "Arial")
-                  .attr("font-size", "15px")
-                  .text(function(d) { return d.name })
-                  .style("stroke", "rgb(0,0,0)")
-                  .style("opacity", "0")
-                  .style("z-index", 2000);
-
-            node.on("mouseover", Graph.mouseover)
-                .on("mouseout", Graph.mouseout)
-                .on("click", Graph.click);
-
             // node.on('click', datum => {
             //     alert("hi");
             //     alert(datum);
@@ -395,30 +238,30 @@ var Graph = {
 
             //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
             Graph.force.on("tick", function () {
-                link.attr("x1", function (d) {
-                    return d.source.x;
-                })
-                    .attr("y1", function (d) {
-                    return d.source.y;
-                })
-                    .attr("x2", function (d) {
-                    return d.target.x;
-                })
-                    .attr("y2", function (d) {
-                    return d.target.y;
-                });
+                // link.attr("x1", function (d) {
+                //     return d.source.x;
+                // })
+                //     .attr("y1", function (d) {
+                //     return d.source.y;
+                // })
+                //     .attr("x2", function (d) {
+                //     return d.target.x;
+                // })
+                //     .attr("y2", function (d) {
+                //     return d.target.y;
+                // });
                 d3.selectAll("#graph circle").attr("cx", function (d) {
                     return d.x;
                 })
                     .attr("cy", function (d) {
                     return d.y;
                 });
-                d3.selectAll("#graph text").attr("x", function (d) {
-                    return d.x;
-                })
-                    .attr("y", function (d) {
-                    return d.y;
-                });
+                // d3.selectAll("#graph text").attr("x", function (d) {
+                //     return d.x;
+                // })
+                //     .attr("y", function (d) {
+                //     return d.y;
+                // });
             });
         }
     }

@@ -6,6 +6,7 @@ def countWords(readFile, writeFile):
 	minSize = 15
 	maxSize = 70
 
+	print("wordcloud.py: Load JSON file");
 	# Load JSON file containing tweets
 	with open(readFile, encoding="utf8") as f:
 		line = f.readline()
@@ -14,26 +15,26 @@ def countWords(readFile, writeFile):
 	cWordCounts = {}
 	cWordMinMax = {}
 
+	print("wordcloud.py: Count instances of each word per community");
 	# Count instances of each word per community
 	for key, value in data.items():
 		wordCounts = {}
 
-		words = []
-
+		print("Length", len(value))
 		for l in value:
-			words = words + l.replace('\n', ' ').split()
-
-		for w in words:
-			word = cleanWord(w)
-
-			if word in wordCounts:
-				wordCounts[word] = wordCounts[word] + 1
-			else:
-				wordCounts[word] = 1
+			l = l.replace('\n', ' ').split()
+			for word in l:
+				if word[0]!='@' and not word.startswith('http://') and not word.startswith('https://'):
+					word = cleanWord(word)
+					if word in wordCounts:
+						wordCounts[word] += 1
+					else:
+						wordCounts[word] = 1
 
 		cWordCounts[key] = wordCounts
 		cWordMinMax[key] = {"maxCount" : 1, "minCount" : float("inf")}
 
+	print("wordcloud.py: Remove common words");
 	# Remove words that are too common
 	if len(cWordCounts) > 1:
 		for key, value in cWordCounts["1"].copy().items():
@@ -43,17 +44,11 @@ def countWords(readFile, writeFile):
 				if not key in value2.keys():
 					inAllDict = False
 					break
-
 			if inAllDict:
 				for c in cWordCounts:
 					cWordCounts[c].pop(key, None)
 
-	# Remove mentions
-	for key, value in cWordCounts.items():
-		for key2, value2 in value.copy().items():
-			if key2[:1] == "@" or key2.startswith("http://") or key2.startswith("https://"):
-				cWordCounts[key].pop(key2, None)
-
+	print("wordcloud.py: Adjust size values");
 	# Adjust size values
 	for key, value in data.items():
 		for key2, value2 in cWordCounts[key].items():
@@ -68,6 +63,7 @@ def countWords(readFile, writeFile):
 			else:
 				cWordCounts[key][key2] = (value2 - 1) / (cWordMinMax[key]["maxCount"] - 1) * maxSize + minSize
 
+	print("wordcloud.py: Convert to JSON format");
 	# Convert to JSON format
 	finalCounts = {}
 
@@ -77,6 +73,7 @@ def countWords(readFile, writeFile):
 		for key2, value2 in sorted(value.items(), key=operator.itemgetter(1), reverse = True):
 			finalCounts[key].append({"text": key2, "size": value2})
 
+	print("wordcloud.py: Write to file");
 	with open(writeFile, 'w') as outputFile:
 		json.dump(finalCounts, outputFile)
 

@@ -3,8 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# MongoDB Tweet Data
+# Big Tweet Data
 MongoDB\ Tweet\ Data/*.json
+thesis/backend/E3\ Tweet\ Data/*.json
 
 # C extensions
 *.so

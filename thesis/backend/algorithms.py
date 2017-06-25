@@ -108,7 +108,7 @@ class KMeans(Algorithm):
 
 							temp[ctr2] = sim
 							ctr2 += 1
-						#print(u.id,temp)
+							#print(u.id,temp)
 
 						# Once closest centroid to user is found, update lists
 						clusters[closestCentroid].append(u)
@@ -119,7 +119,7 @@ class KMeans(Algorithm):
 
 					# Check if user clusters are the same as in the previous iteration
 					for u in users.values():
-						#print(u.id,u.prevGrp,u.currGrp)
+						# print(u.id,u.prevGrp,u.currGrp)
 						if u.prevGrp != u.currGrp:
 							end = False
 						u.prevGrp = u.currGrp

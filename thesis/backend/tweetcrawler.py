@@ -6,7 +6,7 @@ auth.set_access_token("2355697038-vbX1vt6liw7PI4DAR4tEDy3BuZpIzmgpIDUsnvi", "WHM
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-dirname = "C:/Users/Marc/Documents/CommunityDetection/Demo Tweet Data/"
+dirname = "E3 Tweet Data/"
 userIdFilename = "user_dataset.json"
 
 idList = []
@@ -19,23 +19,20 @@ with open(dirname+userIdFilename, encoding="utf8") as f:
 		idList.append(id)
 print("Imported", len(idList), "ids")
 
-data = []
-ctr = 0
-for srcId in idList:
-	ctr+=1
-	entry = {}
-	entry["id"] = srcId
-	try:
-		print(ctr, " - Reading", srcId, "'s tweets")
-		tweets = api.user_timeline(id=srcId, count=100, include_entities=True)
-		entry["tweets"] = []
-		for x in tweets:
-			entry["tweets"].append(x._json)	
-		data.append(entry)
-	except Exception as e:
-		print("{}".format(e))
-
 with open(dirname+"tweets.json", 'w') as out:
-	for entry in data:
-		json.dump(entry, out)
-		out.write("\n")
+	ctr = 0
+	for srcId in idList:
+		ctr+=1
+		entry = {}
+		entry["id"] = srcId
+		try:
+			print(ctr, "- Reading", srcId, "'s tweets")
+			tweets = api.user_timeline(id=srcId, count=200, include_entities=True)
+			entry["tweets"] = []
+			for x in tweets:
+				entry["tweets"].append(x._json)	
+			json.dump(entry, out)
+			out.write("\n")
+		except Exception as e:
+			print("{}".format(e))
+

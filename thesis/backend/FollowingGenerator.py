@@ -6,7 +6,7 @@ auth.set_access_token("2355697038-vbX1vt6liw7PI4DAR4tEDy3BuZpIzmgpIDUsnvi", "WHM
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-dirname = "C:/Users/Marc/Documents/CommunityDetection/Demo Tweet Data/"
+dirname = "E3 Tweet Data/"
 userIdFilename = "user_dataset.json"
 
 idList = []
@@ -19,24 +19,21 @@ with open(dirname+userIdFilename, encoding="utf8") as f:
 		idList.append(id)
 print("Imported", len(idList), "ids")
 
-data = []
-ctr = 0
-for srcId in idList:
-	ctr+=1
-	entry = {}
-	entry["id"] = srcId
-	entry["following_ids"] = []
-	try:
-		print(ctr, " - Reading", srcId, "'s friends")
-		friends = api.friends_ids(id=srcId)
-		for tgtId in idList:
-			if tgtId in friends:
-				entry["following_ids"].append(tgtId)
-	except Exception as e:
-		print("{}".format(e))
-	data.append(entry)
-
 with open(dirname+"following.json", 'w') as out:
-	for entry in data:
-		json.dump(entry, out)
-		out.write("\n")
+	ctr = 0
+	for srcId in idList:
+		ctr+=1
+		entry = {}
+		entry["id"] = srcId
+		try:
+			friends = api.friends_ids(id=srcId)
+			print(ctr, "- Reading", srcId, "'s friends. Found", len(friends))
+			entry["following_ids"] = []
+			for tgtId in idList:
+				if tgtId in friends:
+					entry["following_ids"].append(tgtId)
+			json.dump(entry, out)
+			out.write("\n")
+		except Exception as e:
+			print("{}".format(e))
+		
