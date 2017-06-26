@@ -8,6 +8,7 @@ var Graph = {
     minSize : 25,
     maxSize : 100,
     graph : null,
+    nodeGroupMap : {}, // Map of node name to group number
 
     generateGraph : function(graph){
         console.log("Graph.generateGraph: start");
@@ -140,18 +141,23 @@ var Graph = {
         }
     },
 
-    mouseover : function() {
-        d3.select(this).select("text").transition()
-          .style("opacity", "1");
+    mouseover : function(elem) {
+        if(elem.name >= 0){
+            d3.select(this).select("text").transition()
+              .style("opacity", "1");
+        }
     },
 
-    mouseout : function() {
-        d3.select(this).select("text").transition()
-          .style("opacity", "0");
+    mouseout : function(elem) {
+        if(elem.name >= 0){
+            d3.select(this).select("text").transition()
+              .style("opacity", "0");
+        }
     },
 
     click : function(elem) {
         // Do this on click of element
+        console.log(elem)
     },
 
     generateCommunities : function(graph) {
@@ -183,7 +189,7 @@ var Graph = {
                 .size([Graph.width, Graph.height]);
 
             //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-            graphSVG = d3.select("#graph").append("svg")
+            var graphSVG = d3.select("#graph").append("svg")
                 .attr("width", Graph.width)
                 .attr("height", Graph.height);
 
@@ -289,6 +295,7 @@ var Graph = {
     clickGC : function(elem) {
         Graph.force.stop();
         $("#graph svg").remove();
+<<<<<<< HEAD
         Graph.generateGraph(Graph.graph);
 
         $("div#options").append("<button>View All Communities</button>");
@@ -297,6 +304,19 @@ var Graph = {
             $("#graph svg").remove();
             Graph.generateCommunities(Graph.graph);
             $(this).remove();
+=======
+        Graph.generateCommunityGraph(Graph.graph, elem["group"]);
+
+        Graph.selectCommunity(elem["group"]);
+
+        $("div#options").append("<button class='viewAllButton'>View All Communities</button>");
+        $("div#options button.viewAllButton").bind("click", function(){
+            Graph.force.stop();
+            $("#graph svg").remove();
+            Graph.generateCommunities(Graph.graph);
+            $("div#options button").remove();
+            Graph.selectCommunity(0);
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
         });
     },
 
@@ -308,11 +328,19 @@ var Graph = {
         Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
 
+<<<<<<< HEAD
         directed = graph.directed;
     
         if(graph != null && directed != null){
             //Set up the colour scale
             color = d3.scale.category20();
+=======
+        var directed = graph.directed;
+    
+        if(graph != null && directed != null){
+            //Set up the colour scale
+            var color = d3.scale.category20();
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
 
             //Set up the force layout
             Graph.force = d3.layout.force()
@@ -323,7 +351,11 @@ var Graph = {
                 .size([Graph.width, Graph.height]);
 
             //Append a SVG to the body of the html page. Assign this SVG as an object to svg
+<<<<<<< HEAD
             graphSVG = d3.select("#graph").append("svg")
+=======
+            var graphSVG = d3.select("#graph").append("svg")
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
                 .attr("width", Graph.width)
                 .attr("height", Graph.height);
 
@@ -344,14 +376,29 @@ var Graph = {
                     .style("opacity", "0.6");
             }
 
+<<<<<<< HEAD
             //Creates the graph data structure out of the json data
             Graph.force.nodes(graph.nodes)
                 .links(graph.links)
+=======
+            //Filters by community
+            var filteredGraph = Graph.filterByCommunity(graph, communityNum);
+
+            console.log(filteredGraph);
+
+            //Creates the graph data structure out of the json data
+            Graph.force.nodes(filteredGraph.nodes)
+                .links(filteredGraph.links)
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
                 .start();
 
             //Create all the line svgs but without locations yet
             var link = graphSVG.selectAll("#graph .link")
+<<<<<<< HEAD
                 .data(graph.links)
+=======
+                .data(filteredGraph.links)
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
                 .enter().append("line")
                 .attr("class", "link")
                 .style("marker-end",  "url(#suit)")
@@ -360,17 +407,198 @@ var Graph = {
                 // return Math.sqrt(d.value);
             });
 
+<<<<<<< HEAD
             //Do the same with the circles for the nodes - no 
             var node = graphSVG.selectAll("#graph .node")
                 .data(graph.nodes)
+=======
+            //Do the same with the circles for the nodes
+            var node = graphSVG.selectAll("#graph .node")
+                .data(filteredGraph.nodes)
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
                 .enter().append("g")
                 .attr("class", "node")
                 .call(Graph.force.drag);
 
             node.append("circle")
                 .attr("r", 8)
+<<<<<<< HEAD
                 .style("fill", function (d) {
                 return color(d.group);
+=======
+                .style("fill", function (d){
+                    return color(d.group);
+                })
+                .style("display", function(d){
+                    if(d.name < 0){
+                        return "none";
+                    }
+                    else{
+                        return "default";
+                    }
+            });
+
+            node.append("text")
+                  .attr("dx", 10)
+                  .attr("dy", ".35em")
+                  .attr("font-family", "Arial")
+                  .attr("font-size", "15px")
+                  .text(function(d) { return d.name })
+                  .style("stroke", "rgb(0,0,0)")
+                  .style("opacity", "0")
+                  .style("z-index", 2000);
+
+            node.on("mouseover", Graph.mouseover)
+                .on("mouseout", Graph.mouseout)
+                .on("click", Graph.clickNode);
+
+            // node.on('click', datum => {
+            //     alert("hi");
+            //     alert(datum);
+            //     console.log(datum); // the datum for the clicked circle
+            // });
+
+            //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+            Graph.force.on("tick", function () {
+                link.attr("x1", function (d) {
+                    return d.source.x;
+                })
+                    .attr("y1", function (d) {
+                    return d.source.y;
+                })
+                    .attr("x2", function (d) {
+                    return d.target.x;
+                })
+                    .attr("y2", function (d) {
+                    return d.target.y;
+                });
+                d3.selectAll("#graph circle").attr("cx", function (d) {
+                    return d.x;
+                })
+                    .attr("cy", function (d) {
+                    return d.y;
+                });
+                d3.selectAll("#graph text").attr("x", function (d) {
+                    return d.x;
+                })
+                    .attr("y", function (d) {
+                    return d.y;
+                });
+            });
+        }
+    },
+
+    clickNode : function(elem) {
+        Graph.force.stop();
+        $("#graph svg").remove();
+        Graph.generateNodeGraph(Graph.graph, elem.name, elem.group);
+
+        prevCommunityNum = $("div.community.active").attr("data-cnum");
+
+        Graph.selectCommunity(0);
+
+        $("div#options").append("<button class='viewCommunityButton'>Back to Viewing Community " + prevCommunityNum + "</button>");
+        $("div#options button.viewCommunityButton").bind("click", function(){
+            Graph.force.stop();
+            $("#graph svg").remove();
+            Graph.generateCommunityGraph(Graph.graph, prevCommunityNum);
+            $(this).remove();
+            Graph.selectCommunity(prevCommunityNum);
+        });
+    },
+
+    generateNodeGraph : function(graph, nodeNum, communityNum){
+        var w = window;
+        var d = document;
+        var e = d.documentElement;
+        var g = d.getElementsByTagName('body')[0];
+        Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
+        Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
+
+        var directed = graph.directed;
+    
+        if(graph != null && directed != null){
+            //Set up the colour scale
+            var color = d3.scale.category20();
+
+            //Set up the force layout
+            Graph.force = d3.layout.force()
+                .charge(-120)
+                .linkDistance(function(d) { 
+                    return(1/(d.value+1) * 500); 
+                })
+                .size([Graph.width, Graph.height]);
+
+            //Append a SVG to the body of the html page. Assign this SVG as an object to svg
+            var graphSVG = d3.select("#graph").append("svg")
+                .attr("width", Graph.width)
+                .attr("height", Graph.height);
+
+            if(directed == "true"){
+                graphSVG.append("defs").selectAll("#graph marker")
+                    .data(["suit", "licensing", "resolved"])
+                  .enter().append("marker")
+                    .attr("id", function(d) { return d; })
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 25)
+                    .attr("refY", 0)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                  .append("path")
+                    .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+                    .style("stroke", "rgb(100,100,100)")
+                    .style("opacity", "0.6");
+            }
+
+            //Filters by community
+            var filteredGraph = Graph.filterByNode(graph, nodeNum, communityNum);
+
+            console.log(filteredGraph);
+
+            //Creates the graph data structure out of the json data
+            Graph.force.nodes(filteredGraph.nodes)
+                .links(filteredGraph.links)
+                .start();
+
+            //Create all the line svgs but without locations yet
+            var link = graphSVG.selectAll("#graph .link")
+                .data(filteredGraph.links)
+                .enter().append("line")
+                .attr("class", "link")
+                .style("marker-end",  "url(#suit)")
+                .style("stroke-width", function (d) {
+                    return 1;
+                // return Math.sqrt(d.value);
+            });
+
+            //Do the same with the circles for the nodes
+            var node = graphSVG.selectAll("#graph .node")
+                .data(filteredGraph.nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .call(Graph.force.drag);
+
+            node.append("circle")
+                .attr("r", function(d){
+                    if(d.name == nodeNum){
+                        return 16;
+                    }
+                    else{
+                        return 8;
+                    }
+                })
+                .style("fill", function(d){
+                    return color(d.group);
+                })
+                .style("display", function(d){
+                    if(d.name < 0){
+                        return "none";
+                    }
+                    else{
+                        return "default";
+                    }
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
             });
 
             node.append("text")
@@ -421,6 +649,113 @@ var Graph = {
                 });
             });
         }
+<<<<<<< HEAD
+=======
+    },
+
+    filterByCommunity : function(graph, communityNum){
+        var nodes = [];
+        var links = [];
+        var nodeMap = {}; // Map of node name to index
+
+        for(var i = 1; i <= graph.communities.length; i++){
+            nodes.push({name: i * -1, group: i});
+        }
+
+        for(i = 0; i < graph.nodes.length; i++){
+            if(graph.nodes[i]["group"] == communityNum){
+                nodes.push(graph.nodes[i]);
+                nodeMap[graph.nodes[i]["name"]] = nodes.length - 1;
+                console.log(graph.nodes[i]["name"]);
+            }
+            Graph.nodeGroupMap[graph.nodes[i]["name"]] = graph.nodes[i]["group"];
+        }
+
+        for(i = 0; i < graph.links.length; i++){
+            if(Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum
+                || Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum){
+
+                if(Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum){
+                    if(!(graph.links[i]["target"] in nodeMap)){
+                        nodes.push({
+                                     name  : graph.links[i]["target"],
+                                     group : Graph.nodeGroupMap[graph.links[i]["target"]]
+                                   });
+                        nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                    }
+                }
+                if(Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum){
+                    if(!(graph.links[i]["source"] in nodeMap)){
+                        nodes.push({
+                                     name  : graph.links[i]["source"],
+                                     group : Graph.nodeGroupMap[graph.links[i]["source"]]
+                                   });
+                        nodeMap[graph.links[i]["source"]] = nodes.length - 1;
+                    }
+                }
+                links.push({
+                             source : nodeMap[graph.links[i]["source"]],
+                             target : nodeMap[graph.links[i]["target"]],
+                             value  : graph.links[i]["value"]
+                           });
+            }
+        }
+
+        return {nodes: nodes, links: links};
+    },
+
+    filterByNode : function(graph, nodeNum, communityNum){
+        var nodes = [];
+        var links = [];
+        var nodeMap = {}; // Map of node name to index
+
+        for(var i = 1; i <= graph.communities.length; i++){
+            nodes.push({name: i * -1, group: i});
+        }
+
+        nodes.push({name: nodeNum, group: communityNum});
+        nodeMap[nodeNum] = nodes.length - 1;
+
+        for(i = 0; i < graph.links.length; i++){
+            if(graph.links[i]["source"] == nodeNum
+                || graph.links[i]["target"] == nodeNum){
+
+            if(graph.links[i]["source"] == nodeNum){
+                if(!(graph.links[i]["target"] in nodeMap)){
+                    nodes.push({
+                                 name  : graph.links[i]["target"],
+                                 group : Graph.nodeGroupMap[graph.links[i]["target"]]
+                               });
+                    nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                }
+            }
+            if(graph.links[i]["target"] == nodeNum){
+                if(!(graph.links[i]["source"] in nodeMap)){
+                    nodes.push({
+                                 name  : graph.links[i]["source"],
+                                 group : Graph.nodeGroupMap[graph.links[i]["source"]]
+                               });
+                    nodeMap[graph.links[i]["source"]] = nodes.length - 1;
+                }
+            }
+            links.push({
+                         source : nodeMap[graph.links[i]["source"]],
+                         target : nodeMap[graph.links[i]["target"]],
+                         value  : graph.links[i]["value"]
+                       });
+            }
+        }
+
+        return {nodes: nodes, links: links};
+    },
+
+    selectCommunity : function(communityNum){
+        $("div.community").removeClass("active");
+
+        if(communityNum > 0){
+            $("div.community[data-cnum=" + communityNum + "]").addClass("active");
+        }
+>>>>>>> f270915e8ba196ed7d2faa828885e242feebb684
     }
 }
 
