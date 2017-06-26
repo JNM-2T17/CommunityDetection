@@ -25,7 +25,8 @@ div#top {
   div#top form {
     height: 100%; }
   div#top button,
-  div#top select {
+  div#top select,
+  div#top input {
     height: 100%;
     border-radius: 5px;
     background-color: white;
@@ -33,9 +34,13 @@ div#top {
     font-size: 0.9em;
     padding: 0 12px;
     margin-right: 5px;
-    vertical-align: top; }
+    vertical-align: top;
+    box-sizing: border-box; }
   div#top select {
-    min-width: 250px; }
+    min-width: 200px; }
+  div#top input#selectK {
+    width: 7em;
+    margin-left: 5px; }
   div#top button {
     background-color: #969696;
     transition: 0.25s;
@@ -125,10 +130,31 @@ div#main {
   top: 60px;
   left: 350px;
   width: calc(100% - 350px); }
+  div#main div.communityOptions {
+    position: absolute;
+    border-radius: 5px;
+    border: 1px #969696 solid;
+    width: 200px;
+    background-color: #FFF; }
+    div#main div.communityOptions button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background-color: transparent;
+      font-size: 1em;
+      border: none;
+      border-bottom: 1px #969696 solid;
+      transition: 0.25s; }
+      div#main div.communityOptions button:last-child {
+        border-bottom: none; }
+      div#main div.communityOptions button:hover {
+        color: #969696; }
 
 /* General */
 select,
-button {
+button,
+input {
   font-family: "Source Sans"; }
 
 /* Graph */
