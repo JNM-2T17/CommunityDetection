@@ -25,7 +25,8 @@ div#top {
   div#top form {
     height: 100%; }
   div#top button,
-  div#top select {
+  div#top select,
+  div#top input {
     height: 100%;
     border-radius: 5px;
     background-color: white;
@@ -33,9 +34,13 @@ div#top {
     font-size: 0.9em;
     padding: 0 12px;
     margin-right: 5px;
-    vertical-align: top; }
+    vertical-align: top;
+    box-sizing: border-box; }
   div#top select {
-    min-width: 250px; }
+    min-width: 200px; }
+  div#top input#selectK {
+    width: 7em;
+    margin-left: 5px; }
   div#top button {
     background-color: #969696;
     transition: 0.25s;
@@ -148,7 +153,8 @@ div#main {
 
 /* General */
 select,
-button {
+button,
+input {
   font-family: "Source Sans"; }
 
 /* Graph */

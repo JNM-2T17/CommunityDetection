@@ -1,39 +1,5 @@
-// $(document).ready(function(){
-// 	$(".generateCommunities").click(function(){
-// 		loadFileData("assets/js/wordCounts.json", "assets/js/vis.json");
-// 	});
-// });
-
-
-// function loadFileData(wordFileName, visFileName){
-// 	var done = false;
-
-//     d3.json(wordFileName, function(error, jsonfile) {
-//         if (error) throw error;
-
-//         allCommunityWords = jsonfile;
-
-//         if(done){
-//         	UI.initializeVis(allCommunityWords, graphData, true);
-//         }
-//         else{
-//         	done = true;
-//         }
-//     });
-
-//     d3.json(visFileName, function(error, jsonfile) {
-//         if (error) throw error;
-
-//         graphData = jsonfile;
-
-//         if(done){
-//         	UI.initializeVis(allCommunityWords, graphData, true);
-//         }
-//         else{
-//         	done = true;
-//         }
-//     });
-// }
+var ALGO_KMEANS = 1;
+var ALGO_DHC = 2;
 
 var UI = {
 	initializeVis : function(words, graph){
@@ -41,6 +7,14 @@ var UI = {
 
 		$("#evaluation").css("display", "block");
 		$("#communities").css("display", "block");
+		$("#selectAlgorithm").change(function(){
+			if($(this).val() == ALGO_KMEANS){
+				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"1\" max=\"2500\"/>")
+			}
+			else{
+				$("#selectK").remove();
+			}
+		});
 
 		// Graph
 

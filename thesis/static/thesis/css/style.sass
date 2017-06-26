@@ -43,7 +43,8 @@ div#top
 		height: 100%
 		
 	button,
-	select
+	select,
+	input
 		height: 100%
 		border-radius: 5px
 		background-color: rgb(255,255,255)
@@ -52,9 +53,15 @@ div#top
 		padding: 0 12px
 		margin-right: 5px
 		vertical-align: top
+		box-sizing: border-box
+
 
 	select
-		min-width: 250px
+		min-width: 200px
+
+	input#selectK
+		width: 7em
+		margin-left: 5px
 
 	button
 		background-color: $color-neutral
@@ -193,7 +200,8 @@ div#main
 /* General */
 
 select,
-button
+button,
+input
 	font-family: $font-main
 
 /* Graph */
