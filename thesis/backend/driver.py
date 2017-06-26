@@ -7,7 +7,7 @@ import webbrowser
 import json
 
 def getAlgo(sim, algoVal):
-	return (KMeans(sim) if algoVal == "1" 
+	return (KMeans(sim, k=3) if algoVal == "1" 
 						else DivisiveHC(sim))
 
 def getParameter(paramVal):
@@ -93,6 +93,8 @@ def start(paramVal, algoVal):
 			# link["target"] = indices[e]
 			# link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 			# data["links"].append(link)
+
+	# TODO: Actually calculate distance between communities
 
 	# TODO: Actually calculate distance between communities
 

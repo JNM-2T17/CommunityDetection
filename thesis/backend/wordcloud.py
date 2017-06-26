@@ -20,18 +20,16 @@ def countWords(readFile, writeFile):
 	for key, value in data.items():
 		wordCounts = {}
 
-		words = []
-
+		print("Length", len(value))
 		for l in value:
-			words = words + l.replace('\n', ' ').split()
-
-		for w in words:
-			word = cleanWord(w)
-
-			if word in wordCounts:
-				wordCounts[word] = wordCounts[word] + 1
-			else:
-				wordCounts[word] = 1
+			l = l.replace('\n', ' ').split()
+			for word in l:
+				if word[0]!='@' and not word.startswith('http://') and not word.startswith('https://'):
+					word = cleanWord(word)
+					if word in wordCounts:
+						wordCounts[word] += 1
+					else:
+						wordCounts[word] = 1
 
 		cWordCounts[key] = wordCounts
 		cWordMinMax[key] = {"maxCount" : 1, "minCount" : float("inf")}
@@ -46,17 +44,9 @@ def countWords(readFile, writeFile):
 				if not key in value2.keys():
 					inAllDict = False
 					break
-
 			if inAllDict:
 				for c in cWordCounts:
 					cWordCounts[c].pop(key, None)
-
-	print("wordcloud.py: Remove mentions and links");
-	# Remove mentions and links
-	for key, value in cWordCounts.items():
-		for key2, value2 in value.copy().items():
-			if key2[:1] == "@" or key2.startswith("http://") or key2.startswith("https://"):
-				cWordCounts[key].pop(key2, None)
 
 	print("wordcloud.py: Adjust size values");
 	# Adjust size values

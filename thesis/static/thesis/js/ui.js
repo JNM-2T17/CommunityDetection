@@ -2,12 +2,8 @@ var ALGO_KMEANS = 1;
 var ALGO_DHC = 2;
 
 var UI = {
-	initializeVis : function(words, graph){
-		// General
-
-		$("#evaluation").css("display", "block");
-		$("#communities").css("display", "block");
-		$("#selectAlgorithm").change(function(){
+	initializeUI : function(){
+		$("#selectAlgorithm").bind("change", function(){
 			if($(this).val() == ALGO_KMEANS){
 				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"1\" max=\"2500\"/>")
 			}
@@ -15,6 +11,13 @@ var UI = {
 				$("#selectK").remove();
 			}
 		});
+	},
+	
+	initializeVis : function(words, graph){
+		// General
+
+		$("#evaluation").css("display", "block");
+		$("#communities").css("display", "block");
 
 		// Graph
 
@@ -23,8 +26,6 @@ var UI = {
 		// Word Clouds
 
 		var communityColors = d3.scale.category20();
-
-		
 
 		for(var i = 1; i <= Object.keys(words).length; i++){
 			var sizeLabel = "users";
