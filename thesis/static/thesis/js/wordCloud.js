@@ -1,8 +1,6 @@
 var MAX_TRIES;
 
 var WordCloud = {
-	// minfont : 25,
-	// maxfont : 50,
 	wordsWidth : 280,
 	wordsHeight : 450,
 	communities : null,
@@ -26,9 +24,9 @@ var WordCloud = {
 	    d3.layout.cloud()
 	        .size([WordCloud.wordsWidth, WordCloud.wordsHeight])
 	        .words(skillsToDraw)
-	        .rotate(/*function() {
+	        .rotate(function() {
 	            return ~(Math.random() * 2) * 90;
-	        }*/0)
+	        })
 	        .font("Bebas Neue")
 	        .fontSize(function(d) {
 	            return d.size;
@@ -83,9 +81,6 @@ var WordCloud = {
             .style("cursor", "default")
             .style("font-family", "Bebas Neue")
             .style("fill", "rgb(60,60,60)")
-            // .style("fill", function(d, i) {
-            //     return fill(i);
-            // })
             .attr("text-anchor", "middle")
             .attr("transform", function(d) {
                 return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
