@@ -310,19 +310,8 @@ var Graph = {
             console.log("Graph.CommunityNodes.nodeClick");
 
             Graph.SingleNode.generateNodeGraph(Graph.graph, elem.name, elem.group);
+            Graph.selectCommunity(0);
             Graph.changeOptions();
-
-            // prevCommunityNum = $("div.community.active").attr("data-cnum");
-
-            // Graph.selectCommunity(0);
-
-            // Graph.appendViewAllCommunities();
-            // $("div#options").append("<button class='viewCommunityButton'>Go back to viewing community " + prevCommunityNum + "</button>");
-            // $("div#options button.viewCommunityButton").bind("click", function(){
-            //     Graph.changeOptions();
-            //     Graph.CommunityNodes.generateCommunityGraph(Graph.graph, prevCommunityNum, Graph.CommunityNodes.withLinks);
-            //     Graph.selectCommunity(prevCommunityNum);
-            // });
         },
 
         filterByCommunity : function(graph, communityNum, withLinks){
