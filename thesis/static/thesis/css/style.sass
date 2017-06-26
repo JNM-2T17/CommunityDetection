@@ -166,6 +166,30 @@ div#main
 	left: $width-side
 	width: calc(100% - 350px) /* manual width-side */
 
+	div.communityOptions
+		position: absolute
+		border-radius: 5px
+		border: 1px $color-neutral solid
+		width: 200px
+		background-color: #FFF
+
+		button
+			display: block
+			width: 100%
+			text-align: center
+			padding: 10px
+			background-color: transparent
+			font-size: 1em
+			border: none
+			border-bottom: 1px $color-neutral solid
+			transition: 0.25s
+
+			&:last-child
+				border-bottom: none
+
+			&:hover
+				color: $color-neutral
+
 /* General */
 
 select,

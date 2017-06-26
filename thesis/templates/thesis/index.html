@@ -29,8 +29,7 @@
 		<div id="top">
 			<form action="{% url 'thesis:run_algo' %}" method="post">
 				{% csrf_token %}
-				<select>
-					<option value="" disabled selected>Choose Users & Tweets File</option>
+				<button>Upload Users & Tweets File</button>
 				</select>
 				<select name="algo">
 					<option value="0" disabled selected>Choose Algorithm</option>

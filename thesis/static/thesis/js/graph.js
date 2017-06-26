@@ -9,6 +9,7 @@ var Graph = {
     maxSize : 100,
     graph : null,
     nodeGroupMap : {}, // Map of node name to group number
+    withLinks : false,
 
     generateGraph : function(graph){
         console.log("Graph.generateGraph: start");
@@ -292,9 +293,37 @@ var Graph = {
     },
 
     clickGC : function(elem) {
+        console.log("clickGC");
+        $("div.communityOptions").remove();
+        $("div#main").append("\n\
+            <div class=\"communityOptions\" style=\"top: " + elem.y + "px; left: " + elem.x + "px;\">\n\
+                <button class=\"viewCommunityNodes\">View users in this community</button>\n\
+                <button class=\"viewRelatedNodes\">View users connected to and in this community</button>\n\
+            </div>");
+
+        setTimeout(function(){
+            $("div.communityOptions").remove();
+        }, 5000);
+
+        $("button.viewCommunityNodes").unbind("click");
+        $("button.viewRelatedNodes").unbind("click");
+        $("button.viewCommunityNodes").bind("click", function(){
+            console.log("viewCommunityNodes click");
+            Graph.selectCommunityOptions(elem, false);
+            $("div.communityOptions").remove();
+        });
+        $("button.viewRelatedNodes").bind("click", function(){
+            console.log("viewRelatedNodes click");
+            Graph.selectCommunityOptions(elem, true);
+            $("div.communityOptions").remove();
+        });
+    },
+
+    selectCommunityOptions : function(elem, withLinks){
+        console.log("selectCommunity");
         Graph.force.stop();
         $("#graph svg").remove();
-        Graph.generateCommunityGraph(Graph.graph, elem["group"]);
+        Graph.generateCommunityGraph(Graph.graph, elem["group"], withLinks);
 
         Graph.selectCommunity(elem["group"]);
 
@@ -308,7 +337,8 @@ var Graph = {
         });
     },
 
-    generateCommunityGraph : function(graph, communityNum){
+    generateCommunityGraph : function(graph, communityNum, withLinks){
+        console.log("generateCommunityGraph");
         var w = window;
         var d = document;
         var e = d.documentElement;
@@ -317,6 +347,7 @@ var Graph = {
         Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
 
         var directed = graph.directed;
+        Graph.withLinks = withLinks;
     
         if(graph != null && directed != null){
             //Set up the colour scale
@@ -353,7 +384,7 @@ var Graph = {
             }
 
             //Filters by community
-            var filteredGraph = Graph.filterByCommunity(graph, communityNum);
+            var filteredGraph = Graph.filterByCommunity(graph, communityNum, withLinks);
 
             console.log(filteredGraph);
 
@@ -444,7 +475,7 @@ var Graph = {
         }
     },
 
-    clickNode : function(elem) {
+    clickNode : function(elem){
         Graph.force.stop();
         $("#graph svg").remove();
         Graph.generateNodeGraph(Graph.graph, elem.name, elem.group);
@@ -457,7 +488,7 @@ var Graph = {
         $("div#options button.viewCommunityButton").bind("click", function(){
             Graph.force.stop();
             $("#graph svg").remove();
-            Graph.generateCommunityGraph(Graph.graph, prevCommunityNum);
+            Graph.generateCommunityGraph(Graph.graph, prevCommunityNum, Graph.withLinks);
             $(this).remove();
             Graph.selectCommunity(prevCommunityNum);
         });
@@ -606,7 +637,7 @@ var Graph = {
         }
     },
 
-    filterByCommunity : function(graph, communityNum){
+    filterByCommunity : function(graph, communityNum, withLinks){
         var nodes = [];
         var links = [];
         var nodeMap = {}; // Map of node name to index
@@ -628,29 +659,36 @@ var Graph = {
             if(Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum
                 || Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum){
 
-                if(Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum){
-                    if(!(graph.links[i]["target"] in nodeMap)){
-                        nodes.push({
-                                     name  : graph.links[i]["target"],
-                                     group : Graph.nodeGroupMap[graph.links[i]["target"]]
-                                   });
-                        nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                if(withLinks){
+                    if(Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum){
+                        if(!(graph.links[i]["target"] in nodeMap)){
+                            nodes.push({
+                                         name  : graph.links[i]["target"],
+                                         group : Graph.nodeGroupMap[graph.links[i]["target"]]
+                                       });
+                            nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                        }
+                    }
+                    if(Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum){
+                        if(!(graph.links[i]["source"] in nodeMap)){
+                            nodes.push({
+                                         name  : graph.links[i]["source"],
+                                         group : Graph.nodeGroupMap[graph.links[i]["source"]]
+                                       });
+                            nodeMap[graph.links[i]["source"]] = nodes.length - 1;
+                        }
                     }
                 }
-                if(Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum){
-                    if(!(graph.links[i]["source"] in nodeMap)){
-                        nodes.push({
-                                     name  : graph.links[i]["source"],
-                                     group : Graph.nodeGroupMap[graph.links[i]["source"]]
-                                   });
-                        nodeMap[graph.links[i]["source"]] = nodes.length - 1;
-                    }
+                
+                if(withLinks
+                    || (Graph.nodeGroupMap[graph.links[i]["source"]] == communityNum
+                        && Graph.nodeGroupMap[graph.links[i]["target"]] == communityNum)){
+                    links.push({
+                                 source : nodeMap[graph.links[i]["source"]],
+                                 target : nodeMap[graph.links[i]["target"]],
+                                 value  : graph.links[i]["value"]
+                               });
                 }
-                links.push({
-                             source : nodeMap[graph.links[i]["source"]],
-                             target : nodeMap[graph.links[i]["target"]],
-                             value  : graph.links[i]["value"]
-                           });
             }
         }
 
@@ -691,6 +729,7 @@ var Graph = {
                     nodeMap[graph.links[i]["source"]] = nodes.length - 1;
                 }
             }
+
             links.push({
                          source : nodeMap[graph.links[i]["source"]],
                          target : nodeMap[graph.links[i]["target"]],
@@ -708,6 +747,10 @@ var Graph = {
         if(communityNum > 0){
             $("div.community[data-cnum=" + communityNum + "]").addClass("active");
         }
+    },
+
+    hideAllExtraOptions : function(){
+        $("div.communityOptions").remove();
     }
 }
 

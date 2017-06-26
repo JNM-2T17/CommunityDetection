@@ -125,6 +125,26 @@ div#main {
   top: 60px;
   left: 350px;
   width: calc(100% - 350px); }
+  div#main div.communityOptions {
+    position: absolute;
+    border-radius: 5px;
+    border: 1px #969696 solid;
+    width: 200px;
+    background-color: #FFF; }
+    div#main div.communityOptions button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      background-color: transparent;
+      font-size: 1em;
+      border: none;
+      border-bottom: 1px #969696 solid;
+      transition: 0.25s; }
+      div#main div.communityOptions button:last-child {
+        border-bottom: none; }
+      div#main div.communityOptions button:hover {
+        color: #969696; }
 
 /* General */
 select,
