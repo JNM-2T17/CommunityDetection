@@ -44,18 +44,26 @@ var UI = {
 
 		// Graph
 
-		Graph.generateCommunities(graph);
+		Graph.Communities.generateCommunities(graph);
 
 		// Word Clouds
 
 		var communityColors = d3.scale.category20();
 
+		
+
 		for(var i = 1; i <= Object.keys(words).length; i++){
+			var sizeLabel = "users";
+
+			if(graph.communities[i-1].size == 1){
+				var sizeLabel = "user";
+			}
+
 			$("#communities").append('\n\
 		<div class="community" data-cNum="' + i + '">\n\
 			<button class="community-button">\n\
 				<div class="community-color" style="background-color: ' + communityColors(i) + '"></div>\n\
-				<div class="community-name">Community ' + i + ' (' + graph.communities[i-1].size + ' user/s)</div>\n\
+				<div class="community-name">Community ' + i + ' (' + graph.communities[i-1].size + ' ' + sizeLabel + ')</div>\n\
 			</button>\n\
 			<div class="community-wordcloud">\n\
 			</div>\n\

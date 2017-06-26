@@ -40,13 +40,13 @@ var WordCloud = {
 	            }
 	            else if (!retryCycle || retryCycle < MAX_TRIES) {
 	                // words are missing due to the random placement and limited room space
-	                console.debug('retrying');
+	                // console.debug('retrying');
 	                // try again and start counting retries
 	                WordCloud.generateCloud((retryCycle || 1) + 1);
 	            }
 	            else {
 	                // retries maxed and failed to fit all the words
-	                console.debug('gave up :(');
+	                // console.debug('gave up :(');
 	                // just draw what we have
 	                WordCloud.drawCloud(fittedSkills);
 	            }
