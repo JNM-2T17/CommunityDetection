@@ -3,8 +3,8 @@ import operator
 
 # Counts the number of words per community from a JSON file and writes to another JSON file
 def countWords(readFile, writeFile):
-	minSize = 15
-	maxSize = 70
+	minSize = 10
+	maxSize = 50
 
 	print("wordcloud.py: Load JSON file");
 	# Load JSON file containing tweets
