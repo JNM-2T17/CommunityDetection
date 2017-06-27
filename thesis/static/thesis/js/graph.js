@@ -375,7 +375,7 @@ var Graph = {
         },
 
         appendSelectNodesButton : function(){
-            $("div#main").append("<button id=\"selectNodes\">Select Nodes</button>");
+            $("div#graphOptions").append("<button id=\"selectNodes\">Select nodes</button>");
             $("button#selectNodes").bind("click", function(){
                 Graph.disableAllButtons();
                 Graph.CommunityNodes.startNodeSelection();
@@ -383,14 +383,17 @@ var Graph = {
         },
 
         appendDoneButton : function(){
-            $("button#selectNodes").remove();
-            $("div#main").append("<button id=\"finishSelection\">View Node Connections</button>");
+            $("button#cancelSelection").before("<button id=\"finishSelection\">View node connections</button>");
             $("button#finishSelection").bind("click", function(){
                 Graph.SelectedNodes.generateNodeGraph(Graph.graph, Graph.CommunityNodes.selectedNodes);
                 Graph.selectCommunity(0);
                 Graph.changeOptions();
             });
-            $("div#main").append("<button id=\"cancelSelection\">Cancel</button>");
+        },
+
+        appendCancelButton : function(){
+            $("button#selectNodes").remove();
+            $("div#graphOptions").append("<button id=\"cancelSelection\">Cancel</button>");
             $("button#cancelSelection").bind("click", function(){
                 d3.select("#graph svg").selectAll("circle")
                     .attr("r", 8)
@@ -421,9 +424,17 @@ var Graph = {
                     d3.select(this).attr("opacity", 0.7);
                     Graph.CommunityNodes.selectedNodes.push(elem);
                 }
+
+                if(Graph.CommunityNodes.selectedNodes.length > 0){
+                    $("button#finishSelection").remove();
+                    Graph.CommunityNodes.appendDoneButton();
+                }
+                else{
+                    $("button#finishSelection").remove();
+                }
             });
 
-            Graph.CommunityNodes.appendDoneButton();
+            Graph.CommunityNodes.appendCancelButton();
 
             function containsObject(obj, list) {
                 var i;
@@ -686,6 +697,8 @@ var Graph = {
         $("button#finishSelection").remove();
         $("button#cancelSelection").remove();
 
+        $("div#options button").removeAttr("disabled");
+
         if(Graph.backtrackStack.length > 1){
             console.log("Graph.changeOptions: if(Graph.backtrackStack.length > 0)");
 
@@ -787,5 +800,6 @@ var Graph = {
 
     disableAllButtons : function(){
         console.log("Graph.disableAllButtons");
+        $("div#options button").attr("disabled", "true");
     }
 }

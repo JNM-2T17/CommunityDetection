@@ -168,6 +168,10 @@ div#side
 			&:hover
 				background-color: $color-hover
 
+			&:disabled
+				background-color: $color-hover
+				color: $color-neutral
+
 div#main
 	top: $height-top
 	left: $width-side
@@ -199,6 +203,27 @@ div#main
 
 	.selectedNode
 		display: none
+
+	div#graphOptions
+		position: absolute
+		bottom: -8px
+		right: 10px
+
+		button
+			border-radius: 5px 5px 0 0
+			padding: 15px
+			font-size: 0.9em
+			background-color: #000
+			transition: 0.25s
+			vertical-align: bottom
+			margin-left: 5px
+			color: #FFF
+			border: none
+			display: inline-block
+
+			&:hover
+				color: $color-neutral
+				padding-bottom: 18px
 
 /* General */
 
