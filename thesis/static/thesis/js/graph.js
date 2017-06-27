@@ -158,6 +158,7 @@ var Graph = {
             Graph.CommunityNodes.generateCommunityGraph(Graph.graph, elem["group"], withLinks);
             Graph.selectCommunity(elem["group"]);
             Graph.changeOptions();
+            Graph.CommunityNodes.appendSelectNodesButton();
         },
     },
 
@@ -172,8 +173,6 @@ var Graph = {
 
             //Filters by community
             var filteredGraph = Graph.CommunityNodes.filterByCommunity(graph, communityNum, withLinks);
-
-            Graph.CommunityNodes.appendSelectNodesButton();
 
             Graph.currentMode = MODE_COMMUNITYNODES;
             Graph.backtrackStack.push({ mode : MODE_COMMUNITYNODES,
@@ -391,6 +390,16 @@ var Graph = {
                 Graph.SelectedNodes.generateNodeGraph(Graph.graph, Graph.CommunityNodes.selectedNodes);
                 Graph.selectCommunity(0);
                 Graph.changeOptions();
+            });
+            $("div#main").append("<button id=\"cancelSelection\">Cancel</button>");
+            $("button#cancelSelection").bind("click", function(){
+                d3.select("#graph svg").selectAll("circle")
+                    .attr("r", 8)
+                    .attr("opacity", 1);
+                Graph.changeOptions();
+                $(this).remove();
+                $("button#finishSelection").remove();
+                Graph.CommunityNodes.appendSelectNodesButton();
             });
         },
 
@@ -881,8 +890,9 @@ var Graph = {
         console.log("Graph.changeOptions");
 
         $("div#options").empty();
-        $("button.selectNodes").remove();
-        $("button.finishSelection").remove();
+        $("button#selectNodes").remove();
+        $("button#finishSelection").remove();
+        $("button#cancelSelection").remove();
 
         if(Graph.backtrackStack.length > 1){
             console.log("Graph.changeOptions: if(Graph.backtrackStack.length > 0)");
@@ -912,6 +922,7 @@ var Graph = {
                     Graph.backtrackStack.pop();
                     Graph.backtrackStack.pop();
                     Graph.changeOptions();
+                    Graph.CommunityNodes.appendSelectNodesButton();
                 });
             }
             else if(prevScreen.mode == MODE_SINGLENODE){
@@ -934,6 +945,7 @@ var Graph = {
                     Graph.CommunityNodes.generateCommunityGraph(Graph.graph, Graph.CommunityNodes.currentCommunity, false);
                     Graph.backtrackStack.pop();
                     Graph.changeOptions();
+                    Graph.CommunityNodes.appendSelectNodesButton();
                 });
             }
             else{
@@ -942,6 +954,7 @@ var Graph = {
                     Graph.CommunityNodes.generateCommunityGraph(Graph.graph, Graph.CommunityNodes.currentCommunity, true);
                     Graph.backtrackStack.pop();
                     Graph.changeOptions();
+                    Graph.CommunityNodes.appendSelectNodesButton();
                 });
             }
         }
