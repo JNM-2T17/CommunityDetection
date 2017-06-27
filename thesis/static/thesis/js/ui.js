@@ -5,7 +5,7 @@ var UI = {
 	initializeUI : function(){
 		$("#selectAlgorithm").bind("change", function(){
 			if($(this).val() == ALGO_KMEANS){
-				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
+				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"\" max=\"2500\"/>")
 			}
 			else{
 				$("#selectK").remove();

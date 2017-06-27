@@ -1,6 +1,7 @@
 var MODE_COMMUNITIES = 0;
 var MODE_COMMUNITYNODES = 1;
 var MODE_SINGLENODE = 2;
+var MODE_SELECTNODE = 3;
 
 var Graph = {
     color : null,
@@ -21,13 +22,13 @@ var Graph = {
         generateCommunities : function(graph) {
             console.log("Graph.Communities.generateCommunities");
 
+            Graph.currentMode = MODE_COMMUNITIES;
+            Graph.backtrackStack.push({mode : MODE_COMMUNITIES});
+
             if(Graph.force != null){
                 Graph.force.stop();
                 $("#graph svg").remove();
             }
-
-            Graph.currentMode = MODE_COMMUNITIES;
-            Graph.backtrackStack.push({mode : MODE_COMMUNITIES});
 
             var w = window;
             var d = document;
@@ -164,12 +165,15 @@ var Graph = {
 
         currentCommunity : 0,
         withLinks : false,
+        selectedNodes : null,
 
         generateCommunityGraph : function(graph, communityNum, withLinks){
             console.log("Graph.CommunityNodes.generateCommunityGraph");
 
-            Graph.force.stop();
-            $("#graph svg").remove();
+            //Filters by community
+            var filteredGraph = Graph.CommunityNodes.filterByCommunity(graph, communityNum, withLinks);
+
+            Graph.CommunityNodes.appendSelectNodesButton();
 
             Graph.currentMode = MODE_COMMUNITYNODES;
             Graph.backtrackStack.push({ mode : MODE_COMMUNITYNODES,
@@ -178,6 +182,9 @@ var Graph = {
                                       });
             Graph.currentCommunity = communityNum;
             Graph.CommunityNodes.withLinks = withLinks;
+
+            Graph.force.stop();
+            $("#graph svg").remove();
 
             var w = window;
             var d = document;
@@ -222,9 +229,6 @@ var Graph = {
                         .style("opacity", "0.6");
                 }
 
-                //Filters by community
-                var filteredGraph = Graph.CommunityNodes.filterByCommunity(graph, communityNum, withLinks);
-
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(filteredGraph.nodes)
                     .links(filteredGraph.links)
@@ -238,7 +242,6 @@ var Graph = {
                     .style("marker-end",  "url(#suit)")
                     .style("stroke-width", function (d) {
                         return 1;
-                    // return Math.sqrt(d.value);
                 });
 
                 //Do the same with the circles for the nodes
@@ -309,9 +312,9 @@ var Graph = {
         nodeClick : function(elem){
             console.log("Graph.CommunityNodes.nodeClick");
 
-            Graph.SingleNode.generateNodeGraph(Graph.graph, elem.name, elem.group);
-            Graph.selectCommunity(0);
-            Graph.changeOptions();
+            // Graph.SingleNode.generateNodeGraph(Graph.graph, elem.name, elem.group);
+            // Graph.selectCommunity(0);
+            // Graph.changeOptions();
         },
 
         filterByCommunity : function(graph, communityNum, withLinks){
@@ -373,6 +376,36 @@ var Graph = {
             return {nodes: nodes, links: links};
         },
 
+        appendSelectNodesButton : function(){
+            $("div#main").append("<button id=\"selectNodes\">Select Nodes</button>");
+            $("button#selectNodes").bind("click", function(){
+                Graph.disableAllButtons();
+                Graph.CommunityNodes.startNodeSelection();
+            });
+        },
+
+        appendDoneButton : function(){
+            $("button#selectNodes").remove();
+            $("div#main").append("<button id=\"finishSelection\">View Node Connections</button>");
+            $("button#finishSelection").bind("click", function(){
+                Graph.SelectedNodes.generateNodeGraph(Graph.graph, Graph.CommunityNodes.selectedNodes);
+                Graph.selectCommunity(0);
+                Graph.changeOptions();
+            });
+        },
+
+        startNodeSelection : function(){
+            Graph.CommunityNodes.selectedNodes = [];
+
+            d3.select("#graph svg").selectAll("circle").on("click", function(elem){
+                d3.select(this).attr("r", 12);
+                d3.select(this).attr("opacity", 0.7);
+                Graph.CommunityNodes.selectedNodes.push(elem);
+            });
+
+            Graph.CommunityNodes.appendDoneButton();
+        }
+
     },
 
     SingleNode : {
@@ -382,14 +415,17 @@ var Graph = {
         generateNodeGraph : function(graph, nodeNum, communityNum){
             console.log("Graph.SingleNode.generateNodeGraph");
 
-            Graph.force.stop();
-            $("#graph svg").remove();
-
             Graph.currentMode = MODE_SINGLENODE;
             Graph.backtrackStack.push({ mode : MODE_SINGLENODE,
                                         nodeNum : nodeNum,
                                         communityNum : communityNum
                                       });
+
+            //Filters by community
+            var filteredGraph = Graph.SingleNode.filterByNode(graph, nodeNum, communityNum);
+
+            Graph.force.stop();
+            $("#graph svg").remove();
 
             var w = window;
             var d = document;
@@ -433,9 +469,6 @@ var Graph = {
                         .style("stroke", "rgb(100,100,100)")
                         .style("opacity", "0.6");
                 }
-
-                //Filters by community
-                var filteredGraph = Graph.SingleNode.filterByNode(graph, nodeNum, communityNum);
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(filteredGraph.nodes)
@@ -528,9 +561,9 @@ var Graph = {
         nodeClick : function(elem){
             console.log("Graph.SingleNode.nodeClick");
 
-            Graph.SingleNode.generateNodeGraph(Graph.graph, elem.name, elem.group);
-            Graph.selectCommunity(0);
-            Graph.changeOptions();
+            // Graph.SingleNode.generateNodeGraph(Graph.graph, elem.name, elem.group);
+            // Graph.selectCommunity(0);
+            // Graph.changeOptions();
         },
 
         filterByNode : function(graph, nodeNum, communityNum){
@@ -575,6 +608,227 @@ var Graph = {
                              target : nodeMap[graph.links[i]["target"]],
                              value  : graph.links[i]["value"]
                            });
+                }
+            }
+
+            return {nodes: nodes, links: links};
+        },
+    },
+
+    SelectedNodes : {
+
+        currentNodes : [],
+
+        generateNodeGraph : function(graph, selectedNodes){
+            console.log("Graph.SelectedNodes.generateNodeGraph");
+
+            Graph.currentMode = MODE_SELECTNODE;
+            Graph.backtrackStack.push({ mode : MODE_SELECTNODE,
+                                        selectedNodes : selectedNodes
+                                      });
+
+            //Filters by community
+            var filteredGraph = Graph.SelectedNodes.filterByNode(graph, selectedNodes);
+
+            Graph.force.stop();
+            $("#graph svg").remove();
+
+            var w = window;
+            var d = document;
+            var e = d.documentElement;
+            var g = d.getElementsByTagName('body')[0];
+            Graph.width = (w.innerWidth || e.clientWidth || g.clientWidth) - 380;
+            Graph.height = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 90;
+
+            var directed = graph.directed;
+        
+            if(graph != null && directed != null){
+                //Set up the colour scale
+                var color = d3.scale.category20();
+
+                //Set up the force layout
+                Graph.force = d3.layout.force()
+                    .charge(-120)
+                    .linkDistance(function(d) { 
+                        return(1/(d.value+1) * 500); 
+                    })
+                    .size([Graph.width, Graph.height]);
+
+                //Append a SVG to the body of the html page. Assign this SVG as an object to svg
+                var graphSVG = d3.select("#graph").append("svg")
+                    .attr("width", Graph.width)
+                    .attr("height", Graph.height);
+
+                if(directed == "true"){
+                    graphSVG.append("defs").selectAll("#graph marker")
+                        .data(["suit", "licensing", "resolved"])
+                      .enter().append("marker")
+                        .attr("id", function(d) { return d; })
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 25)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                      .append("path")
+                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+                        .style("stroke", "rgb(100,100,100)")
+                        .style("opacity", "0.6");
+                }
+
+                //Creates the graph data structure out of the json data
+                Graph.force.nodes(filteredGraph.nodes)
+                    .links(filteredGraph.links)
+                    .start();
+
+                //Create all the line svgs but without locations yet
+                var link = graphSVG.selectAll("#graph .link")
+                    .data(filteredGraph.links)
+                    .enter().append("line")
+                    .attr("class", "link")
+                    .style("marker-end",  "url(#suit)")
+                    .style("stroke-width", function (d) {
+                        return 1;
+                });
+
+                //Do the same with the circles for the nodes
+                var node = graphSVG.selectAll("#graph .node")
+                    .data(filteredGraph.nodes)
+                    .enter().append("g")
+                    .attr("class", "node")
+                    .call(Graph.force.drag);
+
+                node.append("circle")
+                    .attr("r", function(d){
+                        var found = selectedNodes.some(function (n) {
+                            return n.name === d.name;
+                        });
+
+                        if(found){
+                            console.log("found: " + d.name);
+                            return 16;
+                        }
+                        else{
+                            return 8;
+                        }
+                    })
+                    .style("fill", function(d){
+                        return color(d.group);
+                    })
+                    .style("display", function(d){
+                        if(d.name < 0){
+                            return "none";
+                        }
+                        else{
+                            return "default";
+                        }
+                });
+
+                node.append("text")
+                      .attr("dx", 10)
+                      .attr("dy", ".35em")
+                      .attr("font-family", "Arial")
+                      .attr("font-size", "15px")
+                      .text(function(d) { return d.name })
+                      .style("stroke", "rgb(0,0,0)")
+                      .style("opacity", "0")
+                      .style("z-index", 2000);
+
+                node.on("mouseover", Graph.mouseover)
+                    .on("mouseout", Graph.mouseout)
+                    .on("click", Graph.SelectedNodes.nodeClick);
+
+                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+                Graph.force.on("tick", function () {
+                    link.attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                        .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                        .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                        .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+                    d3.selectAll("#graph circle").attr("cx", function (d) {
+                        return d.x;
+                    })
+                        .attr("cy", function (d) {
+                        return d.y;
+                    });
+                    d3.selectAll("#graph text").attr("x", function (d) {
+                        return d.x;
+                    })
+                        .attr("y", function (d) {
+                        return d.y;
+                    });
+                });
+            }
+        },
+
+        nodeClick : function(elem){
+            console.log("Graph.SelectedNodes.nodeClick");
+
+            // Graph.SelectedNodes.generateNodeGraph(Graph.graph, elem.name, elem.group);
+            // Graph.selectCommunity(0);
+            // Graph.changeOptions();
+        },
+
+        filterByNode : function(graph, selectedNodes){
+            console.log("Graph.SelectedNodes.filterByNode");
+            console.log(selectedNodes);
+
+            var nodes = [];
+            var links = [];
+            var nodeMap = {}; // Map of node name to index
+
+            for(var i = 1; i <= graph.communities.length; i++){
+                nodes.push({name: i * -1, group: i});
+            }
+
+            var nodeNum;
+            var communityNum;
+
+            for(var j = 0; j < selectedNodes.length; j++){
+                nodeNum = selectedNodes[j].name;
+                communityNum = selectedNodes[j].group;
+
+                if(!(nodeNum in nodeMap)){
+                    nodes.push({name: nodeNum, group: communityNum});
+                    nodeMap[nodeNum] = nodes.length - 1;
+                }
+
+                for(i = 0; i < graph.links.length; i++){
+                    if(graph.links[i]["source"] == nodeNum
+                        || graph.links[i]["target"] == nodeNum){
+
+                    if(graph.links[i]["source"] == nodeNum){
+                        if(!(graph.links[i]["target"] in nodeMap)){
+                            nodes.push({
+                                         name  : graph.links[i]["target"],
+                                         group : Graph.nodeGroupMap[graph.links[i]["target"]]
+                                       });
+                            nodeMap[graph.links[i]["target"]] = nodes.length - 1;
+                        }
+                    }
+                    if(graph.links[i]["target"] == nodeNum){
+                        if(!(graph.links[i]["source"] in nodeMap)){
+                            nodes.push({
+                                         name  : graph.links[i]["source"],
+                                         group : Graph.nodeGroupMap[graph.links[i]["source"]]
+                                       });
+                            nodeMap[graph.links[i]["source"]] = nodes.length - 1;
+                        }
+                    }
+
+                    links.push({
+                                 source : nodeMap[graph.links[i]["source"]],
+                                 target : nodeMap[graph.links[i]["target"]],
+                                 value  : graph.links[i]["value"]
+                               });
+                    }
                 }
             }
 
@@ -699,5 +953,9 @@ var Graph = {
             Graph.selectCommunity(0);
             Graph.changeOptions();
         });
+    },
+
+    disableAllButtons : function(){
+        console.log("Graph.disableAllButtons");
     }
 }

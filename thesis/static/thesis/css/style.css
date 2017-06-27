@@ -150,6 +150,8 @@ div#main {
         border-bottom: none; }
       div#main div.communityOptions button:hover {
         color: #969696; }
+  div#main .selectedNode {
+    display: none; }
 
 /* General */
 select,
