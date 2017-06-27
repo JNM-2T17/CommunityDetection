@@ -398,12 +398,35 @@ var Graph = {
             Graph.CommunityNodes.selectedNodes = [];
 
             d3.select("#graph svg").selectAll("circle").on("click", function(elem){
-                d3.select(this).attr("r", 12);
-                d3.select(this).attr("opacity", 0.7);
-                Graph.CommunityNodes.selectedNodes.push(elem);
+                if(containsObject(elem, Graph.CommunityNodes.selectedNodes)){
+                    d3.select(this).attr("r", 8);
+                    d3.select(this).attr("opacity", 1);
+                    $.each(Graph.CommunityNodes.selectedNodes, function(i){
+                        if(Graph.CommunityNodes.selectedNodes[i].name === elem.name) {
+                            Graph.CommunityNodes.selectedNodes.splice(i,1);
+                            return false;
+                        }
+                    });
+                }
+                else{
+                    d3.select(this).attr("r", 12);
+                    d3.select(this).attr("opacity", 0.7);
+                    Graph.CommunityNodes.selectedNodes.push(elem);
+                }
             });
 
             Graph.CommunityNodes.appendDoneButton();
+
+            function containsObject(obj, list) {
+                var i;
+                for (i = 0; i < list.length; i++) {
+                    if (list[i] === obj) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
     },
@@ -858,6 +881,8 @@ var Graph = {
         console.log("Graph.changeOptions");
 
         $("div#options").empty();
+        $("button.selectNodes").remove();
+        $("button.finishSelection").remove();
 
         if(Graph.backtrackStack.length > 1){
             console.log("Graph.changeOptions: if(Graph.backtrackStack.length > 0)");
