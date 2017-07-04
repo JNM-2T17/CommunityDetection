@@ -190,27 +190,27 @@ class Parameter:
 			for user in currCom.users:
 				sim = 0
 				for user2 in currCom.users:
-					sim += self.similarity(user,user2)
+					sim += 1 - self.similarity(user,user2)
 				sim /= len(currCom.users)
 				sI[i] += sim ** 2
 			sI[i] = math.sqrt(sI[i] / len(currCom.users))
 
 			for j in range(i,len(communities)):
 				if i == j:
-					mIJ[i][j] = 1
+					mIJ[i][j] = 0
 				else:
 					mIJ[i][j] = 0;
 					com2 = communities[j]
 					for user1 in currCom.users:
 						for user2 in com2.users:
-							mIJ[i][j] += self.similarity(user1,user2)
+							mIJ[i][j] += 1 - self.similarity(user1,user2)
 
 					mIJ[i][j] /= len(currCom.users) * len(com2.users)
 				mIJ[j][i] = mIJ[i][j]
 
 		print(sI)
 		print(mIJ)
-		
+
 		dbiVal = 0
 		for i in range(0,len(communities)):
 			maxM = -1;
