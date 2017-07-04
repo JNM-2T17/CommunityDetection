@@ -2,6 +2,7 @@ from model import *
 from similarity import *
 from collections import *
 import random
+import math
 
 MAX_DIST = 0
 MIN_DIST = 1
@@ -277,6 +278,8 @@ class AgglomerativeHC(Algorithm):
 						currSim = self.similarity(communities[i],communities[j])
 						if currSim > maxSim:
 							max1,max2 = i,j
+							maxSim = currSim
+
 			print("Merge %d and %d" % (max1,max2))
 			for x in communities[max2].users:
 				communities[max1].addUser(x)
@@ -332,9 +335,10 @@ class AgglomerativeSAHC(Algorithm):
 		prevCom = self.copy(communities)
 		prevMod = self.parameter.modularity(communities)
 		currMod = prevMod
+		tenth = len(communities) / 10
 
 		while len(communities) > 1:
-			temp = len(communities)
+			temp = math.ceil(len(communities) / tenth)
 			
 			prevMod = currMod
 			max1 = max2 = -1;
@@ -346,6 +350,7 @@ class AgglomerativeSAHC(Algorithm):
 						currSim = self.similarity(communities[i],communities[j])
 						if currSim > maxSim:
 							max1,max2 = i,j
+							maxSim = currSim
 			print("Merge %d and %d" % (max1,max2))
 			for x in communities[max2].users:
 				communities[max1].addUser(x)
