@@ -25,7 +25,7 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 def start(paramVal, algoVal):
-	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
+	loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
 	algo = getAlgo(sim, algoVal)
 	clusterer = Clusterer(loader, algo)
