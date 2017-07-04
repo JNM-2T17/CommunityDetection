@@ -88,6 +88,7 @@ for key in users:
 
 print("\nFinished! Generated", len(communities), "communities")
 print("Modularity:", clusterer.modularity())
+print("DBI:", clusterer.dbi())
 # print("FPUPC:", clusterer.fpupc())
 
 print("\nWriting json...")
