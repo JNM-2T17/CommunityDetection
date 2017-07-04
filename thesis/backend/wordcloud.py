@@ -82,3 +82,4 @@ def cleanWord(word):
 	word = word.lower()
 	word = word.replace('.', '').replace('!', '').replace('?', '').replace(',', '').replace('\'', '').replace('…', '').replace('"', '').replace('(', '').replace(')', '').replace('[', '').replace(']', '')
 	return word
+
