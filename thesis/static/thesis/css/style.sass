@@ -1,0 +1,247 @@
+$font-main: "Source Sans"
+
+$height-top: 60px
+$width-side: 350px
+
+$color-neutral: rgb(150,150,150)
+$color-green: rgb(170,230,130)
+$color-hover: rgb(220,220,220)
+$color-border: transparent
+
+$bgColor-top: rgb(30,30,30)
+
+$textColor-top: rgb(255,255,255)
+
+@font-face
+	font-family: "Source Sans"
+	src: url(../fonts/SourceSansPro-Regular.ttf)
+
+@font-face
+	font-family: "Bebas Neue"
+	src: url(../fonts/BebasNeue.otf)
+
+body
+	line-height: 1.5em
+
+div#top,
+div#side,
+div#main
+	position: absolute
+	box-sizing: border-box
+	padding: 10px
+	clear: both
+	font-family: $font-main
+
+div#top
+	top: 0
+	left: 0
+	height: $height-top
+	width: 100%
+	background-color: $bgColor-top
+
+	form
+		height: 100%
+		
+	button,
+	select,
+	input
+		height: 100%
+		border-radius: 5px
+		background-color: rgb(255,255,255)
+		border: 1px solid $color-border
+		font-size: 0.9em
+		padding: 0 12px
+		margin-right: 5px
+		vertical-align: top
+		box-sizing: border-box
+
+
+	select
+		min-width: 200px
+
+	input#selectK
+		width: 7em
+		margin-left: 5px
+
+	button
+		background-color: $color-neutral
+		transition: 0.25s
+		border: none
+
+		&:hover
+			background-color: $color-hover
+
+		i
+			margin-left: 10px
+			font-size: 1.2em
+
+	button.generateCommunities
+		background-color: $color-green
+		float: right
+		margin-right: 0
+
+		i
+			transition: 0.25s
+
+		&:hover
+			background-color: $color-hover
+
+			i
+				margin-right: -5px
+				margin-left: 15px
+
+div#side
+	top: $height-top
+	left: 0
+	width: $width-side
+
+	div#evaluation
+		border-radius: 5px
+		background-color: $color-neutral
+		color: $textColor-top
+		box-sizing: border-box
+		padding: 10px
+		font-size: 0.9em
+		display: none
+
+	div#communities
+		border-radius: 5px
+		border: 1px solid $color-neutral
+		margin: 10px 0
+		display: none
+
+		div.community
+			border-bottom: 1px solid $color-neutral
+
+			&.active
+				background-color: $color-hover
+
+			&:last-child
+				border-bottom: none
+
+			button.community-button
+				padding: 10px
+				border: none
+				background: none
+				width: 100%
+				text-align: left
+				box-sizing: border-box
+				height: 42px
+				margin-left: 0
+				transition: 0.25s
+
+				div.community-color
+					width: 20px
+					height: 20px
+					background-color: rgb(100,100,100)
+					display: inline-block
+					vertical-align: middle
+					border-radius: 50%
+
+				div.community-name
+					display: inline-block
+					vertical-align: middle
+					font-size: 1.2em
+					margin-left: 10px
+
+				&:hover
+					margin-left: 8px
+
+			div.community-wordcloud
+				margin-left: 10px
+				height: 0
+				overflow: hidden
+
+	div#options
+
+		button
+			width: 100%
+			height: 100%
+			background-color: $color-green
+			transition: 0.25s
+			padding: 10px
+			border-radius: 5px
+			border: none
+			font-size: 0.8em
+			margin-bottom: 10px
+
+			&:hover
+				background-color: $color-hover
+
+			&:disabled
+				background-color: $color-hover
+				color: $color-neutral
+
+div#main
+	top: $height-top
+	left: $width-side
+	width: calc(100% - 350px) /* manual width-side */
+
+	div.communityOptions
+		position: absolute
+		border-radius: 5px
+		border: 1px $color-neutral solid
+		width: 200px
+		background-color: #FFF
+
+		button
+			display: block
+			width: 100%
+			text-align: center
+			padding: 10px
+			background-color: transparent
+			font-size: 1em
+			border: none
+			border-bottom: 1px $color-neutral solid
+			transition: 0.25s
+
+			&:last-child
+				border-bottom: none
+
+			&:hover
+				color: $color-neutral
+
+	.selectedNode
+		display: none
+
+	div#graphOptions
+		position: absolute
+		bottom: -8px
+		right: 10px
+
+		button
+			border-radius: 5px 5px 0 0
+			padding: 15px
+			font-size: 0.9em
+			background-color: #000
+			transition: 0.25s
+			vertical-align: bottom
+			margin-left: 5px
+			color: #FFF
+			border: none
+			display: inline-block
+
+			&:hover
+				color: $color-neutral
+				padding-bottom: 18px
+
+/* General */
+
+select,
+button,
+input
+	font-family: $font-main
+
+/* Graph */
+
+.node
+	stroke: #fff
+	stroke-width: 1.5px
+
+.link
+	stroke: rgb(100,100,100)
+	stroke-opacity: .6
+
+.blendCircle
+	mix-blend-mode: multiply
+
