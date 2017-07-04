@@ -1,3 +1,5 @@
+import math
+
 class Tweet:
 	"""This class represents a tweet."""
 
@@ -100,6 +102,15 @@ class Clusterer:
 	def modularity(self):
 		return self.algorithm.parameter.modularity(self.communities)
 
+	"""Returns the Davies-Bouldin Index
+	Parameters:
+	communities - list of communities to evaluate
+	Returns:
+	DBI of communities
+	"""
+	def dbi(self):
+		return self.algorithm.parameter.dbi(self.communities)		
+
 class Algorithm:
 	"""This class represents an abstract algorithm"""
 
@@ -130,7 +141,7 @@ class Parameter:
 	user1 - first user
 	user2 - second user
 	"""
-	def run(self,user1,user2):
+	def similarity(self,user1,user2):
 		raise NotImplementedError
 
 	"""Returns the modularity given a list of communities
@@ -162,6 +173,54 @@ class Parameter:
 			q /= 2.0*m
 			# print("Modularity =", q)
 			return q
+
+	"""Returns the Davies-Bouldin Index
+	Parameters:
+	communities - list of communities to evaluate
+	Returns:
+	DBI of communities
+	"""
+	def dbi(self,communities):
+		sI = [0 for i in range(0,len(communities))]
+		mIJ = [[0 for i in range(0,len(communities))] for j in range(0,len(communities))]
+		
+		for i in range(0,len(communities)):
+			sI[i] = 0
+			currCom = communities[i]
+			for user in currCom.users:
+				sim = 0
+				for user2 in currCom.users:
+					sim += 1 - self.similarity(user,user2)
+				sim /= len(currCom.users)
+				sI[i] += sim ** 2
+			sI[i] = math.sqrt(sI[i] / len(currCom.users))
+
+			for j in range(i,len(communities)):
+				if i == j:
+					mIJ[i][j] = 0
+				else:
+					mIJ[i][j] = 0;
+					com2 = communities[j]
+					for user1 in currCom.users:
+						for user2 in com2.users:
+							mIJ[i][j] += 1 - self.similarity(user1,user2)
+
+					mIJ[i][j] /= len(currCom.users) * len(com2.users)
+				mIJ[j][i] = mIJ[i][j]
+
+		print(sI)
+		print(mIJ)
+
+		dbiVal = 0
+		for i in range(0,len(communities)):
+			maxM = -1;
+			for j in range(0,len(communities)):
+				if i != j:
+					r = (sI[i] + sI[j]) / mIJ[i][j]
+					if r > maxM:
+						maxM = r
+			dbiVal += maxM
+		return dbiVal / len(communities)
 
 	"""Returns the dictionary of outgoing edges {userId: weight} given a user and the list of users
 		
