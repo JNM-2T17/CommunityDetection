@@ -2,6 +2,7 @@ from model import *
 from similarity import *
 from collections import *
 import random
+import math
 
 MAX_DIST = 0
 MIN_DIST = 1
@@ -235,3 +236,151 @@ class DivisiveHC(Algorithm):
 				prevmod = mod
 
 		return current
+
+class AgglomerativeHC(Algorithm):
+	def __init__(self, parameter):
+		super(AgglomerativeHC, self).__init__(parameter)
+
+	def seedCommunity(self,user):
+		com = Community()
+		com.addUser(user)
+		return com
+
+	def similarity(self,com1,com2):
+		total = 0
+		count = 0
+		for x in com1.users:
+			for y in com2.users:
+				total += self.parameter.similarity(x,y)
+				count += 1
+		return total / count
+
+	def copy(self,communities):
+		newComs = []
+		for x in communities:
+			newComs.append(Community())
+			for y in x.users:
+				newComs[-1].addUser(y)
+		return newComs
+
+	def run(self, users):
+		communities = [self.seedCommunity(x) for x in users.values()]
+		bestMod = self.parameter.modularity(communities)
+		bestCom = self.copy(communities)
+
+		while len(communities) > 1:
+			max1 = max2 = -1;
+			maxSim = -1;
+			print(len(communities))
+			for i in range(0,len(communities)):
+				for j in range(0,len(communities)):
+					if i != j:
+						currSim = self.similarity(communities[i],communities[j])
+						if currSim > maxSim:
+							max1,max2 = i,j
+							maxSim = currSim
+
+			print("Merge %d and %d" % (max1,max2))
+			for x in communities[max2].users:
+				communities[max1].addUser(x)
+
+			if max2 < len(communities) - 1:
+				right = communities[max2+1:]
+			else:
+				right = []
+
+			if max2 > 0:
+				left = communities[:max2]
+			else:
+				left = []
+
+			communities = left + right
+			currMod = self.parameter.modularity(communities)
+			# print(currMod,">?",bestMod)
+			if currMod > bestMod:
+				bestMod = currMod
+				bestCom = self.copy(communities)
+				# print("REPLACING")
+
+		return bestCom
+
+class AgglomerativeSAHC(Algorithm):
+	def __init__(self, parameter):
+		super(AgglomerativeSAHC, self).__init__(parameter)
+
+	def seedCommunity(self,user):
+		com = Community()
+		com.addUser(user)
+		return com
+
+	def similarity(self,com1,com2):
+		total = 0
+		count = 0
+		for x in com1.users:
+			for y in com2.users:
+				total += self.parameter.similarity(x,y)
+				count += 1
+		return total / count
+
+	def copy(self,communities):
+		newComs = []
+		for x in communities:
+			newComs.append(Community())
+			for y in x.users:
+				newComs[-1].addUser(y)
+		return newComs
+
+	def run(self, users):
+		communities = [self.seedCommunity(x) for x in users.values()]
+		prevCom = self.copy(communities)
+		prevMod = self.parameter.modularity(communities)
+		currMod = prevMod
+		tenth = len(communities) / 10
+
+		while len(communities) > 1:
+			temp = math.ceil(len(communities) / tenth)
+			
+			prevMod = currMod
+			max1 = max2 = -1;
+			maxSim = -1;
+			print(len(communities))
+			for i in range(0,len(communities)):
+				for j in range(0,len(communities)):
+					if i != j:
+						currSim = self.similarity(communities[i],communities[j])
+						if currSim > maxSim:
+							max1,max2 = i,j
+							maxSim = currSim
+			print("Merge %d and %d" % (max1,max2))
+			for x in communities[max2].users:
+				communities[max1].addUser(x)
+
+			if max2 < len(communities) - 1:
+				right = communities[max2+1:]
+			else:
+				right = []
+
+			if max2 > 0:
+				left = communities[:max2]
+			else:
+				left = []
+
+			communities = left + right
+			currMod = self.parameter.modularity(communities)
+			delta = (currMod - prevMod) * 100
+			# print(currMod,">?",bestMod)
+			if delta > 0:
+				prevCom = self.copy(communities)
+				# print("REPLACING")
+			else:
+				prob = math.exp(delta/temp)
+				val = random.random()
+				if val <= prob:
+					prevCom = self.copy(communities)
+				else:
+					communities = prevCom
+					break
+
+		return communities
+
+

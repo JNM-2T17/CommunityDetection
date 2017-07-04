@@ -8,12 +8,15 @@ import json
 
 def getAlgo(sim, algoVal):
 	return (KMeans(sim) if algoVal == "1" 
-						else DivisiveHC(sim))
+						else DivisiveHC(sim) if algoVal == "2"
+						else AgglomerativeHC(sim) if algoVal == "3"
+						else AgglomerativeSAHC(sim))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
 						else Hashtags() if paramVal == "2" 
-						else Retweets())
+						else Retweets() if paramVal == "3"
+						else Mentions())
 
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
@@ -25,12 +28,16 @@ def normalizedSimilarity(user1, user2, s):
 print("Input algorithm:")
 print("1- KMeans")
 print("2- Divisive HC")
+print("3- Agglomerative HC")
+print("4- Agglomerative HC with Simulated Annealing")
 algoVal = input()
 
 print("Input parameter:")
 print("1- Following")
 print("2- Hashtags")
 print("3- Retweets")
+print("4- Mentions")
+
 paramVal = input()
 print()
 loader = Loader("Demo Tweet Data/", "user_dataset.json", "following.json", "tweets.json")
@@ -85,6 +92,7 @@ for key in users:
 
 print("\nFinished! Generated", len(communities), "communities")
 print("Modularity:", clusterer.modularity())
+print("DBI:", clusterer.dbi())
 # print("FPUPC:", clusterer.fpupc())
 
 print("\nWriting json...")
