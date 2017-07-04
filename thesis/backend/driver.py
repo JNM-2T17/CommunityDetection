@@ -8,7 +8,9 @@ import json
 
 def getAlgo(sim, algoVal):
 	return (KMeans(sim, k=3) if algoVal == "1" 
-						else DivisiveHC(sim))
+						else DivisiveHC(sim) if algoVal == "2"
+						else AgglomerativeHC(sim) if algoVal == "3"
+						else AgglomerativeSAHC(sim))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
@@ -115,5 +117,6 @@ def start(paramVal, algoVal):
 	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
 	output['algo'] = algoVal
 	output['param'] = paramVal
+	output['dbi'] = math.ceil(clusterer.dbi() * 1000) / 1000
 
 	return output

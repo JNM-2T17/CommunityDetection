@@ -37,6 +37,8 @@
 					<option value="0" disabled selected>Choose Algorithm</option>
 					<option value="1">K-Means</option>
 					<option value="2">Divisive HC</option>
+					<option value="3">Agglomerative HC</option>
+					<option value="4">Agglomerative HC with Simulated Annealing</option>
 				</select>
 				<select id="selectParameter" name="param">
 					<option value="0" disabled selected>Choose Parameter</option>
@@ -56,7 +58,10 @@
 					{{ request.session.output.mod }}
 				{% endif %}
 				<br/>
-				<b>DBI:</b> ?
+				<b>DBI:</b>
+				{% if request.session.output %}
+					{{ request.session.output.dbi }}
+				{% endif %}
 			</div>
 
 			<div id="communities">
