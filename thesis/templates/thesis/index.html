@@ -52,9 +52,15 @@
 
 		<div id="side">
 			<div id="description">
-				<b>Algorithm:</b> ?
+				<b>Algorithm:</b>
+				{% if request.session.output %}
+					{{ request.session.output.algo }}
+				{% endif %}
 				<br/>
-				<b>Similarity Parameter:</b> ?
+				<b>Similarity Parameter:</b>
+				{% if request.session.output %}
+					{{ request.session.output.param }}
+				{% endif %}
 			</div>
 			<div id="evaluation">
 				<b>Modularity:</b> 
