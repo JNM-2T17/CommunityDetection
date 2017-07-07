@@ -16,6 +16,7 @@ var UI = {
 	initializeVis : function(words, graph){
 		// General
 
+		$("#description").css("display", "block");
 		$("#evaluation").css("display", "block");
 		$("#communities").css("display", "block");
 

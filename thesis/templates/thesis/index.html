@@ -31,7 +31,6 @@
 		<div id="top">
 			<form action="{% url 'thesis:run_algo' %}" method="post">
 				{% csrf_token %}
-				<button>Upload Users & Tweets File</button>
 				</select>
 				<select id="selectAlgorithm" name="algo">
 					<option value="0" disabled selected>Choose Algorithm</option>
@@ -52,6 +51,11 @@
 		</div>
 
 		<div id="side">
+			<div id="description">
+				<b>Algorithm:</b> ?
+				<br/>
+				<b>Similarity Parameter:</b> ?
+			</div>
 			<div id="evaluation">
 				<b>Modularity:</b> 
 				{% if request.session.output %}
