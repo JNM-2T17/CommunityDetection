@@ -10,7 +10,9 @@ def getAlgo(sim, algoVal):
 	return (KMeans(sim, k=3) if algoVal == "1" 
 						else DivisiveHC(sim) if algoVal == "2"
 						else AgglomerativeHC(sim) if algoVal == "3"
-						else AgglomerativeSAHC(sim))
+						else AgglomerativeHCSA(sim) if algoVal == "4"
+						else KMeansSA(sim) if algoVal == "5"
+						else DivisiveHCSA(sim))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
