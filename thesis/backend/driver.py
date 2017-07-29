@@ -97,7 +97,7 @@ def start(paramVal, algoVal, k=0):
 			data["nodes"].append(node)
 			indices[u.id] = ctr
 			ctr+=1
-		communityTweets[commNum] = tweetString
+		communityTweets[commNum] = {"size" : len(c.users), "tweets" : tweetString}
 		commNum += 1
 
 	users = clusterer.users

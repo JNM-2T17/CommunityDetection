@@ -93,14 +93,14 @@ class Hashtags(Parameter):
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
 		for u in userList:
-			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:
+			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>2:
 				edges[u] = 1
 		return edges
 
 	def createIncomingEdges(self, user, userList):
 		edges = {}
 		for u in userList:
-			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>0:
+			if user != userList[u] and len(self.commonHashtags(user, userList[u]))>2:
 				edges[u] = 1
 		return edges
 
