@@ -425,36 +425,45 @@ class DivisiveHCSA(Algorithm):
 				# replace previous community with halves
 				current.remove(temp)
 
-				current.append(t1)
-				current.append(t2)
+				zero = False;
+				if len(t1.users) > 0:
+					current.append(t1)
+				else:
+					zero = True
 
-				# get modularity
-				mod = self.parameter.modularity(current)
-				found = False
-				if mod < prevmod:
-					prob = math.exp(100 * (mod - prevmod)/max(1,10 - iterCount))
-					if random.random() > prob:
-						# remove new divisions and restore old whole
-						current.pop()
-						current.pop()
-						current.append(temp)
+				if len(t2.users) > 0:
+					current.append(t2)
+				else:
+					zero = True
+
+				if not zero:
+					# get modularity
+					mod = self.parameter.modularity(current)
+					found = False
+					if mod < prevmod:
+						prob = math.exp(100 * (mod - prevmod)/max(1,10 - iterCount))
+						if random.random() > prob:
+							# remove new divisions and restore old whole
+							current.pop()
+							current.pop()
+							current.append(temp)
+						else:
+							found = True
 					else:
 						found = True
-				else:
-					found = True
-				# print(len(current),"communities")
-				# print("New mod =", mod, ", prev mod =", prevmod)
-				# if splitting worsened modularity
-				if found:
-					# if halves have more than one element, add to frontier
-					if t1.len() > 1:
-						frontier.append(t1)
-					
-					if t2.len() > 1:
-						frontier.append(t2)
+					# print(len(current),"communities")
+					# print("New mod =", mod, ", prev mod =", prevmod)
+					# if splitting worsened modularity
+					if found:
+						# if halves have more than one element, add to frontier
+						if t1.len() > 1:
+							frontier.append(t1)
+						
+						if t2.len() > 1:
+							frontier.append(t2)
 
-					# update modularity
-					prevmod = mod
+						# update modularity
+						prevmod = mod
 			elif len(temp.users) == 1:
 				current.append(temp)
 
