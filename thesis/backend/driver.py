@@ -43,11 +43,12 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 def start(paramVal, algoVal, k=0):
-	loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
+	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
 	algo = getAlgo(sim, algoVal, k)
 	clusterer = Clusterer(loader, algo)
 	clusterer.run()
+	clusterer.cleanCommunities()
 	communities = clusterer.communities
 	userList = clusterer.users
 
@@ -116,7 +117,18 @@ def start(paramVal, algoVal, k=0):
 
 	# TODO: Actually calculate distance between communities
 
-	# TODO: Actually calculate distance between communities
+	commCount = len(communities);
+
+	for i in range(1, commCount + 1):
+	 	for j in range(i+1, commCount + 1):
+	 		link = {}
+	 		link["source"] = i - 1
+	 		link["target"] = j - 1
+	 		linkVal = math.floor((clusterer.dbi2(i-1,j-1) - 1) / 2 * 100) + 2;
+	 		if linkVal < 2:
+	 			linkVal = 2
+	 		link["value"] = linkVal
+	 		data["communityLinks"].append(link)
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())
@@ -136,5 +148,7 @@ def start(paramVal, algoVal, k=0):
 	output['algo'] = getAlgoString(algoVal, k)
 	output['param'] = getParamString(paramVal)
 	output['dbi'] = math.ceil(clusterer.dbi() * 1000) / 1000
+	if output['dbi'] == -1:
+		output['dbi'] = 'N/A'
 
 	return output

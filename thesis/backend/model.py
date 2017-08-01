@@ -109,7 +109,29 @@ class Clusterer:
 	DBI of communities
 	"""
 	def dbi(self):
-		return self.algorithm.parameter.dbi(self.communities)		
+		return self.algorithm.parameter.dbi(self.communities)	
+
+	"""Returns the Davies-Bouldin Index between Two Communities
+	Parameters:
+	comm1 - index of first community
+	comm2 - index of second community
+	Returns:
+	DBI of communities
+	"""
+	def dbi2(self, comm1, comm2):
+		newList = [] # List containing only the two communities
+		newList.append(self.communities[comm1])
+		newList.append(self.communities[comm2])
+		return self.algorithm.parameter.dbi(newList)	
+
+	def cleanCommunities(self):
+		indices = []
+		for i in range(0, len(self.communities)):
+			if len(self.communities[i].users) == 0:
+				indices.append(i)
+		for i in range(len(indices)-1, -1, -1):
+			print(i)
+			self.communities.pop(indices[i])	
 
 class Algorithm:
 	"""This class represents an abstract algorithm"""

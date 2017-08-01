@@ -24,6 +24,8 @@ var Graph = {
             Graph.currentMode = MODE_COMMUNITIES;
             Graph.backtrackStack.push({mode : MODE_COMMUNITIES});
 
+            console.log(graph.communityLinks);
+
             if(Graph.force != null){
                 Graph.force.stop();
                 $("#graph svg").remove();
@@ -48,7 +50,7 @@ var Graph = {
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 500); 
+                        return(1/(d.value+1) * 20000 / Math.ceil(graph.communities.length/2)); 
                     })
                     .size([Graph.width, Graph.height]);
 
@@ -57,34 +59,27 @@ var Graph = {
                     .attr("width", Graph.width)
                     .attr("height", Graph.height);
 
-                if(directed == "true"){
-                    graphSVG.append("defs").selectAll("#graph marker")
-                        .data(["suit", "licensing", "resolved"])
-                      .enter().append("marker")
-                        .attr("id", function(d) { return d; })
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 25)
-                        .attr("refY", 0)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
-                        .attr("orient", "auto")
-                      .append("path")
-                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                        .style("stroke", "rgb(100,100,100)")
-                        .style("opacity", "0.6");
-                }
-
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)
-                    // .links(graph.communityLinks)
+                    .links(graph.communityLinks)
                     .start();
 
-                Graph.force.gravity(0);
+                //Create all the line svgs but without locations yet
+                var link = graphSVG.selectAll("#graph .link")
+                    .data(graph.communityLinks)
+                    .enter().append("line")
+                    .attr("class", "link")
+                    .style("marker-end",  "url(#suit)")
+                    .style("stroke-width", function (d) {
+                        return 1;
+                });
+
+                // Graph.force.gravity(0);
                 // Graph.force.linkDistance(Graph.height/100);
                 // Graph.force.linkStrength(0.1);
-                Graph.force.charge(function(node) {
-                   return node.graph === 0 ? -30 : -300;
-                });
+                // Graph.force.charge(function(node) {
+                //    return node.graph === 0 ? -30 : -300;
+                // });
 
                 //Do the same with the circles for the nodes - no 
                 var node = graphSVG.selectAll("#graph .node")
@@ -226,6 +221,8 @@ var Graph = {
                         .style("stroke", "rgb(100,100,100)")
                         .style("opacity", "0.6");
                 }
+
+                console.log(filteredGraph.links);
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(filteredGraph.nodes)
