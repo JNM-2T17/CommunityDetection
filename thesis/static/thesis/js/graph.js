@@ -44,13 +44,13 @@ var Graph = {
             if(graph != null && directed != null){
 
                 //Set up the colour scale
-                color = d3.scale.category20();
-
+                var color = d3.scale.category20();
+                
                 //Set up the force layout
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 20000 / Math.ceil(graph.communities.length/2)); 
+                        return(1/(d.value+1) * 18000 / Math.ceil(graph.communities.length/2)); 
                     })
                     .size([Graph.width, Graph.height]);
 
@@ -108,12 +108,34 @@ var Graph = {
                 node.on('click', Graph.Communities.nodeClick);
 
                 //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+                // Graph.force.on("tick", function () {
+                //     d3.selectAll("#graph circle").attr("cx", function (d) {
+                //         return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
+                //     })
+                //         .attr("cy", function (d) {
+                //         return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
+                //     });
+                // });
+
+                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
                 Graph.force.on("tick", function () {
+                    link.attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                        .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                        .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                        .attr("y2", function (d) {
+                        return d.target.y;
+                    });
                     d3.selectAll("#graph circle").attr("cx", function (d) {
-                        return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
+                        return d.x;
                     })
                         .attr("cy", function (d) {
-                        return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
+                        return d.y;
                     });
                 });
             }
