@@ -18,6 +18,8 @@ var Graph = {
 
     Communities : {
 
+        link : null,
+
         generateCommunities : function(graph) {
             console.log("Graph.Communities.generateCommunities");
 
@@ -65,7 +67,7 @@ var Graph = {
                     .start();
 
                 //Create all the line svgs but without locations yet
-                var link = graphSVG.selectAll("#graph .link")
+                Graph.Communities.link = graphSVG.selectAll("#graph .link")
                     .data(graph.communityLinks)
                     .enter().append("line")
                     .attr("class", "link")
@@ -119,7 +121,7 @@ var Graph = {
 
                 //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
                 Graph.force.on("tick", function () {
-                    link.attr("x1", function (d) {
+                    Graph.Communities.link.attr("x1", function (d) {
                         return d.source.x;
                     })
                         .attr("y1", function (d) {
@@ -176,6 +178,40 @@ var Graph = {
             Graph.changeOptions();
             Graph.CommunityNodes.appendSelectNodesButton();
         },
+
+        centerOnCommunity : function(commNum){
+            console.log("Graph.Communities.centerOnCommunity: " + commNum);
+
+            selectedNode = d3.select("#graph").selectAll("#graph .node").filter(function(elem){
+                return elem.name == commNum;
+            }).data()[0];
+
+            console.log(selectedNode);
+
+            var centerX = Graph.width / 2;
+            var centerY = Graph.height / 2;
+            var shiftLeft = selectedNode.x - centerX;
+            var shiftUp = selectedNode.y - centerY;
+
+            Graph.Communities.link.attr("x1", function (d) {
+                return d.source.x - shiftLeft;
+            })
+                .attr("y1", function (d) {
+                return d.source.y - shiftUp;
+            })
+                .attr("x2", function (d) {
+                return d.target.x - shiftLeft;
+            })
+                .attr("y2", function (d) {
+                return d.target.y - shiftUp;
+            });
+            d3.selectAll("#graph circle").attr("cx", function (d) {
+                return d.x - shiftLeft;
+            })
+                .attr("cy", function (d) {
+                return d.y - shiftUp;
+            });
+        }
     },
 
     CommunityNodes : {

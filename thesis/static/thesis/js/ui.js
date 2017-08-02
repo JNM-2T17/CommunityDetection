@@ -57,6 +57,8 @@ var UI = {
 		$(".community-button").click(function(){
 			var communityNum = $(this).parent().attr("data-cNum");
 
+			Graph.Communities.centerOnCommunity(communityNum);
+
 			if($(this).parent().find(".community-wordcloud").css("height") != "0px"){
 				$(this).parent().find(".community-wordcloud").animate({
 					height: 0
