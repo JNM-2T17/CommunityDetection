@@ -12,7 +12,7 @@ class Following(Parameter):
 	user1 - first user
 	user2 - second user
 	"""
-	def similarity(self,user1,user2):
+	def zhangSimilarity(self,user1,user2):
 		cFriend = 0
 		for k, v in user1.following.items():
 			if k in user2.following:
@@ -37,6 +37,57 @@ class Following(Parameter):
 
 		else:
 			return (cFriend / friendDenom + cFollowers / followDenom) 
+
+	"""Returns the cosine similarity of the two users using this similarity parameter
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def cosine(self,user1,user2):
+		userFollowing = []
+		userFollowers = []
+		for u in user1.following.keys():
+			if u not in userFollowing:
+				userFollowing.append(u)
+		for u in user2.following.keys():
+			if u not in userFollowing:
+				userFollowing.append(u)
+
+		cosineNum = 0
+		cosineFollowingDen1 = 0
+		cosineFollowingDen2 = 0
+
+		for u in userFollowing:
+			if u in user1.following and u in user2.following:
+				cosineNum += 1
+			if u in user1.following:
+				cosineFollowingDen1 += 1
+			if u in user2.following:
+				cosineFollowingDen2 += 1
+
+		for u in user1.followers.keys():
+			if u not in userFollowers:
+				userFollowers.append(u)
+		for u in user2.followers.keys():
+			if u not in userFollowers:
+				userFollowers.append(u)
+
+		cosineNum = 0
+		cosineDen1 = 0
+		cosineDen2 = 0
+
+		for u in userFollowers:
+			if u in user1.followers and u in user2.followers:
+				cosineNum += 1
+			if u in user1.followers:
+				cosineDen1 += 1
+			if u in user2.followers:
+				cosineDen2 += 1
+
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -78,7 +129,7 @@ class Hashtags(Parameter):
 	user1 - first user
 	user2 - second user
 	"""
-	def similarity(self,user1,user2):
+	def zhangSimilarity(self,user1,user2):
 		c = self.commonHashtags(user1, user2)
 		n = len(c)
 		sim = 0
@@ -89,6 +140,41 @@ class Hashtags(Parameter):
 			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (total1+total2))
 			sim += val
 		return sim
+
+	"""Returns the cosine similarity of the two users using this similarity parameter
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def cosine(self,user1,user2):
+		hashtagDim = []
+
+		for h in user1.hashtags.keys():
+			if h not in hashtagDim:
+				hashtagDim.append(h)
+
+		for h in user2.hashtags.keys():
+			if h not in hashtagDim:
+				hashtagDim.append(h)
+
+		cosineNum = 0
+		cosineDen1 = 0
+		cosineDen2 = 0
+
+		for h in hashtagDim:
+			if h in user1.hashtags and h in user2.hashtags:
+				cosineNum += user1.hashtags[h] * user2.hashtags[h]
+
+			if h in user1.hashtags:
+				cosineDen1 += user1.hashtags[h] ** 2
+
+			if h in user2.hashtags:
+				cosineDen2 += user2.hashtags[h] ** 2
+
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -122,7 +208,7 @@ class Retweets(Parameter):
 	user1 - first user
 	user2 - second user
 	"""
-	def similarity(self,user1,user2):
+	def zhangSimilarity(self,user1,user2):
 		a = len(self.commonRetweets(user1, user2))
 		b1 = 0
 		if user2.id in user1.retweets:
@@ -138,6 +224,41 @@ class Retweets(Parameter):
 			a /= math.sqrt(len(user1.retweets))*math.sqrt(len(user2.retweets))
 			b /= len(user1.retweets)*len(user2.retweets)
 		return a+b
+
+	"""Returns the cosine similarity of the two users using this similarity parameter
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def cosine(self,user1,user2):
+		retweetDim = []
+
+		for h in user1.retweets.keys():
+			if h not in retweetDim:
+				retweetDim.append(h)
+
+		for h in user2.retweets.keys():
+			if h not in retweetDim:
+				retweetDim.append(h)
+
+		cosineNum = 0
+		cosineDen1 = 0
+		cosineDen2 = 0
+
+		for h in retweetDim:
+			if h in user1.retweets and h in user2.retweets:
+				cosineNum += user1.retweets[h] * user2.retweets[h]
+
+			if h in user1.retweets:
+				cosineDen1 += user1.retweets[h] ** 2
+
+			if h in user2.retweets:
+				cosineDen2 += user2.retweets[h] ** 2
+
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -171,7 +292,7 @@ class Mentions(Parameter):
 	user1 - first user
 	user2 - second user
 	"""
-	def similarity(self,user1,user2):
+	def zhangSimilarity(self,user1,user2):
 		a = len(self.commonMentions(user1, user2))
 		b1 = 0
 		if user2.id in user1.mentions:
@@ -187,6 +308,41 @@ class Mentions(Parameter):
 			a /= math.sqrt(len(user1.mentions))*math.sqrt(len(user2.mentions))
 			b /= len(user1.mentions)*len(user2.mentions)
 		return a+b
+
+	"""Returns the cosine similarity of the two users using this similarity parameter
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def cosine(self,user1,user2):
+		mentionsDim = []
+
+		for h in user1.mentions.keys():
+			if h not in mentionsDim:
+				mentionsDim.append(h)
+
+		for h in user2.mentions.keys():
+			if h not in mentionsDim:
+				mentionsDim.append(h)
+
+		cosineNum = 0
+		cosineDen1 = 0
+		cosineDen2 = 0
+
+		for h in mentionsDim:
+			if h in user1.mentions and h in user2.mentions:
+				cosineNum += user1.mentions[h] * user2.mentions[h]
+
+			if h in user1.mentions:
+				cosineDen1 += user1.mentions[h] ** 2
+
+			if h in user2.mentions:
+				cosineDen2 += user2.mentions[h] ** 2
+
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
