@@ -118,8 +118,9 @@ class Algorithm:
 	Parameter:
 	parameter - similarity parameter to use for this algorithm
 	"""
-	def __init__(self,parameter):
+	def __init__(self,parameter,cosine=False):
 		self.parameter = parameter
+		self.cosine = cosine
 
 	"""Runs this algorithm on the given users
 	Parameter:

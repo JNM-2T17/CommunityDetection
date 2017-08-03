@@ -84,7 +84,10 @@ class Following(Parameter):
 			if u in user2.followers:
 				cosineDen2 += 1
 
-		return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -168,7 +171,10 @@ class Hashtags(Parameter):
 			if h in user2.hashtags:
 				cosineDen2 += user2.hashtags[h] ** 2
 
-		return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -249,7 +255,10 @@ class Retweets(Parameter):
 			if h in user2.retweets:
 				cosineDen2 += user2.retweets[h] ** 2
 
-		return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
@@ -330,7 +339,10 @@ class Mentions(Parameter):
 			if h in user2.mentions:
 				cosineDen2 += user2.mentions[h] ** 2
 
-		return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		try:
+			return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
+		except ZeroDivisionError:
+			return 0
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}

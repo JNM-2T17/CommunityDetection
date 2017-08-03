@@ -23,6 +23,10 @@ def vis(request):
 def run(request):
 	paramVal = request.POST['param']
 	algoVal = request.POST['algo']
-	output = start(paramVal, algoVal)
+	measureVal = request.POST['measure']
+	k = None
+	if 'kval' in request.POST:
+		k = request.POST['kval']
+	output = start(paramVal, algoVal, measureVal,k)
 	request.session['output'] = output
 	return HttpResponseRedirect(reverse('thesis:vis'))

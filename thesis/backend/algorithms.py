@@ -9,13 +9,13 @@ MIN_DIST = 1
 AVE_DIST = 2
 
 class KMeans(Algorithm):
-	def __init__(self, parameter, k = None):
+	def __init__(self, parameter, cosine = False, k = None):
 		if k is None:
 			self.hasSetClusterCount = False
 		else:
 			self.k = k
 			self.hasSetClusterCount = True
-		super(KMeans, self).__init__(parameter)
+		super(KMeans, self).__init__(parameter, cosine)
 
 	def run(self, users):
 		global MAX_DIST
@@ -29,6 +29,8 @@ class KMeans(Algorithm):
 			
 		while True:
 			# If there are less users than clusters that need to be formed
+			print(len(users),"<",numClusters)
+			print(type(len(users)),"<",type(numClusters))
 			if len(users) < numClusters:
 				communities = []
 
@@ -81,7 +83,7 @@ class KMeans(Algorithm):
 
 							currSim = -1
 							for v in com:
-								currSim = self.parameter.similarity(u,v)
+								currSim = self.parameter.similarity(u,v,self.cosine)
 								if mode == MAX_DIST:
 									if sim is None:
 										if abs(currSim) < 1e-4:
@@ -235,7 +237,7 @@ class KMeansSA(Algorithm):
 
 							currSim = -1
 							for v in com:
-								currSim = self.parameter.similarity(u,v)
+								currSim = self.parameter.similarity(u,v,self.cosine)
 								if mode == MAX_DIST:
 									if sim is None:
 										if abs(currSim) < 1e-4:
@@ -344,7 +346,7 @@ class DivisiveHC(Algorithm):
 			# print("Iteration", iterCount)
 			# get first community and split
 			temp = frontier.popleft()
-			kmeans = KMeans(self.parameter, 2)
+			kmeans = KMeans(self.parameter, self.cosine, 2)
 
 			userDict = {}
 			for u in temp.users:
@@ -411,7 +413,7 @@ class DivisiveHCSA(Algorithm):
 			# get first community and split
 			temp = frontier.popleft()
 			if len(temp.users) > 1:
-				kmeans = KMeans(self.parameter, 2)
+				kmeans = KMeans(self.parameter, self.cosine, 2)
 
 				userDict = {}
 				for u in temp.users:
@@ -483,7 +485,7 @@ class AgglomerativeHC(Algorithm):
 		count = 0
 		for x in com1.users:
 			for y in com2.users:
-				total += self.parameter.similarity(x,y)
+				total += self.parameter.similarity(x,y,self.cosine)
 				count += 1
 		return total / count
 
@@ -550,7 +552,7 @@ class AgglomerativeHCSA(Algorithm):
 		count = 0
 		for x in com1.users:
 			for y in com2.users:
-				total += self.parameter.similarity(x,y)
+				total += self.parameter.similarity(x,y,self.cosine)
 				count += 1
 		return total / count
 
