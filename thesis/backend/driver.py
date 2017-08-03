@@ -21,11 +21,13 @@ def getParameter(paramVal):
  						else Mentions())
 
 def getAlgoString(algoVal, kVal=0):
-	if kVal==0:
+	if kVal is None:
 		return ("K-Means" if algoVal == "1" 
 						else "Divisive HC" if algoVal == "2"
 						else "Agglomerative HC" if algoVal == "3"
-						else "Agglomerative SA HC")
+						else "Agglomerative SA HC" if algoVal == "4"
+						else "K-Means SA" if algoVal == "5"
+						else "Divisive SA HC")
 	else:
 		return "K-Means (K="+kVal+")"
 
@@ -45,7 +47,8 @@ def start(paramVal, algoVal, measureVal,k):
 	# loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
 	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
-	algo = getAlgo(sim, algoVal,measureVal == "1",k if k is None else int(k))
+	k = k if k is None else int(k)
+	algo = getAlgo(sim, algoVal,measureVal == "1",k)
 	clusterer = Clusterer(loader, algo)
 	clusterer.run()
 	clusterer.cleanCommunities()

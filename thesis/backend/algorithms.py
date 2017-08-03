@@ -29,8 +29,6 @@ class KMeans(Algorithm):
 			
 		while True:
 			# If there are less users than clusters that need to be formed
-			print(len(users),"<",numClusters)
-			print(type(len(users)),"<",type(numClusters))
 			if len(users) < numClusters:
 				communities = []
 
@@ -173,9 +171,6 @@ class KMeans(Algorithm):
 		return communities
 
 class KMeansSA(Algorithm):
-	def __init__(self, parameter):
-		super(KMeansSA, self).__init__(parameter)
-
 	def run(self, users):
 		global MAX_DIST
 		global MIN_DIST
@@ -472,8 +467,6 @@ class DivisiveHCSA(Algorithm):
 		return current
 
 class AgglomerativeHC(Algorithm):
-	def __init__(self, parameter):
-		super(AgglomerativeHC, self).__init__(parameter)
 
 	def seedCommunity(self,user):
 		com = Community()
@@ -539,8 +532,6 @@ class AgglomerativeHC(Algorithm):
 		return bestCom
 
 class AgglomerativeHCSA(Algorithm):
-	def __init__(self, parameter):
-		super(AgglomerativeSAHC, self).__init__(parameter)
 
 	def seedCommunity(self,user):
 		com = Community()
