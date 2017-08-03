@@ -6,14 +6,13 @@ from .wordcloud import *
 import webbrowser
 import json
 
-def getAlgo(sim, algoVal, kVal=0):
-	if kVal==0:
-		return (KMeans(sim) if algoVal == "1" 
-						else DivisiveHC(sim) if algoVal == "2"
-						else AgglomerativeHC(sim) if algoVal == "3"
-						else AgglomerativeSAHC(sim))
-	else:
-		return KMeans(sim, k=int(kVal))
+def getAlgo(sim, algoVal, cosine, k):
+	return (KMeans(sim,cosine, k) if algoVal == "1" 
+						else DivisiveHC(sim, cosine) if algoVal == "2"
+						else AgglomerativeHC(sim, cosine) if algoVal == "3"
+						else AgglomerativeHCSA(sim, cosine) if algoVal == "4"
+						else KMeansSA(sim, cosine) if algoVal == "5"
+						else DivisiveHCSA(sim, cosine))
 
 def getParameter(paramVal):
 	return (Following() if paramVal == "1" 
@@ -22,11 +21,13 @@ def getParameter(paramVal):
  						else Mentions())
 
 def getAlgoString(algoVal, kVal=0):
-	if kVal==0:
+	if kVal is None:
 		return ("K-Means" if algoVal == "1" 
 						else "Divisive HC" if algoVal == "2"
 						else "Agglomerative HC" if algoVal == "3"
-						else "Agglomerative SA HC")
+						else "Agglomerative SA HC" if algoVal == "4"
+						else "K-Means SA" if algoVal == "5"
+						else "Divisive SA HC")
 	else:
 		return "K-Means (K="+kVal+")"
 
@@ -42,10 +43,12 @@ def normalizedSimilarity(user1, user2, s):
 	sim = int(sim)
 	return int(sim/10 + 1)
 
-def start(paramVal, algoVal, k=0):
+def start(paramVal, algoVal, measureVal,k):
+	# loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
 	loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
-	algo = getAlgo(sim, algoVal, k)
+	k = k if k is None else int(k)
+	algo = getAlgo(sim, algoVal,measureVal == "1",k)
 	clusterer = Clusterer(loader, algo)
 	clusterer.run()
 	clusterer.cleanCommunities()
