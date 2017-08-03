@@ -141,7 +141,28 @@ class Parameter:
 	user1 - first user
 	user2 - second user
 	"""
-	def similarity(self,user1,user2):
+	def similarity(self,user1,user2,cosine=False):
+		if cosine:
+			return self.cosine(user1,user2)
+		else:
+			return self.zhangSimilarity(user1,user2)
+
+	"""Returns the similarity of the two users using this similarity parameter 
+	according to Zhang, 2012
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def zhangSimilarity(self,user1,user2):
+		raise NotImplementedError
+
+	"""Returns the cosine similarity of the two users using this similarity 
+	parameter
+	Parameters:
+	user1 - first user
+	user2 - second user
+	"""
+	def cosine(self,user1,user2):
 		raise NotImplementedError
 
 	"""Returns the modularity given a list of communities
