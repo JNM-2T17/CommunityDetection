@@ -53,19 +53,17 @@ class Following(Parameter):
 			if u not in userFollowing:
 				userFollowing.append(u)
 
-		cosineFollowingNum = 0
+		cosineNum = 0
 		cosineFollowingDen1 = 0
 		cosineFollowingDen2 = 0
 
 		for u in userFollowing:
 			if u in user1.following and u in user2.following:
-				cosineFollowingNum += 1
+				cosineNum += 1
 			if u in user1.following:
 				cosineFollowingDen1 += 1
 			if u in user2.following:
 				cosineFollowingDen2 += 1
-
-		cosineFollowing = cosineFollowingNum / math.sqrt(cosineFollowingDen1 * cosineFollowingDen2)
 
 		for u in user1.followers.keys():
 			if u not in userFollowers:
@@ -74,21 +72,19 @@ class Following(Parameter):
 			if u not in userFollowers:
 				userFollowers.append(u)
 
-		cosineFollowersNum = 0
-		cosineFollowersDen1 = 0
-		cosineFollowersDen2 = 0
+		cosineNum = 0
+		cosineDen1 = 0
+		cosineDen2 = 0
 
 		for u in userFollowers:
 			if u in user1.followers and u in user2.followers:
-				cosineFollowersNum += 1
+				cosineNum += 1
 			if u in user1.followers:
-				cosineFollowersDen1 += 1
+				cosineDen1 += 1
 			if u in user2.followers:
-				cosineFollowersDen2 += 1
+				cosineDen2 += 1
 
-		cosineFollowers = cosineFollowersNum / math.sqrt(cosineFollowersDen1 * cosineFollowersDen2)
-
-		return (cosineFollowing + cosineFollowers) / 2
+		return cosineNum / math.sqrt(cosineDen1 * cosineDen2)
 
 	def createOutgoingEdges(self, user, userList):
 		edges = {}
