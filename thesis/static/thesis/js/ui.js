@@ -1,21 +1,26 @@
 var ALGO_KMEANS = 1;
-var ALGO_DHC = 2;
 
 var UI = {
 	initializeUI : function(){
 		$("#selectAlgorithm").bind("change", function(){
 			if($(this).val() == ALGO_KMEANS){
-				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"\" max=\"2500\"/>")
+				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
+				$("#selectK").bind("change", function(){
+					ErrorChecking.checkIfValid();
+				});
 			}
 			else{
 				$("#selectK").remove();
 			}
 		});
+
+		ErrorChecking.initializeErrorCheck();
 	},
 
 	initializeVis : function(words, graph){
 		// General
 
+		$("#description").css("display", "block");
 		$("#evaluation").css("display", "block");
 		$("#communities").css("display", "block");
 
@@ -51,6 +56,8 @@ var UI = {
 
 		$(".community-button").click(function(){
 			var communityNum = $(this).parent().attr("data-cNum");
+
+			Graph.Communities.centerOnCommunity(communityNum);
 
 			if($(this).parent().find(".community-wordcloud").css("height") != "0px"){
 				$(this).parent().find(".community-wordcloud").animate({

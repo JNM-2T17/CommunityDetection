@@ -20,8 +20,7 @@ def countWords(readFile, writeFile):
 	for key, value in data.items():
 		wordCounts = {}
 
-		print("Length", len(value))
-		for l in value:
+		for l in value["tweets"]:
 			l = l.replace('\n', ' ').split()
 			for word in l:
 				if word[0]!='@' and not word.startswith('http://') and not word.startswith('https://'):
@@ -41,7 +40,7 @@ def countWords(readFile, writeFile):
 			inAllDict = True
 
 			for key2, value2 in cWordCounts.items():
-				if not key in value2.keys():
+				if not key in value2.keys() and data[key2]["size"] > 2:
 					inAllDict = False
 					break
 			if inAllDict:

@@ -61,23 +61,30 @@ div#top {
       div#top button.generateCommunities:hover i {
         margin-right: -5px;
         margin-left: 15px; }
+    div#top button.generateCommunities:disabled {
+      background-color: gainsboro; }
+      div#top button.generateCommunities:disabled:hover i {
+        margin-right: 0;
+        margin-left: 10px; }
 
 div#side {
   top: 60px;
   left: 0;
   width: 350px; }
-  div#side div#evaluation {
+  div#side div#evaluation,
+  div#side div#description {
     border-radius: 5px;
     background-color: #969696;
     color: white;
     box-sizing: border-box;
     padding: 10px;
     font-size: 0.9em;
-    display: none; }
+    display: none;
+    margin-bottom: 10px; }
   div#side div#communities {
     border-radius: 5px;
     border: 1px solid #969696;
-    margin: 10px 0;
+    margin-bottom: 10px;
     display: none; }
     div#side div#communities div.community {
       border-bottom: 1px solid #969696; }
@@ -132,7 +139,8 @@ div#side {
 div#main {
   top: 60px;
   left: 350px;
-  width: calc(100% - 350px); }
+  width: calc(100% - 350px);
+  position: fixed; }
   div#main div.communityOptions {
     position: absolute;
     border-radius: 5px;

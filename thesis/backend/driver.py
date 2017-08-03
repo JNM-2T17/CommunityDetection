@@ -20,6 +20,21 @@ def getParameter(paramVal):
 						else Retweets() if paramVal == "3"
  						else Mentions())
 
+def getAlgoString(algoVal, kVal=0):
+	if kVal==0:
+		return ("K-Means" if algoVal == "1" 
+						else "Divisive HC" if algoVal == "2"
+						else "Agglomerative HC" if algoVal == "3"
+						else "Agglomerative SA HC")
+	else:
+		return "K-Means (K="+kVal+")"
+
+def getParamString(paramVal):
+	return ("Following" if paramVal == "1" 
+						else "Hashtags" if paramVal == "2" 
+						else "Retweets" if paramVal == "3"
+ 						else "Mentions")
+
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
 	sim *= 100
@@ -33,6 +48,7 @@ def start(paramVal, algoVal, measureVal,k):
 	algo = getAlgo(sim, algoVal,measureVal == "1",k if k is None else int(k))
 	clusterer = Clusterer(loader, algo)
 	clusterer.run()
+	clusterer.cleanCommunities()
 	communities = clusterer.communities
 	userList = clusterer.users
 
@@ -82,7 +98,7 @@ def start(paramVal, algoVal, measureVal,k):
 			data["nodes"].append(node)
 			indices[u.id] = ctr
 			ctr+=1
-		communityTweets[commNum] = tweetString
+		communityTweets[commNum] = {"size" : len(c.users), "tweets" : tweetString}
 		commNum += 1
 
 	users = clusterer.users
@@ -101,7 +117,18 @@ def start(paramVal, algoVal, measureVal,k):
 
 	# TODO: Actually calculate distance between communities
 
-	# TODO: Actually calculate distance between communities
+	commCount = len(communities);
+
+	for i in range(1, commCount + 1):
+	 	for j in range(i+1, commCount + 1):
+	 		link = {}
+	 		link["source"] = i - 1
+	 		link["target"] = j - 1
+	 		linkVal = math.floor((clusterer.dbi2(i-1,j-1) - 1) / 2 * 100) + 2;
+	 		if linkVal < 2:
+	 			linkVal = 2
+	 		link["value"] = linkVal
+	 		data["communityLinks"].append(link)
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())
@@ -118,8 +145,10 @@ def start(paramVal, algoVal, measureVal,k):
 	countWords("communitytweets.json", "wordCounts.json")
 	output = {}
 	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
-	output['algo'] = algoVal
-	output['param'] = paramVal
+	output['algo'] = getAlgoString(algoVal, k)
+	output['param'] = getParamString(paramVal)
 	output['dbi'] = math.ceil(clusterer.dbi() * 1000) / 1000
+	if output['dbi'] == -1:
+		output['dbi'] = 'N/A'
 
 	return output

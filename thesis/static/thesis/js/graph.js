@@ -18,11 +18,15 @@ var Graph = {
 
     Communities : {
 
+        link : null,
+
         generateCommunities : function(graph) {
             console.log("Graph.Communities.generateCommunities");
 
             Graph.currentMode = MODE_COMMUNITIES;
             Graph.backtrackStack.push({mode : MODE_COMMUNITIES});
+
+            console.log(graph.communityLinks);
 
             if(Graph.force != null){
                 Graph.force.stop();
@@ -42,13 +46,13 @@ var Graph = {
             if(graph != null && directed != null){
 
                 //Set up the colour scale
-                color = d3.scale.category20();
-
+                var color = d3.scale.category20();
+                
                 //Set up the force layout
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 500); 
+                        return(1/(d.value+1) * 5000); 
                     })
                     .size([Graph.width, Graph.height]);
 
@@ -57,34 +61,27 @@ var Graph = {
                     .attr("width", Graph.width)
                     .attr("height", Graph.height);
 
-                if(directed == "true"){
-                    graphSVG.append("defs").selectAll("#graph marker")
-                        .data(["suit", "licensing", "resolved"])
-                      .enter().append("marker")
-                        .attr("id", function(d) { return d; })
-                        .attr("viewBox", "0 -5 10 10")
-                        .attr("refX", 25)
-                        .attr("refY", 0)
-                        .attr("markerWidth", 6)
-                        .attr("markerHeight", 6)
-                        .attr("orient", "auto")
-                      .append("path")
-                        .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-                        .style("stroke", "rgb(100,100,100)")
-                        .style("opacity", "0.6");
-                }
-
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)
-                    // .links(graph.communityLinks)
+                    .links(graph.communityLinks)
                     .start();
 
-                Graph.force.gravity(0);
+                //Create all the line svgs but without locations yet
+                Graph.Communities.link = graphSVG.selectAll("#graph .link")
+                    .data(graph.communityLinks)
+                    .enter().append("line")
+                    .attr("class", "link")
+                    .style("marker-end",  "url(#suit)")
+                    .style("stroke-width", function (d) {
+                        return 1;
+                });
+
+                // Graph.force.gravity(0);
                 // Graph.force.linkDistance(Graph.height/100);
                 // Graph.force.linkStrength(0.1);
-                Graph.force.charge(function(node) {
-                   return node.graph === 0 ? -30 : -300;
-                });
+                // Graph.force.charge(function(node) {
+                //    return node.graph === 0 ? -30 : -300;
+                // });
 
                 //Do the same with the circles for the nodes - no 
                 var node = graphSVG.selectAll("#graph .node")
@@ -113,12 +110,34 @@ var Graph = {
                 node.on('click', Graph.Communities.nodeClick);
 
                 //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+                // Graph.force.on("tick", function () {
+                //     d3.selectAll("#graph circle").attr("cx", function (d) {
+                //         return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
+                //     })
+                //         .attr("cy", function (d) {
+                //         return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
+                //     });
+                // });
+
+                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
                 Graph.force.on("tick", function () {
+                    Graph.Communities.link.attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                        .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                        .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                        .attr("y2", function (d) {
+                        return d.target.y;
+                    });
                     d3.selectAll("#graph circle").attr("cx", function (d) {
-                        return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
+                        return d.x;
                     })
                         .attr("cy", function (d) {
-                        return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
+                        return d.y;
                     });
                 });
             }
@@ -159,6 +178,40 @@ var Graph = {
             Graph.changeOptions();
             Graph.CommunityNodes.appendSelectNodesButton();
         },
+
+        centerOnCommunity : function(commNum){
+            console.log("Graph.Communities.centerOnCommunity: " + commNum);
+
+            selectedNode = d3.select("#graph").selectAll("#graph .node").filter(function(elem){
+                return elem.name == commNum;
+            }).data()[0];
+
+            console.log(selectedNode);
+
+            var centerX = Graph.width / 2;
+            var centerY = Graph.height / 2;
+            var shiftLeft = selectedNode.x - centerX;
+            var shiftUp = selectedNode.y - centerY;
+
+            Graph.Communities.link.attr("x1", function (d) {
+                return d.source.x - shiftLeft;
+            })
+                .attr("y1", function (d) {
+                return d.source.y - shiftUp;
+            })
+                .attr("x2", function (d) {
+                return d.target.x - shiftLeft;
+            })
+                .attr("y2", function (d) {
+                return d.target.y - shiftUp;
+            });
+            d3.selectAll("#graph circle").attr("cx", function (d) {
+                return d.x - shiftLeft;
+            })
+                .attr("cy", function (d) {
+                return d.y - shiftUp;
+            });
+        }
     },
 
     CommunityNodes : {
@@ -226,6 +279,8 @@ var Graph = {
                         .style("stroke", "rgb(100,100,100)")
                         .style("opacity", "0.6");
                 }
+
+                console.log(filteredGraph.links);
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(filteredGraph.nodes)

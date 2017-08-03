@@ -90,12 +90,21 @@ div#top
 				margin-right: -5px
 				margin-left: 15px
 
+		&:disabled
+			background-color: $color-hover
+
+			&:hover
+				i
+					margin-right: 0
+					margin-left: 10px
+
 div#side
 	top: $height-top
 	left: 0
 	width: $width-side
 
-	div#evaluation
+	div#evaluation,
+	div#description
 		border-radius: 5px
 		background-color: $color-neutral
 		color: $textColor-top
@@ -103,11 +112,12 @@ div#side
 		padding: 10px
 		font-size: 0.9em
 		display: none
+		margin-bottom: 10px
 
 	div#communities
 		border-radius: 5px
 		border: 1px solid $color-neutral
-		margin: 10px 0
+		margin-bottom: 10px
 		display: none
 
 		div.community
@@ -176,6 +186,7 @@ div#main
 	top: $height-top
 	left: $width-side
 	width: calc(100% - 350px) /* manual width-side */
+	position: fixed
 
 	div.communityOptions
 		position: absolute

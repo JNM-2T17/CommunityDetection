@@ -10,6 +10,7 @@
 		<link rel="stylesheet" href="{% static 'thesis/css/style.css' %}" type="text/css"/>
 		<script src="{% static 'thesis/js/jquery-3.1.1.min.js' %}"></script>
 		<script src="{% static 'thesis/js/ui.js' %}"></script>
+		<script src="{% static 'thesis/js/errorCheck.js' %}"></script>
 		<script src="{% static 'thesis/js/wordcloud.js' %}"></script>
 		<script src="{% static 'thesis/js/graph.js' %}"></script>
 		<script src="{% static 'thesis/js/d3.min.js' %}"></script>
@@ -31,7 +32,6 @@
 		<div id="top">
 			<form action="{% url 'thesis:run_algo' %}" method="post">
 				{% csrf_token %}
-				<button>Upload Users & Tweets File</button>
 				</select>
 				<select id="selectAlgorithm" name="algo">
 					<option value="0" disabled selected>Choose Algorithm</option>
@@ -59,6 +59,17 @@
 		</div>
 
 		<div id="side">
+			<div id="description">
+				<b>Algorithm:</b>
+				{% if request.session.output %}
+					{{ request.session.output.algo }}
+				{% endif %}
+				<br/>
+				<b>Similarity Parameter:</b>
+				{% if request.session.output %}
+					{{ request.session.output.param }}
+				{% endif %}
+			</div>
 			<div id="evaluation">
 				<b>Modularity:</b> 
 				{% if request.session.output %}
