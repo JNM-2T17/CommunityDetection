@@ -139,7 +139,8 @@ div#side {
 div#main {
   top: 60px;
   left: 350px;
-  width: calc(100% - 350px); }
+  width: calc(100% - 350px);
+  position: fixed; }
   div#main div.communityOptions {
     position: absolute;
     border-radius: 5px;

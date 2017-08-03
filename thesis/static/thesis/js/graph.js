@@ -52,7 +52,7 @@ var Graph = {
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 18000 / Math.ceil(graph.communities.length/2)); 
+                        return(1/(d.value+1) * 5000); 
                     })
                     .size([Graph.width, Graph.height]);
 
