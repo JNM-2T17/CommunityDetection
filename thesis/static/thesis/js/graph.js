@@ -149,7 +149,7 @@ var Graph = {
             $("div.communityOptions").remove();
 
             $("div#main").append("\n\
-                <div class=\"communityOptions\" style=\"top: " + elem.y + "px; left: " + elem.x + "px;\">\n\
+                <div class=\"communityOptions\" style=\"top: 10px; right: 10px;\">\n\
                     <button class=\"viewCommunityNodes\">View users in this community</button>\n\
                     <button class=\"viewRelatedNodes\">View users connected to and in this community</button>\n\
                 </div>");
@@ -193,23 +193,25 @@ var Graph = {
             var shiftLeft = selectedNode.x - centerX;
             var shiftUp = selectedNode.y - centerY;
 
-            Graph.Communities.link.attr("x1", function (d) {
-                return d.source.x - shiftLeft;
-            })
-                .attr("y1", function (d) {
-                return d.source.y - shiftUp;
-            })
-                .attr("x2", function (d) {
-                return d.target.x - shiftLeft;
-            })
-                .attr("y2", function (d) {
-                return d.target.y - shiftUp;
-            });
-            d3.selectAll("#graph circle").attr("cx", function (d) {
-                return d.x - shiftLeft;
-            })
-                .attr("cy", function (d) {
-                return d.y - shiftUp;
+            Graph.force.on("tick", function () {
+                Graph.Communities.link.attr("x1", function (d) {
+                    return d.source.x - shiftLeft;
+                })
+                    .attr("y1", function (d) {
+                    return d.source.y - shiftUp;
+                })
+                    .attr("x2", function (d) {
+                    return d.target.x - shiftLeft;
+                })
+                    .attr("y2", function (d) {
+                    return d.target.y - shiftUp;
+                });
+                d3.selectAll("#graph circle").attr("cx", function (d) {
+                    return d.x - shiftLeft;
+                })
+                    .attr("cy", function (d) {
+                    return d.y - shiftUp;
+                });
             });
         }
     },

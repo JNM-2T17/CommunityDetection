@@ -65,7 +65,11 @@ def start(paramVal, algoVal, measureVal,k):
 	data["communityLinks"] = []
 	data["info"] = {"minSize" : float('Inf'), "maxSize" : 0}
 
+	stats = {} # Statistics for each community e.g. number of users per location
+	stats["location"] = {}
+
 	communityTweets = {}
+	communityProfile = {}
 
 	indices = {}
 	commIndices = {}
@@ -84,6 +88,8 @@ def start(paramVal, algoVal, measureVal,k):
 		comm["size"] = len(c.users)
 		data["communities"].append(comm)
 
+		stats["location"][commNum] = {}
+
 		if data["info"]["minSize"] > comm["size"]:
 			data["info"]["minSize"] = comm["size"]
 
@@ -91,17 +97,31 @@ def start(paramVal, algoVal, measureVal,k):
 			data["info"]["maxSize"] = comm["size"]
 
 		tweetString = []
+		profileString = []
 		for u in c.users:
-			# print("-", u.id)
 			for t in u.tweets:
 				tweetString.append(t.tweetdata["text"])
+
+			profileString.append(u.data["description"])
+
 			node = {}
 			node["name"] = u.data["id"]
 			node["group"] = commNum
 			data["nodes"].append(node)
 			indices[u.id] = ctr
 			ctr+=1
-		communityTweets[commNum] = {"size" : len(c.users), "tweets" : tweetString}
+
+			# Record number of users per location
+			userLoc = u.data["location"].strip()
+			if len(userLoc) == 0:
+				userLoc = "N/A"
+			if userLoc in stats["location"][commNum]:
+				stats["location"][commNum][userLoc] = stats["location"][commNum][userLoc] + 1
+			else:
+				stats["location"][commNum][userLoc] = 1
+
+		communityTweets[commNum] = {"size" : len(c.users), "string" : tweetString}
+		communityProfile[commNum] = {"size" : len(c.users), "string" : profileString}
 		commNum += 1
 
 	users = clusterer.users
@@ -141,11 +161,27 @@ def start(paramVal, algoVal, measureVal,k):
 	with open('vis.json', 'w') as outfile:
 	    json.dump(data, outfile)
 
-	print("Writing word cloud data...")
+	print("Writing tweet word cloud data...")
 	with open('communitytweets.json', 'w') as outfile:
 	    json.dump(communityTweets, outfile)
 
-	countWords("communitytweets.json", "wordCounts.json")
+	print("Writing profile description word cloud data...")
+	with open('communityprofile.json', 'w') as outfile:
+	    json.dump(communityProfile, outfile)
+
+	print("Writing community statistics...")
+	with open('stats.json', 'w') as outfile:
+	    json.dump(stats, outfile)
+
+	countWords("communitytweets.json", "tweetWordCounts.json")
+	countWords("communityprofile.json", "profileWordCounts.json")
+
+	# print("Stats (Location):")
+	# for commName, commLocs in stats["location"].items():
+	# 	print("\tCommunity " + str(commName))
+	# 	for loc, count in commLocs.items():
+	# 		print("\t\t" + str(count) + " in " + loc)
+
 	output = {}
 	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
 	output['algo'] = getAlgoString(algoVal, k)

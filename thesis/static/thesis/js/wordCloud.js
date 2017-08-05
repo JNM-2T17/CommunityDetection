@@ -1,4 +1,6 @@
 var MAX_TRIES;
+var CLOUDTYPE_TWEETS = 0;
+var CLOUDTYPE_PROFILE = 1;
 
 var WordCloud = {
 	wordsWidth : 280,
@@ -6,7 +8,7 @@ var WordCloud = {
 	communities : null,
 	communityNum : null,
 	maxCount : null,
-	generateWordCloud : function(communities, communityNum, maxCount){
+	generateWordCloud : function(communities, communityNum, maxCount, type){
 		WordCloud.communities = communities;
 		WordCloud.communityNum = communityNum;
 		WordCloud.maxCount = maxCount;
@@ -17,9 +19,9 @@ var WordCloud = {
 		MAX_TRIES = (WordCloud.wordsWidth > 400) ? 6 : 3;
 
 		// draw initial cloud wilthout filters
-		WordCloud.generateCloud();
+		WordCloud.generateCloud(type);
 	},
-	generateCloud : function (retryCycle) {
+	generateCloud : function (type, retryCycle) {
 	    var skillsToDraw = WordCloud.transformToCloudLayoutObjects(WordCloud.communities[WordCloud.communityNum].slice(0,WordCloud.maxCount), retryCycle);
 	    d3.layout.cloud()
 	        .size([WordCloud.wordsWidth, WordCloud.wordsHeight])
@@ -34,19 +36,19 @@ var WordCloud = {
 	        .on("end", function(fittedSkills) {
 	            // check if all words fit and are included
 	            if (fittedSkills.length == skillsToDraw.length) {
-	                WordCloud.drawCloud(fittedSkills); // finished
+	                WordCloud.drawCloud(fittedSkills, type); // finished
 	            }
 	            else if (!retryCycle || retryCycle < MAX_TRIES) {
 	                // words are missing due to the random placement and limited room space
 	                // console.debug('retrying');
 	                // try again and start counting retries
-	                WordCloud.generateCloud((retryCycle || 1) + 1);
+	                WordCloud.generateCloud(type, (retryCycle || 1) + 1);
 	            }
 	            else {
 	                // retries maxed and failed to fit all the words
 	                // console.debug('gave up :(');
 	                // just draw what we have
-	                WordCloud.drawCloud(fittedSkills);
+	                WordCloud.drawCloud(fittedSkills, type);
 	            }
 	        })
 	        .start();
@@ -60,8 +62,13 @@ var WordCloud = {
             };
         });
     },
-    drawCloud : function(words) {
-        d3.select(".community[data-cNum='" + WordCloud.communityNum + "'] .community-wordcloud").append("svg")
+    drawCloud : function(words, type) {
+    	var divClass = "community-wordcloud";
+    	if(type == CLOUDTYPE_PROFILE){
+    		divClass = "community-profilecloud";
+    	}
+    	
+        d3.select(".community[data-cNum='" + WordCloud.communityNum + "'] ." + divClass).append("svg")
             .attr("width", WordCloud.wordsWidth)
             .attr("height", WordCloud.wordsHeight)
             .append("g")
@@ -88,14 +95,26 @@ var WordCloud = {
             .text(function(d) {
                 return d.text;
             });
-            
-        // set the viewbox to content bounding box (zooming in on the content, effectively trimming whitespace)
-        $(".community-wordcloud svg").each(function(){
-        	var wordSVG = this;
-        	var bbox = wordSVG.getBBox();
-	        var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
-	        wordSVG.setAttribute("viewBox", viewBox);
-        });
+
+        if(type == CLOUDTYPE_TWEETS){
+        	// set the viewbox to content bounding box (zooming in on the content, effectively trimming whitespace)
+	        $(".community-wordcloud svg").each(function(){
+	        	var wordSVG = this;
+	        	var bbox = wordSVG.getBBox();
+		        var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+		        wordSVG.setAttribute("viewBox", viewBox);
+	        });
+        }
+        else if(type == CLOUDTYPE_PROFILE){
+        	console.log("type is profile")
+        	// set the viewbox to content bounding box (zooming in on the content, effectively trimming whitespace)
+	        $(".community-profilecloud svg").each(function(){
+	        	var wordSVG = this;
+	        	var bbox = wordSVG.getBBox();
+		        var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+		        wordSVG.setAttribute("viewBox", viewBox);
+	        });
+        }
     }
 }
 

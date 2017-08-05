@@ -157,10 +157,22 @@ div#side
 				&:hover
 					margin-left: 8px
 
-			div.community-wordcloud
+			div.community-stats
 				margin-left: 10px
 				height: 0
 				overflow: hidden
+				text-align: center
+				font-size: 0.75em
+				font-weight: bold
+
+				div
+					height: 490px
+					width: 300px
+					overflow: scroll
+
+				div.community-wordcloud svg,
+				div.community-profilecloud svg
+					transform: rotate(180deg)
 
 	div#options
 
