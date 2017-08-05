@@ -119,10 +119,15 @@ class Clusterer:
 	DBI of communities
 	"""
 	def dbi2(self, comm1, comm2):
-		newList = [] # List containing only the two communities
-		newList.append(self.communities[comm1])
-		newList.append(self.communities[comm2])
-		return self.algorithm.parameter.dbi(newList)	
+		dist = 0
+
+		for u in comm1.users:
+			for v in comm2.users:
+				dist += 1 - self.algorithm.parameter.similarity(u,v)
+
+		dist /= len(comm1.users) * len(comm2.users)
+
+		return dist	
 
 	def cleanCommunities(self):
 		indices = []
@@ -251,9 +256,6 @@ class Parameter:
 
 					mIJ[i][j] /= len(currCom.users) * len(com2.users)
 				mIJ[j][i] = mIJ[i][j]
-
-		print(sI)
-		print(mIJ)
 
 		dbiVal = 0
 		for i in range(0,len(communities)):

@@ -147,7 +147,7 @@ def start(paramVal, algoVal, measureVal,k):
 	 		link = {}
 	 		link["source"] = i - 1
 	 		link["target"] = j - 1
-	 		linkVal = math.floor((clusterer.dbi2(i-1,j-1) - 1) / 2 * 100) + 2;
+	 		linkVal = math.floor((clusterer.dbi2(communities[i-1],communities[j-1]) - 1) / 2 * 100) + 2;
 	 		if linkVal < 2:
 	 			linkVal = 2
 	 		link["value"] = linkVal

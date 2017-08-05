@@ -30,13 +30,13 @@ class Following(Parameter):
 			return 0
 
 		elif friendDenom == 0:
-			return cFollowers / followDenom
+			return cFollowers / followDenom / 2
 
 		elif followDenom == 0:
-			return cFriend / friendDenom
+			return cFriend / friendDenom / 2
 
 		else:
-			return (cFriend / friendDenom + cFollowers / followDenom) 
+			return (cFriend / friendDenom + cFollowers / followDenom) / 2
 
 	"""Returns the cosine similarity of the two users using this similarity parameter
 	Parameters:
@@ -133,13 +133,13 @@ class Hashtags(Parameter):
 		c = self.commonHashtags(user1, user2)
 		n = len(c)
 		sim = 0
+		total1 = self.totalHashtags(user1)
+		total2 = self.totalHashtags(user2)
 		for k in c:
-			total1 = self.totalHashtags(user1)
-			total2 = self.totalHashtags(user2)
 			val = (1 - abs(user1.hashtags[k]/total1 - user2.hashtags[k]/total2))
 			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (total1+total2))
 			sim += val
-		return sim
+		return sim / len(c)
 
 	"""Returns the cosine similarity of the two users using this similarity parameter
 	Parameters:
@@ -198,7 +198,7 @@ class Retweets(Parameter):
 
 	def commonRetweets(self, user1, user2):
 		retweets = []
-		for r in user1.retweets:
+		for r in user1.retweets.keys():
 			if r in user2.retweets.keys():
 				retweets.append(r)
 		return retweets
@@ -223,7 +223,7 @@ class Retweets(Parameter):
 		else:
 			a /= math.sqrt(len(user1.retweets))*math.sqrt(len(user2.retweets))
 			b /= len(user1.retweets)*len(user2.retweets)
-		return a+b
+		return (a+b) / 2
 
 	"""Returns the cosine similarity of the two users using this similarity parameter
 	Parameters:
@@ -307,7 +307,7 @@ class Mentions(Parameter):
 		else:
 			a /= math.sqrt(len(user1.mentions))*math.sqrt(len(user2.mentions))
 			b /= len(user1.mentions)*len(user2.mentions)
-		return a+b
+		return (a+b) / 2
 
 	"""Returns the cosine similarity of the two users using this similarity parameter
 	Parameters:

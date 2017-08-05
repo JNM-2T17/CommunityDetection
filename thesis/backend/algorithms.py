@@ -10,7 +10,6 @@ AVE_DIST = 2
 
 class KMeans(Algorithm):
 	def __init__(self, parameter, cosine = False, k = None):
-		print(k)
 		if k is None or k == 0:
 			self.hasSetClusterCount = False
 		else:
