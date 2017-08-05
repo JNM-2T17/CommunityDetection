@@ -121,8 +121,7 @@ div#side {
         height: 0;
         overflow: hidden;
         text-align: center;
-        font-size: 0.75em;
-        font-weight: bold; }
+        font-size: 0.75em; }
         div#side div#communities div.community div.community-stats div {
           height: 490px;
           width: 300px;
