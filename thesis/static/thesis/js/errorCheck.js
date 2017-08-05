@@ -10,12 +10,15 @@ var ErrorChecking = {
 			ErrorChecking.checkIfValid();
 		});
 
-
+		$("#selectMeasure").bind("change", function(){
+			ErrorChecking.checkIfValid();
+		});
 	},
 
 	checkIfValid : function(){
 		if($("#selectAlgorithm").val() > 0
-			&& $("#selectParameter").val() >0){
+			&& $("#selectParameter").val() > 0
+			&& $("#selectMeasure").val() > 0){
 
 			if($("#selectAlgorithm").val() == ALGO_KMEANS){
 				if($("#selectK").val() != ""){

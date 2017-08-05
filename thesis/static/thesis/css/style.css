@@ -116,10 +116,17 @@ div#side {
           margin-left: 10px; }
         div#side div#communities div.community button.community-button:hover {
           margin-left: 8px; }
-      div#side div#communities div.community div.community-wordcloud {
+      div#side div#communities div.community div.community-stats {
         margin-left: 10px;
         height: 0;
-        overflow: hidden; }
+        overflow: hidden;
+        text-align: center;
+        font-size: 0.75em;
+        font-weight: bold; }
+      div#side div#communities div.community div.community-locations {
+        height: 500px;
+        width: 300px;
+        overflow: scroll; }
   div#side div#options button {
     width: 100%;
     height: 100%;

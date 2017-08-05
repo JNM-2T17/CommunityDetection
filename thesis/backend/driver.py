@@ -65,6 +65,9 @@ def start(paramVal, algoVal, measureVal,k):
 	data["communityLinks"] = []
 	data["info"] = {"minSize" : float('Inf'), "maxSize" : 0}
 
+	stats = {} # Statistics for each community e.g. number of users per location
+	stats["location"] = {}
+
 	communityTweets = {}
 
 	indices = {}
@@ -84,6 +87,8 @@ def start(paramVal, algoVal, measureVal,k):
 		comm["size"] = len(c.users)
 		data["communities"].append(comm)
 
+		stats["location"][commNum] = {}
+
 		if data["info"]["minSize"] > comm["size"]:
 			data["info"]["minSize"] = comm["size"]
 
@@ -92,7 +97,6 @@ def start(paramVal, algoVal, measureVal,k):
 
 		tweetString = []
 		for u in c.users:
-			# print("-", u.id)
 			for t in u.tweets:
 				tweetString.append(t.tweetdata["text"])
 			node = {}
@@ -101,6 +105,16 @@ def start(paramVal, algoVal, measureVal,k):
 			data["nodes"].append(node)
 			indices[u.id] = ctr
 			ctr+=1
+
+			# Record number of users per location
+			userLoc = u.data["location"].strip()
+			if len(userLoc) == 0:
+				userLoc = "N/A"
+			if userLoc in stats["location"][commNum]:
+				stats["location"][commNum][userLoc] = stats["location"][commNum][userLoc] + 1
+			else:
+				stats["location"][commNum][userLoc] = 1
+
 		communityTweets[commNum] = {"size" : len(c.users), "tweets" : tweetString}
 		commNum += 1
 
@@ -145,7 +159,18 @@ def start(paramVal, algoVal, measureVal,k):
 	with open('communitytweets.json', 'w') as outfile:
 	    json.dump(communityTweets, outfile)
 
+	print("Writing community statistics...")
+	with open('stats.json', 'w') as outfile:
+	    json.dump(stats, outfile)
+
 	countWords("communitytweets.json", "wordCounts.json")
+
+	print("Stats (Location):")
+	for commName, commLocs in stats["location"].items():
+		print("\tCommunity " + str(commName))
+		for loc, count in commLocs.items():
+			print("\t\t" + str(count) + " in " + loc)
+
 	output = {}
 	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
 	output['algo'] = getAlgoString(algoVal, k)
