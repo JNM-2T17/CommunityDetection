@@ -10,7 +10,8 @@ AVE_DIST = 2
 
 class KMeans(Algorithm):
 	def __init__(self, parameter, cosine = False, k = None):
-		if k is None:
+		print(k)
+		if k is None or k == 0:
 			self.hasSetClusterCount = False
 		else:
 			self.k = k
@@ -21,7 +22,7 @@ class KMeans(Algorithm):
 		global MAX_DIST
 		global MIN_DIST
 		global AVE_DIST
-
+		
 		if self.hasSetClusterCount:
 			numClusters = self.k
 		else:
