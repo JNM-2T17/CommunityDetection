@@ -59,7 +59,13 @@ var Graph = {
                 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
                 var graphSVG = d3.select("#graph").append("svg")
                     .attr("width", Graph.width)
-                    .attr("height", Graph.height);
+                    .attr("height", Graph.height)
+                    // .attr("width", "100%")
+                    // .attr("height", "100%")
+                    .call(d3.behavior.zoom().on("zoom", function () {
+                        graphSVG.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+                    }))
+                    .append("g");
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)

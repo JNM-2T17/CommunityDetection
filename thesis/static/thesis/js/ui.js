@@ -1,5 +1,5 @@
 var ALGO_KMEANS = 1;
-var ALGO_KMEANS_SA = 2
+var ALGO_KMEANS_SA = 5;
 
 var UI = {
 	initializeUI : function(){
