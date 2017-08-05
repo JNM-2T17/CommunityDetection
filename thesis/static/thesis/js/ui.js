@@ -2,6 +2,8 @@ var ALGO_KMEANS = 1;
 
 var UI = {
 	initializeUI : function(){
+		console.log("UI.initializeUI");
+
 		$("#selectAlgorithm").bind("change", function(){
 			if($(this).val() == ALGO_KMEANS){
 				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
@@ -17,7 +19,9 @@ var UI = {
 		ErrorChecking.initializeErrorCheck();
 	},
 
-	initializeVis : function(words, graph, locations){
+	initializeVis : function(tweetWords, profileWords, graph, locations){
+		console.log("UI.initializeVis");
+
 		// General
 
 		$("#description").css("display", "block");
@@ -32,7 +36,7 @@ var UI = {
 
 		var communityColors = d3.scale.category20();
 
-		for(var i = 1; i <= Object.keys(words).length; i++){
+		for(var i = 1; i <= Object.keys(tweetWords).length; i++){
 			var sizeLabel = "users";
 
 			if(graph.communities[i-1].size == 1){
@@ -61,7 +65,12 @@ var UI = {
 
 		// Tweet Word Clouds
 		$(".community").each(function(){
-			WordCloud.generateWordCloud(words, $(this).attr("data-cNum"), 20);
+			WordCloud.generateWordCloud(tweetWords, $(this).attr("data-cNum"), 20, CLOUDTYPE_TWEETS);
+		});
+
+		// Profile Word Clouds
+		$(".community").each(function(){
+			WordCloud.generateWordCloud(profileWords, $(this).attr("data-cNum"), 20, CLOUDTYPE_PROFILE);
 		});
 
 		// Location Pie Charts
@@ -79,18 +88,18 @@ var UI = {
 			if($(this).parent().find(".community-stats").css("height") != "0px"){
 				$(this).parent().find(".community-stats").animate({
 					height: 0
-				}, 1500);
+				}, 1000);
 			}
 			else{
 				$(".community[data-cNum!='" + communityNum + "'] .community-stats").each(function(){
 					$(this).animate({
 						height: 0
-					}, 1500);
+					}, 1000);
 				});
 
 				$(this).parent().find(".community-stats").animate({
-					height: "1500px"
-				}, 1500);
+					height: "1600px"
+				}, 1000);
 			}
 		});
 	}

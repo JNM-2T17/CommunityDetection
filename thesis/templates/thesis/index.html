@@ -23,8 +23,8 @@
         <script>
         	$(document).ready(function(){
         		UI.initializeUI();
-        		{% if word_cloud %}
-        		UI.initializeVis({{ word_cloud|safe }}, {{ graph|safe }}, {{ locations|safe }});
+        		{% if tweet_word_cloud %}
+        		UI.initializeVis({{ tweet_word_cloud|safe }}, {{ profile_word_cloud|safe }}, {{ graph|safe }}, {{ locations|safe }});
         		{% endif %}
         	});
         </script>

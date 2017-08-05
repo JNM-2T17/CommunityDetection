@@ -8,17 +8,21 @@ def index(request):
 	return render(request, 'thesis/index.html')
 
 def vis(request):
-	word_cloud = {}
+	tweet_word_cloud = {}
+	profile_word_cloud = {}
 	graph = {}
 	stats = {}
-	with open('wordCounts.json') as json_data:
-		word_cloud = json.load(json_data)
+	with open('tweetWordCounts.json') as json_data:
+		tweet_word_cloud = json.load(json_data)
+	with open('profileWordCounts.json') as json_data:
+		profile_word_cloud = json.load(json_data)
 	with open('vis.json') as json_data:
 		graph = json.load(json_data)
 	with open('stats.json') as json_data:
 		stats = json.load(json_data)
 	context = {
-		'word_cloud': word_cloud,
+		'tweet_word_cloud': tweet_word_cloud,
+		'profile_word_cloud': profile_word_cloud,
 		'graph': graph,
 		'locations': stats["location"]
 	}

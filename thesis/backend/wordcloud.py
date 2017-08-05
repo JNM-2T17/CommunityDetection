@@ -20,7 +20,7 @@ def countWords(readFile, writeFile):
 	for key, value in data.items():
 		wordCounts = {}
 
-		for l in value["tweets"]:
+		for l in value["string"]:
 			l = l.replace('\n', ' ').split()
 			for word in l:
 				if word[0]!='@' and not word.startswith('http://') and not word.startswith('https://'):
