@@ -29,7 +29,7 @@ def getAlgoString(algoVal, kVal=0):
 						else "K-Means SA" if algoVal == "5"
 						else "Divisive SA HC")
 	else:
-		return "K-Means (K="+kVal+")"
+		return "K-Means (K=%d)" % kVal
 
 def getParamString(paramVal):
 	return ("Following" if paramVal == "1" 
