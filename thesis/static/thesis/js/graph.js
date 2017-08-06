@@ -52,14 +52,20 @@ var Graph = {
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 5000); 
+                        return(1/(d.value+1) * 12000 / Math.sqrt(graph.communities.length)); 
                     })
                     .size([Graph.width, Graph.height]);
 
                 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
                 var graphSVG = d3.select("#graph").append("svg")
                     .attr("width", Graph.width)
-                    .attr("height", Graph.height);
+                    .attr("height", Graph.height)
+                    // .attr("width", "100%")
+                    // .attr("height", "100%")
+                    .call(d3.behavior.zoom().on("zoom", function () {
+                        graphSVG.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+                    }))
+                    .append("g");
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)
@@ -70,18 +76,11 @@ var Graph = {
                 Graph.Communities.link = graphSVG.selectAll("#graph .link")
                     .data(graph.communityLinks)
                     .enter().append("line")
-                    .attr("class", "link")
-                    .style("marker-end",  "url(#suit)")
-                    .style("stroke-width", function (d) {
-                        return 1;
-                });
-
-                // Graph.force.gravity(0);
-                // Graph.force.linkDistance(Graph.height/100);
-                // Graph.force.linkStrength(0.1);
-                // Graph.force.charge(function(node) {
-                //    return node.graph === 0 ? -30 : -300;
-                // });
+                        .attr("class", "link")
+                        .style("marker-end",  "url(#suit)")
+                        .style("stroke-width", function (d) {
+                            return 1;
+                        });
 
                 //Do the same with the circles for the nodes - no 
                 var node = graphSVG.selectAll("#graph .node")
@@ -119,27 +118,79 @@ var Graph = {
                 //     });
                 // });
 
-                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-                Graph.force.on("tick", function () {
-                    Graph.Communities.link.attr("x1", function (d) {
-                        return d.source.x;
-                    })
-                        .attr("y1", function (d) {
-                        return d.source.y;
-                    })
-                        .attr("x2", function (d) {
-                        return d.target.x;
-                    })
-                        .attr("y2", function (d) {
-                        return d.target.y;
-                    });
-                    d3.selectAll("#graph circle").attr("cx", function (d) {
-                        return d.x;
-                    })
-                        .attr("cy", function (d) {
-                        return d.y;
-                    });
+                // Use a timeout to allow the rest of the page to load first.
+
+                Graph.force.on('end', function() {
+
+                    graphSVG.selectAll("#graph line")
+                        .attr("x1", function(d) { return d.source.x; })
+                        .attr("y1", function(d) { return d.source.y; })
+                        .attr("x2", function(d) { return d.target.x; })
+                        .attr("y2", function(d) { return d.target.y; });
+
+                    //Do the same with the circles for the nodes - no 
+                    graphSVG.selectAll("#graph circle")
+                        .attr("cx", function(d) { return d.x; })
+                        .attr("cy", function(d) { return d.y; });
+
                 });
+
+                Graph.force.start();
+
+                //Create all the line svgs but without locations yet
+                // graphSVG.selectAll("#graph line")
+                //     .attr("x1", function(d) { return d.source.x; })
+                //     .attr("y1", function(d) { return d.source.y; })
+                //     .attr("x2", function(d) { return d.target.x; })
+                //     .attr("y2", function(d) { return d.target.y; });
+
+                // //Do the same with the circles for the nodes - no 
+                // graphSVG.selectAll("#graph circle")
+                //     .attr("cx", function(d) { return d.x; })
+                //     .attr("cy", function(d) { return d.y; });
+
+                // Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+                // Graph.force.on("tick", function () {
+                //     Graph.Communities.link.attr("x1", function (d) {
+                //         return d.source.x;
+                //     })
+                //         .attr("y1", function (d) {
+                //         return d.source.y;
+                //     })
+                //         .attr("x2", function (d) {
+                //         return d.target.x;
+                //     })
+                //         .attr("y2", function (d) {
+                //         return d.target.y;
+                //     });
+                //     d3.selectAll("#graph circle").attr("cx", function (d) {
+                //         return d.x;
+                //     })
+                //         .attr("cy", function (d) {
+                //         return d.y;
+                //     });
+                // });
+
+                // function tick(){
+                //     Graph.Communities.link.attr("x1", function (d) {
+                //         return d.source.x;
+                //     })
+                //         .attr("y1", function (d) {
+                //         return d.source.y;
+                //     })
+                //         .attr("x2", function (d) {
+                //         return d.target.x;
+                //     })
+                //         .attr("y2", function (d) {
+                //         return d.target.y;
+                //     });
+                //     d3.selectAll("#graph circle").attr("cx", function (d) {
+                //         return d.x;
+                //     })
+                //         .attr("cy", function (d) {
+                //         return d.y;
+                //     });
+                // }
             }
         },
 
@@ -193,26 +244,75 @@ var Graph = {
             var shiftLeft = selectedNode.x - centerX;
             var shiftUp = selectedNode.y - centerY;
 
-            Graph.force.on("tick", function () {
-                Graph.Communities.link.attr("x1", function (d) {
-                    return d.source.x - shiftLeft;
-                })
-                    .attr("y1", function (d) {
-                    return d.source.y - shiftUp;
-                })
-                    .attr("x2", function (d) {
-                    return d.target.x - shiftLeft;
-                })
-                    .attr("y2", function (d) {
-                    return d.target.y - shiftUp;
-                });
-                d3.selectAll("#graph circle").attr("cx", function (d) {
-                    return d.x - shiftLeft;
-                })
-                    .attr("cy", function (d) {
-                    return d.y - shiftUp;
-                });
-            });
+            var graphSVG = d3.select("#graph svg");
+
+            //Create all the line svgs but without locations yet
+            graphSVG.selectAll("#graph line")
+                .attr("x1", function(d) { return d.source.x - shiftLeft; })
+                .attr("y1", function(d) { return d.source.y - shiftUp; })
+                .attr("x2", function(d) { return d.target.x - shiftLeft; })
+                .attr("y2", function(d) { return d.target.y - shiftUp; });
+
+            //Do the same with the circles for the nodes - no 
+            graphSVG.selectAll("#graph circle")
+                .attr("cx", function(d) { return d.x - shiftLeft; })
+                .attr("cy", function(d) { return d.y - shiftUp; });
+
+            // graphSVG.selectAll("#graph line").each(function(d){
+            //     console.log(d);
+            //     d.source.x -= shiftLeft;
+            //     d.source.y -= shiftUp;
+            //     d.target.x -= shiftLeft;
+            //     d.target.y -= shiftUp;
+            // });
+
+            // d3.selectAll("#graph circle").each(function(d){
+            //     d.x -= shiftLeft;
+            //     d.y -= shiftUp;
+            // });
+            // Graph.Communities.link.attr("x1", function (d) {
+            //     d.source.x -= shiftLeft;
+            //     return d.source.x;
+            // })
+            //     .attr("y1", function (d) {
+            //     d.source.y -= shiftUp;
+            //     return d.source.y;
+            // })
+            //     .attr("x2", function (d) {
+            //     d.target.x -= shiftLeft;
+            //     return d.target.x;
+            // })
+            //     .attr("y2", function (d) {
+            //     d.target.y -= shiftUp;
+            //     return d.target.y;
+            // });
+            // d3.selectAll("#graph circle").attr("cx", function (d) {
+            //     d.x -= shiftLeft;
+            //     return d.x;
+            // })
+            //     .attr("cy", function (d) {
+            //     d.y -= shiftUp;
+            //     return d.y;
+            // });
+
+            // Graph.Communities.link.attr("x1", function (d) {
+            //     return d.source.x - shiftLeft;
+            // })
+            //     .attr("y1", function (d) {
+            //     return d.source.y - shiftUp;
+            // })
+            //     .attr("x2", function (d) {
+            //     return d.target.x - shiftLeft;
+            // })
+            //     .attr("y2", function (d) {
+            //     return d.target.y - shiftUp;
+            // });
+            // d3.selectAll("#graph circle").attr("cx", function (d) {
+            //     return d.x - shiftLeft;
+            // })
+            //     .attr("cy", function (d) {
+            //     return d.y - shiftUp;
+            // });
         }
     },
 

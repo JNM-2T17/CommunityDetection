@@ -1,12 +1,22 @@
 var ALGO_KMEANS = 1;
+var ALGO_KMEANS_SA = 5;
 
 var UI = {
 	initializeUI : function(){
 		console.log("UI.initializeUI");
 
+		checkIfKmeans();
+
 		$("#selectAlgorithm").bind("change", function(){
-			if($(this).val() == ALGO_KMEANS){
-				$(this).after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
+			checkIfKmeans();
+		});
+
+		function checkIfKmeans(){
+			var dropbox = $("#selectAlgorithm");
+
+			if(dropbox.val() == ALGO_KMEANS
+				|| dropbox.val() == ALGO_KMEANS_SA){
+				dropbox.after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
 				$("#selectK").bind("change", function(){
 					ErrorChecking.checkIfValid();
 				});
@@ -14,7 +24,7 @@ var UI = {
 			else{
 				$("#selectK").remove();
 			}
-		});
+		}
 
 		ErrorChecking.initializeErrorCheck();
 	},

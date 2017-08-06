@@ -67,7 +67,7 @@ var WordCloud = {
     	if(type == CLOUDTYPE_PROFILE){
     		divClass = "community-profilecloud";
     	}
-    	
+
         d3.select(".community[data-cNum='" + WordCloud.communityNum + "'] ." + divClass).append("svg")
             .attr("width", WordCloud.wordsWidth)
             .attr("height", WordCloud.wordsHeight)
@@ -106,7 +106,6 @@ var WordCloud = {
 	        });
         }
         else if(type == CLOUDTYPE_PROFILE){
-        	console.log("type is profile")
         	// set the viewbox to content bounding box (zooming in on the content, effectively trimming whitespace)
 	        $(".community-profilecloud svg").each(function(){
 	        	var wordSVG = this;
