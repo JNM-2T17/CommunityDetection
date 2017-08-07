@@ -47,12 +47,13 @@ var Graph = {
 
                 //Set up the colour scale
                 var color = d3.scale.category20();
-                
+
                 //Set up the force layout
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(1/(d.value+1) * 2500); 
+                        return(1/(d.value+1) * 12000 / Math.sqrt(graph.communities.length));
+                        // return(Math.pow(1-d.value,2) * 500000); 
                     })
                     .size([Graph.width, Graph.height]);
 
@@ -69,8 +70,8 @@ var Graph = {
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)
-                    .links(graph.communityLinks)
-                    .start();
+                    .links(graph.communityLinks);
+                    // .start();
 
                 //Create all the line svgs but without locations yet
                 Graph.Communities.link = graphSVG.selectAll("#graph .link")

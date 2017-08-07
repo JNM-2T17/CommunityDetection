@@ -6,8 +6,6 @@ var LocationPie = {
 		pieNums = [];
 		pieNames = [];
 
-		console.log(locations);
-
 		Object.keys(locations).forEach(function(key) {
 		    pieNums.push(locations[key]);
 		    pieNames.push(key);
@@ -21,8 +19,6 @@ var LocationPie = {
 		    // These labels appear in the legend and in the tooltips when hovering different arcs
 		    labels: pieNames
 		};
-
-		console.log(pieData);
 
 		return {
 		    type: 'horizontalBar',
