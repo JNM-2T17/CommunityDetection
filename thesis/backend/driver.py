@@ -144,14 +144,15 @@ def start(paramVal, algoVal, measureVal,k):
 
 	for i in range(1, commCount + 1):
 	 	for j in range(i+1, commCount + 1):
-	 		link = {}
-	 		link["source"] = i - 1
-	 		link["target"] = j - 1
-	 		linkVal = math.floor((clusterer.dbi2(communities[i-1],communities[j-1]) - 1) / 2 * 100) + 2;
-	 		if linkVal < 2:
-	 			linkVal = 2
-	 		link["value"] = linkVal
-	 		data["communityLinks"].append(link)
+	 		if i != j:
+		 		link = {}
+		 		link["source"] = i - 1
+		 		link["target"] = j - 1
+		 		linkVal = math.floor((clusterer.dbi2(communities[i-1],communities[j-1]) - 1) / 2 * 100) + 2;
+		 		if linkVal < 2:
+		 			linkVal = 2
+		 		link["value"] = linkVal
+		 		data["communityLinks"].append(link)
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())
