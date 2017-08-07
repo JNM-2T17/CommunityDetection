@@ -139,7 +139,10 @@ class Hashtags(Parameter):
 			val = (1 - abs(user1.hashtags[k]/total1 - user2.hashtags[k]/total2))
 			val *= ((user1.hashtags[k]+user2.hashtags[k]) / (total1+total2))
 			sim += val
-		return sim / len(c)
+		if len(c) > 0:
+			return sim / len(c)
+		else:
+			return 0
 
 	"""Returns the cosine similarity of the two users using this similarity parameter
 	Parameters:
