@@ -1,5 +1,4 @@
 var ALGO_KMEANS = 1;
-var ALGO_KMEANS_SA = 5;
 
 var UI = {
 	initializeUI : function(){
@@ -14,8 +13,7 @@ var UI = {
 		function checkIfKmeans(){
 			var dropbox = $("#selectAlgorithm");
 
-			if(dropbox.val() == ALGO_KMEANS
-				|| dropbox.val() == ALGO_KMEANS_SA){
+			if(dropbox.val() == ALGO_KMEANS){
 				dropbox.after("<input id=\"selectK\" name=\"kval\" placeholder=\"Value of K\" type=\"number\" step=\"1\" min=\"0\" max=\"2500\"/>")
 				$("#selectK").bind("change", function(){
 					ErrorChecking.checkIfValid();
