@@ -71,6 +71,11 @@
 				{% if request.session.output %}
 					{{ request.session.output.param }}
 				{% endif %}
+				<br/>
+				<b>Similarity Measure:</b>
+				{% if request.session.output %}
+					{{ request.session.output.measure }}
+				{% endif %}
 			</div>
 			<div id="evaluation">
 				<b>Modularity:</b> 

@@ -21,7 +21,7 @@ def getParameter(paramVal):
  						else Mentions())
 
 def getAlgoString(algoVal, kVal=0):
-	if kVal is None:
+	if kVal is None or kVal==0:
 		return ("K-Means" if algoVal == "1" 
 						else "Divisive HC" if algoVal == "2"
 						else "Agglomerative HC" if algoVal == "3"
@@ -36,6 +36,10 @@ def getParamString(paramVal):
 						else "Hashtags" if paramVal == "2" 
 						else "Retweets" if paramVal == "3"
  						else "Mentions")
+
+def getMeasureString(measureVal):
+	return ("Cosine Similarity" if measureVal == "1" 
+						else "Standard Similarity")
 
 def normalizedSimilarity(user1, user2, s):
 	sim = s.similarity(user1, user2)
@@ -187,6 +191,7 @@ def start(paramVal, algoVal, measureVal,k):
 	output['mod'] = math.ceil(clusterer.modularity()*1000)/1000
 	output['algo'] = getAlgoString(algoVal, k)
 	output['param'] = getParamString(paramVal)
+	output['measure'] = getMeasureString(measureVal)
 	output['dbi'] = math.ceil(clusterer.dbi() * 1000) / 1000
 	if output['dbi'] == -1:
 		output['dbi'] = 'N/A'
