@@ -142,9 +142,11 @@ def start(paramVal, algoVal, measureVal,k):
 			# link["value"] = normalizedSimilarity(curUser, userList[e], sim)
 			# data["links"].append(link)
 
-	# TODO: Actually calculate distance between communities
+	# Calculates distance between communities
 
-	commCount = len(communities);
+	commCount = len(communities)
+	minSim = float("inf")
+	maxSim = 0
 
 	for i in range(1, commCount + 1):
 	 	for j in range(i+1, commCount + 1):
@@ -152,11 +154,29 @@ def start(paramVal, algoVal, measureVal,k):
 		 		link = {}
 		 		link["source"] = i - 1
 		 		link["target"] = j - 1
-		 		linkVal = math.floor((clusterer.dbi2(communities[i-1],communities[j-1]) - 1) / 2 * 100) + 2;
-		 		if linkVal < 2:
-		 			linkVal = 2
+		 		commSim = clusterer.dbi2(communities[i-1],communities[j-1]);
+
+		 		# Get minimum and maximum similarity values between communities
+		 		if(commSim < minSim):
+		 			minSim = commSim
+		 		if(commSim > maxSim):
+		 			maxSim = commSim
+
+		 		linkVal = commSim
+		 		# print("Similarity between", i, "and", j, ":", commSim)
+		 		# linkVal = math.floor((commSim - 1) / 2 * 100) + 2;
+		 		# if linkVal < 2:
+		 		# 	linkVal = 2
 		 		link["value"] = linkVal
 		 		data["communityLinks"].append(link)
+
+	if minSim == float("inf"):
+		minSim = "Number.POSITIVE_INFINITY"
+	if maxSim == float("inf"):
+		maxSim = "Number.POSITIVE_INFINITY"
+
+	data["minCommunitySimilarity"] = minSim
+	data["maxCommunitySimilarity"] = maxSim
 
 	print("\nFinished! Generated", len(communities), "communities")
 	print("Modularity:", clusterer.modularity())
