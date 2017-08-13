@@ -79,9 +79,9 @@ var Graph = {
                             return 500;
                         }
                         else{
-                            return (950 * (1 - (d.value - minSim)/(maxSim - minSim)) + 50);
+                            return (950 * (maxSim - d.value)/(maxSim - minSim) + 50);
                         }
-                        
+
                         // return(6000/(d.value+1));
                         // return(Math.pow(1-d.value,2) * 500000); 
                     })
