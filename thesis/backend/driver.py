@@ -48,8 +48,9 @@ def normalizedSimilarity(user1, user2, s):
 	return int(sim/10 + 1)
 
 def start(paramVal, algoVal, measureVal,k):
-	loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
+	# loader = Loader("thesis/backend/Actual Final Tweet Data/compressed.json")
 	# loader = Loader("thesis/backend/Demo Tweet Data/compressed.json")
+	loader = Loader("thesis/backend/E3 Tweet Data/compressed.json")
 	sim = getParameter(paramVal)
 	k = k if k is None else int(k)
 	algo = getAlgo(sim, algoVal,measureVal == "1",k)
