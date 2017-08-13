@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Community Detection</title>
+		<link rel="stylesheet" href="{% static 'thesis/font-awesome-4.7.0/css/font-awesome.min.css' %}" type="text/css"/>
+		<link rel="stylesheet" href="{% static 'thesis/css/style.css' %}" type="text/css"/>
+		<script src="{% static 'thesis/js/jquery-3.1.1.min.js' %}"></script>
+		<script src="{% static 'thesis/js/ui.js' %}"></script>
+		<script src="{% static 'thesis/js/errorCheck.js' %}"></script>
+		<script src="{% static 'thesis/js/wordcloud.js' %}"></script>
+		<script src="{% static 'thesis/js/locationPie.js' %}"></script>
+		<script src="{% static 'thesis/js/graph.js' %}"></script>
+		<script src="{% static 'thesis/js/d3.min.js' %}"></script>
+		<script src="{% static 'thesis/node_modules/d3/d3.min.js' %}"></script>
+        <script src="{% static 'thesis/node_modules/d3-cloud/build/d3.layout.cloud.js' %}"></script>
+        <script src="{% static 'thesis/node_modules/lodash/lodash.min.js' %}"></script>
+        <script src="{% static 'thesis/js/Chart.min.js' %}"></script>
+        
+        <script>
+        	$(document).ready(function(){
+        		UI.initializeUI();
+        		{% if tweet_word_cloud %}
+        		UI.initializeVis({{ tweet_word_cloud|safe }}, {{ profile_word_cloud|safe }}, {{ graph|safe }}, {{ locations|safe }});
+        		{% endif %}
+        	});
+        </script>
+	</head>
+
+	<body>
+		<div id="top">
+			<form action="{% url 'thesis:run_algo' %}" method="post">
+				{% csrf_token %}
+				</select>
+				<select id="selectAlgorithm" name="algo">
+					<option value="0" disabled selected>Choose Algorithm</option>
+					<option value="1">K-Means</option>
+					<option value="5">K-Means with Simulated Annealing</option>
+					<option value="2">Divisive HC</option>
+					<option value="6">Divisive HC with Simulated Annealing</option>
+					<option value="3">Agglomerative HC</option>
+					<option value="4">Agglomerative HC with Simulated Annealing</option>
+				</select>
+				<select id="selectParameter" name="param">
+					<option value="0" disabled selected>Choose Parameter</option>
+					<option value="1">Following</option>
+					<option value="2">Hashtags</option>
+					<option value="3">Retweets</option>
+					<option value="4">Mentions</option>
+				</select>
+				<select id="selectMeasure" name="measure">
+					<option value="0" disabled selected>Choose Measure</option>
+					<option value="1">Cosine Similarity</option>
+					<option value="2">Parameter Similarity (Zhang, 2012)</option>
+				</select>
+				<button class="generateCommunities" type="submit">Generate Communities <i class="fa fa-arrow-right"></i></button>
+			</form>
+		</div>
+
+		<div id="side">
+			<div id="description">
+				<b>Algorithm:</b>
+				{% if request.session.output %}
+					{{ request.session.output.algo }}
+				{% endif %}
+				<br/>
+				<b>Similarity Parameter:</b>
+				{% if request.session.output %}
+					{{ request.session.output.param }}
+				{% endif %}
+				<br/>
+				<b>Similarity Measure:</b>
+				{% if request.session.output %}
+					{{ request.session.output.measure }}
+				{% endif %}
+			</div>
+			<div id="evaluation">
+				<b>Modularity:</b> 
+				{% if request.session.output %}
+					{{ request.session.output.mod }}
+				{% endif %}
+				<br/>
+				<b>DBI:</b>
+				{% if request.session.output %}
+					{{ request.session.output.dbi }}
+				{% endif %}
+			</div>
+
+			<div id="communities">
+			</div>
+
+			<div id="options">
+			</div>
+		</div>
+
+		<div id="main">
+			<div id="graph">
+			</div>
+			<div id="graphOptions">
+			</div>
+		</div>
+	</body>
+
+</html>
