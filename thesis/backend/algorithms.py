@@ -65,7 +65,12 @@ class KMeans(Algorithm):
 				
 				end = False
 				# Assign users to clusters with closest centroids until clusters don't change
+				iterCtr = 0
+				lim =3 * (3.2685 + 0.0105 * len(users))
 				while not end:
+					iterCtr += 1
+					if iterCtr > lim:
+						break
 					prevUserClusters = clusters.copy() # Copy current set of user clusters to previous set of user clusters
 					clusters = [[] for i in range(0,numClusters)]
 				
@@ -399,6 +404,7 @@ class DivisiveHCSA(Algorithm):
 		frontier = deque()
 		frontier.append(com)
 		prevmod = self.parameter.modularity(current)
+		kmeans = KMeans(self.parameter, self.cosine, 2)
 
 		iterCount = 0
 		# while there are communities to split
@@ -407,14 +413,15 @@ class DivisiveHCSA(Algorithm):
 			print("Iteration", iterCount)
 			# get first community and split
 			temp = frontier.popleft()
+			print("Splitting",len(temp.users),"users")
 			if len(temp.users) > 1:
-				kmeans = KMeans(self.parameter, self.cosine, 2)
-
 				userDict = {}
 				for u in temp.users:
 					userDict[u.id] = u
 
+				print("Before k-means")
 				results = kmeans.run(userDict)
+				print("After k-means")
 				t1 = results[0]
 				t2 = results[1]
 				print(len(t1.users),"vs.",len(t2.users))
@@ -452,6 +459,7 @@ class DivisiveHCSA(Algorithm):
 					# print("New mod =", mod, ", prev mod =", prevmod)
 					# if splitting worsened modularity
 					if found:
+						
 						# if halves have more than one element, add to frontier
 						if t1.len() > 1:
 							frontier.append(t1)

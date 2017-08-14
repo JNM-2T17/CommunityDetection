@@ -164,7 +164,7 @@ class Parameter:
 	"""Basic constructor for an Parameter
 	"""
 	def __init__(self):
-		pass
+		self.cache = {}
 
 	"""checks the similarity between two users
 	Parameter:
@@ -172,10 +172,16 @@ class Parameter:
 	user2 - second user
 	"""
 	def similarity(self,user1,user2,cosine=False):
-		if cosine:
-			return self.cosine(user1,user2)
+		if user1.id > user2.id:
+			user1,user2 = user2,user1
+
+		if user1.id in self.cache and user2.id in self.cache[user1.id]:
+			return self.cache[user1.id][user2.id]
 		else:
-			return self.zhangSimilarity(user1,user2)
+			if user1.id not in self.cache:
+				self.cache[user1.id] = {}
+			self.cache[user1.id][user2.id] = self.cosine(user1,user2) if cosine else  self.zhangSimilarity(user1,user2)
+			return self.cache[user1.id][user2.id]
 
 	"""Returns the similarity of the two users using this similarity parameter 
 	according to Zhang, 2012

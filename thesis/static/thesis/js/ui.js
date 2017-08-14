@@ -5,9 +5,14 @@ var UI = {
 		console.log("UI.initializeUI");
 
 		checkIfKmeans();
+		setMeasureName();
 
 		$("#selectAlgorithm").bind("change", function(){
 			checkIfKmeans();
+		});
+
+		$("#selectParameter").bind("change", function(){
+			setMeasureName();
 		});
 
 		function checkIfKmeans(){
@@ -21,6 +26,18 @@ var UI = {
 			}
 			else{
 				$("#selectK").remove();
+			}
+		}
+
+		function setMeasureName(){
+			var selectedParam = $("#selectParameter option:selected").text();
+			var dropbox = $("#selectParameter");
+
+			if(dropbox.val() > 0){
+				$("#selectMeasure option[value=2]").html(selectedParam + " Similarity (Zhang, 2012)");
+			}
+			else{
+				$("#selectMeasure option[value=2]").html("Parameter Similarity (Zhang, 2012)");
 			}
 		}
 

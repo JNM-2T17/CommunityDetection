@@ -26,7 +26,19 @@ var Graph = {
             Graph.currentMode = MODE_COMMUNITIES;
             Graph.backtrackStack.push({mode : MODE_COMMUNITIES});
 
-            console.log(graph.communityLinks);
+            if(graph.communities.length == 1){
+                var minSim = 1;
+                var maxSim = 1;
+            }
+            else{
+                var minSim = graph.minCommunitySimilarity;
+                var maxSim = graph.maxCommunitySimilarity;
+            }
+            
+
+            // console.log(graph.communityLinks);
+            // console.log(graph.minCommunitySimilarity);
+            // console.log(graph.maxCommunitySimilarity);
 
             if(Graph.force != null){
                 Graph.force.stop();
@@ -52,7 +64,25 @@ var Graph = {
                 Graph.force = d3.layout.force()
                     .charge(-120)
                     .linkDistance(function(d) { 
-                        return(6000/(d.value+1));
+                        // if(maxSim - minSim < 0.2){
+                        //     return 10000000/((d.value - minSim)/(maxSim - minSim)+0.0001);
+                        // }
+                        // else if(maxSim - minSim < 0.4){
+                        //     console.log("< 0.4");
+                        //     return 0.25/((d.value - minSim)/(maxSim - minSim)+0.0001);
+                        // }
+                        // else{
+                        //     console.log("else");
+                            
+                        // }
+                        if(maxSim == minSim){
+                            return 500;
+                        }
+                        else{
+                            return (950 * (maxSim - d.value)/(maxSim - minSim) + 50);
+                        }
+
+                        // return(6000/(d.value+1));
                         // return(Math.pow(1-d.value,2) * 500000); 
                     })
                     .size([Graph.width, Graph.height]);
@@ -70,8 +100,8 @@ var Graph = {
 
                 //Creates the graph data structure out of the json data
                 Graph.force.nodes(graph.communities)
-                    .links(graph.communityLinks);
-                    // .start();
+                    .links(graph.communityLinks)
+                    .start();
 
                 //Create all the line svgs but without locations yet
                 Graph.Communities.link = graphSVG.selectAll("#graph .link")
@@ -109,16 +139,6 @@ var Graph = {
 
                 node.on('click', Graph.Communities.nodeClick);
 
-                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-                // Graph.force.on("tick", function () {
-                //     d3.selectAll("#graph circle").attr("cx", function (d) {
-                //         return d.x = Math.max(getR(d.size), Math.min(Graph.width - getR(d.size), d.x));
-                //     })
-                //         .attr("cy", function (d) {
-                //         return d.y = Math.max(getR(d.size), Math.min(Graph.height - getR(d.size), d.y));
-                //     });
-                // });
-
                 // Use a timeout to allow the rest of the page to load first.
 
                 Graph.force.on('end', function() {
@@ -138,19 +158,7 @@ var Graph = {
 
                 Graph.force.start();
 
-                //Create all the line svgs but without locations yet
-                // graphSVG.selectAll("#graph line")
-                //     .attr("x1", function(d) { return d.source.x; })
-                //     .attr("y1", function(d) { return d.source.y; })
-                //     .attr("x2", function(d) { return d.target.x; })
-                //     .attr("y2", function(d) { return d.target.y; });
-
-                // //Do the same with the circles for the nodes - no 
-                // graphSVG.selectAll("#graph circle")
-                //     .attr("cx", function(d) { return d.x; })
-                //     .attr("cy", function(d) { return d.y; });
-
-                // Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+                //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
                 // Graph.force.on("tick", function () {
                 //     Graph.Communities.link.attr("x1", function (d) {
                 //         return d.source.x;
@@ -171,27 +179,6 @@ var Graph = {
                 //         return d.y;
                 //     });
                 // });
-
-                // function tick(){
-                //     Graph.Communities.link.attr("x1", function (d) {
-                //         return d.source.x;
-                //     })
-                //         .attr("y1", function (d) {
-                //         return d.source.y;
-                //     })
-                //         .attr("x2", function (d) {
-                //         return d.target.x;
-                //     })
-                //         .attr("y2", function (d) {
-                //         return d.target.y;
-                //     });
-                //     d3.selectAll("#graph circle").attr("cx", function (d) {
-                //         return d.x;
-                //     })
-                //         .attr("cy", function (d) {
-                //         return d.y;
-                //     });
-                // }
             }
         },
 
@@ -234,86 +221,31 @@ var Graph = {
         centerOnCommunity : function(commNum){
             console.log("Graph.Communities.centerOnCommunity: " + commNum);
 
-            selectedNode = d3.select("#graph").selectAll("#graph .node").filter(function(elem){
-                return elem.name == commNum;
-            }).data()[0];
+            // selectedNode = d3.select("#graph").selectAll("#graph .node").filter(function(elem){
+            //     return elem.name == commNum;
+            // }).data()[0];
 
-            console.log(selectedNode);
+            // console.log(selectedNode);
 
-            var centerX = Graph.width / 2;
-            var centerY = Graph.height / 2;
-            var shiftLeft = selectedNode.x - centerX;
-            var shiftUp = selectedNode.y - centerY;
+            // var centerX = Graph.width / 2;
+            // var centerY = Graph.height / 2;
+            // var shiftLeft = selectedNode.x - centerX;
+            // var shiftUp = selectedNode.y - centerY;
 
-            var graphSVG = d3.select("#graph svg");
+            // var graphSVG = d3.select("#graph svg");
 
-            //Create all the line svgs but without locations yet
-            graphSVG.selectAll("#graph line")
-                .attr("x1", function(d) { return d.source.x - shiftLeft; })
-                .attr("y1", function(d) { return d.source.y - shiftUp; })
-                .attr("x2", function(d) { return d.target.x - shiftLeft; })
-                .attr("y2", function(d) { return d.target.y - shiftUp; });
+            // //Create all the line svgs but without locations yet
+            // graphSVG.selectAll("#graph line")
+            //     .attr("x1", function(d) { return d.source.x - shiftLeft; })
+            //     .attr("y1", function(d) { return d.source.y - shiftUp; })
+            //     .attr("x2", function(d) { return d.target.x - shiftLeft; })
+            //     .attr("y2", function(d) { return d.target.y - shiftUp; });
 
-            //Do the same with the circles for the nodes - no 
-            graphSVG.selectAll("#graph circle")
-                .attr("cx", function(d) { return d.x - shiftLeft; })
-                .attr("cy", function(d) { return d.y - shiftUp; });
+            // //Do the same with the circles for the nodes - no 
+            // graphSVG.selectAll("#graph circle")
+            //     .attr("cx", function(d) { return d.x - shiftLeft; })
+            //     .attr("cy", function(d) { return d.y - shiftUp; });
 
-            // graphSVG.selectAll("#graph line").each(function(d){
-            //     console.log(d);
-            //     d.source.x -= shiftLeft;
-            //     d.source.y -= shiftUp;
-            //     d.target.x -= shiftLeft;
-            //     d.target.y -= shiftUp;
-            // });
-
-            // d3.selectAll("#graph circle").each(function(d){
-            //     d.x -= shiftLeft;
-            //     d.y -= shiftUp;
-            // });
-            // Graph.Communities.link.attr("x1", function (d) {
-            //     d.source.x -= shiftLeft;
-            //     return d.source.x;
-            // })
-            //     .attr("y1", function (d) {
-            //     d.source.y -= shiftUp;
-            //     return d.source.y;
-            // })
-            //     .attr("x2", function (d) {
-            //     d.target.x -= shiftLeft;
-            //     return d.target.x;
-            // })
-            //     .attr("y2", function (d) {
-            //     d.target.y -= shiftUp;
-            //     return d.target.y;
-            // });
-            // d3.selectAll("#graph circle").attr("cx", function (d) {
-            //     d.x -= shiftLeft;
-            //     return d.x;
-            // })
-            //     .attr("cy", function (d) {
-            //     d.y -= shiftUp;
-            //     return d.y;
-            // });
-
-            // Graph.Communities.link.attr("x1", function (d) {
-            //     return d.source.x - shiftLeft;
-            // })
-            //     .attr("y1", function (d) {
-            //     return d.source.y - shiftUp;
-            // })
-            //     .attr("x2", function (d) {
-            //     return d.target.x - shiftLeft;
-            // })
-            //     .attr("y2", function (d) {
-            //     return d.target.y - shiftUp;
-            // });
-            // d3.selectAll("#graph circle").attr("cx", function (d) {
-            //     return d.x - shiftLeft;
-            // })
-            //     .attr("cy", function (d) {
-            //     return d.y - shiftUp;
-            // });
         }
     },
 
