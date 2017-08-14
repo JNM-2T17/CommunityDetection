@@ -12,7 +12,7 @@ def clean(tweet):
 	return cleaned_tweet
 
 users = []
-dirname = "Tiny Tweet Data/"
+dirname = "E3 Tweet Data/"
 with open(dirname+"user_dataset.json", encoding="utf8") as f:
 	for line in f:
 		data = json.loads(line)
